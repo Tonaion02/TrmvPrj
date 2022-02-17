@@ -76,3 +76,4 @@ Vector2f abs(const Vector2f& v);
 Vector2i abs(const Vector2i& v);
 
 const float tan60 = 1.732050808f;
+const float tan30 = 0.577350269f;

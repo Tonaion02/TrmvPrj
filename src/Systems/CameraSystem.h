@@ -11,7 +11,7 @@ class CameraSystem : public System
 public:
 	static void init();
 	static void updateCamera();
-	static void recalculateBaseInfo(); //Per ora unused
+	static void resetBaseInfo(); //Per ora unused
 protected:
 
 };

@@ -53,6 +53,7 @@ Game* Game::sGameInstance = nullptr;
 void Game::update()
 {
 	MoveSystem::move();
+
 	CameraSystem::updateCamera();
 }
 
@@ -75,6 +76,7 @@ void Game::input()
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
 				SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
 				WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
+				CameraSystem::resetBaseInfo();
 				break;
 			}
 			break;
@@ -86,10 +88,16 @@ void Game::input()
 	if (keyStates[SDL_SCANCODE_1])
 	{
 		mWorld->cameraData.zoom += 0.1f;
+		if (mWorld->cameraData.zoom > mWorld->cameraData.maxZoom)
+			mWorld->cameraData.zoom = mWorld->cameraData.maxZoom;
+		CameraSystem::resetBaseInfo();
 	}
 	if (keyStates[SDL_SCANCODE_2])
 	{
 		mWorld->cameraData.zoom -= 0.1f;
+		if (mWorld->cameraData.zoom < mWorld->cameraData.minZoom)
+			mWorld->cameraData.zoom = mWorld->cameraData.minZoom;
+		CameraSystem::resetBaseInfo();
 	}
 
 	if (keyStates[SDL_SCANCODE_W])

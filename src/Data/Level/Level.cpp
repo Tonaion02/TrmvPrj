@@ -67,10 +67,10 @@ Level levelWrapper(const std::string& path)
 	}
 
 	int z = 0,x = 59;
-	for (int y = 0; y < level.dim.y; y++)
-	{
-		level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
-	}
+	//for (int y = 0; y < level.dim.y; y++)
+	//{
+	//	level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
+	//}
 
 	z = 0, x = 30;
 	for (int y = 0; y < level.dim.y; y++)

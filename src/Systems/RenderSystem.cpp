@@ -28,8 +28,8 @@ void RenderSystem::draw()
 	ComponentPool<TransformComponent>* transformCmp = &gameInstance->getWorld()->mPoolTransformComponent;
 
 	SDL_Rect destRect;
-	destRect.w = world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale;
-	destRect.h = world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale;
+	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
 	
 	//int maxZ = world->mLevel.maxZ;
 	Vector2i dim = world->currentLevel.dim;
@@ -49,8 +49,8 @@ void RenderSystem::draw()
 		destRect.x = static_cast<int>(transformCmp->mPackedArray[transformCmp->mReverseArray[e]].pos.x * destRect.w);
 		destRect.y = static_cast<int>(transformCmp->mPackedArray[transformCmp->mReverseArray[e]].pos.y * destRect.h);
 
-		destRect.x += world->cameraData.adj.x;
-		destRect.y += world->cameraData.adj.y;
+		destRect.x += static_cast<int>(world->cameraData.adj.x);
+		destRect.y += static_cast<int>(world->cameraData.adj.y);
 
 		SDL_RenderCopy(
 			renderer,
@@ -63,7 +63,7 @@ void RenderSystem::draw()
 
 
 
-	RenderSystem::drawOtherLayerTileMap();
+	//RenderSystem::drawOtherLayerTileMap();
 }
 
 
@@ -76,8 +76,8 @@ void RenderSystem::drawFirstLayerTileMap()
 	float baseScale = world->cameraData.baseScale;
 
 	SDL_Rect destRect;
-	destRect.w = world->currentLevel.tileSet.tileDim.x * baseScale;
-	destRect.h = world->currentLevel.tileSet.tileDim.y * baseScale;
+	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * baseScale);
 
 	Vector2i dim = world->currentLevel.dim;
 	Vector2i tileDim = world->currentLevel.tileSet.tileDim;
@@ -89,12 +89,12 @@ void RenderSystem::drawFirstLayerTileMap()
 	for (int y = world->cameraData.startToRender.y; y < world->cameraData.endToRender.y; y++)
 	{
 		destRect.y = static_cast<int>(y * destRect.h);
-		destRect.y += world->cameraData.adj.y;
+		destRect.y += static_cast<int>(world->cameraData.adj.y);
 
 		for (int x = world->cameraData.startToRender.x; x < world->cameraData.endToRender.x; x++)
 		{
 			destRect.x = static_cast<int>(x * destRect.w);
-			destRect.x += world->cameraData.adj.x;
+			destRect.x += static_cast<int>(world->cameraData.adj.x);
 
 			int id = world->currentLevel.graphicTileLayer.gTiles[y * dim.x + x];
 
@@ -119,8 +119,8 @@ void RenderSystem::drawOtherLayerTileMap()
 	World* world = gameInstance->getWorld();
 
 	SDL_Rect destRect;
-	destRect.w = world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale;
-	destRect.h = world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale;
+	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
 
 	int maxZ = world->currentLevel.maxZ;
 	Vector2i dim = world->currentLevel.dim;
@@ -134,12 +134,12 @@ void RenderSystem::drawOtherLayerTileMap()
 		for (int y = world->cameraData.startToRender.y; y < world->cameraData.endToRender.y; y++)
 		{
 			destRect.y = static_cast<int>(y * destRect.h);
-			destRect.y += world->cameraData.adj.y;
+			destRect.y += static_cast<int>(world->cameraData.adj.y);
 
 			for (int x = world->cameraData.startToRender.x; x < world->cameraData.endToRender.x; x++)
 			{
 				destRect.x = static_cast<int>(x * destRect.w);
-				destRect.x += world->cameraData.adj.x;
+				destRect.x += static_cast<int>(world->cameraData.adj.x);
 
 				int id = world->currentLevel.graphicTileLayer.gTiles[z * dim.x * dim.y + dim.x + x];
 

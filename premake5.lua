@@ -38,6 +38,7 @@ project "SDL_TEST_PREMAKE"
 	}
 
 	files { "src/**.h", "src/**.cpp" }
+	removefiles { "src/ToDo.h" }
 
 	objdir "output/obj"
 
@@ -50,9 +51,4 @@ project "SDL_TEST_PREMAKE"
         defines { "NDEBUG" }
         optimize "On"
 		targetdir "output/bin/release"
-
-	postbuildcommands
-	{
-		"{COPY} C:/Users/pc/source/repos/SDL/copydir C:/Users/pc/source/repos/SDL/TiledMaker"
-	}
 	

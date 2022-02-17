@@ -1,0 +1,18 @@
+# output-dir
+output
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+# DLL FILES
+**.dll
+
+#Other files
+src/ToDo.h
+
+# Directories
+Inspiration
