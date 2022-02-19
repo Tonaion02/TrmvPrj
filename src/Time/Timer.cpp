@@ -4,6 +4,13 @@
 
 
 
+void initTimer(Timer* timer)
+{
+	timer->timePassed = timer->coolDown;
+}
+
+
+
 void start(Timer* timer)
 {
 	timer->timePassed = 0.0f;

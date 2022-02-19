@@ -13,7 +13,7 @@
 
 struct Level
 {
-	GraphicTileLayer graphicTileLayer;
+	GraphicTileLayer<MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> graphicTileLayer;
 	TileMap tileMap;
 	struct SDL_Texture* texture;
 	TileSet tileSet;

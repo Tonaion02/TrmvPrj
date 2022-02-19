@@ -17,6 +17,7 @@ enum LogicType
 
 
 
+
 struct Tile
 {
 	short int logicType=-1;
@@ -25,12 +26,7 @@ struct Tile
 
 
 
-//struct TileMap
-//{
-//	std::array<Tile, MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> tiles;
-//	std::array<int, MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> mappedUniqueTiles;
-//	std::array<int, MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> mappedEntities;
-//};
+
 
 struct TileMap
 {

@@ -14,7 +14,8 @@
 
 
 
+template<std::size_t n>
 struct GraphicTileLayer
 {
-	std::array<short int, MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> gTiles;
+	std::array<short int, n> gTiles;
 };

@@ -8,6 +8,7 @@
 #include "Components/TransformComponent.h"
 #include "Components/DrawComponent.h"
 #include "Components/MoveComponent.h"
+#include "Components/ActionComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -31,6 +32,7 @@ struct World
 	ComponentPool<TransformComponent> mPoolTransformComponent;
 	ComponentPool<DrawComponent> mPoolDrawComponent;
 	ComponentPool<MoveComponent> mPoolMoveComponent;
+	ComponentPool<ActionComponent> mPoolActionComponent;
 	//POOL OF COMPONENTS
 
 	//Camera
@@ -42,11 +44,12 @@ struct World
 
 	//Levels of game
 	Level currentLevel;
-
 	//Base info
 
 	///FOR TESTING
 	//TILESET
 	TileSetHandler mTileSetHandler;
+	
+	Timer debugInfoTimer;
 	///FOR TESTING
 };

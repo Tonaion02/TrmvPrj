@@ -12,5 +12,6 @@ struct Timer
 
 
 
+void initTimer(Timer* timer);
 void start(Timer* timer);
 bool isEnd(const Timer& timer);

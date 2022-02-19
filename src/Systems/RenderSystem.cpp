@@ -31,7 +31,6 @@ void RenderSystem::draw()
 	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
 	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
 	
-	//int maxZ = world->mLevel.maxZ;
 	Vector2i dim = world->currentLevel.dim;
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
@@ -63,7 +62,7 @@ void RenderSystem::draw()
 
 
 
-	//RenderSystem::drawOtherLayerTileMap();
+	RenderSystem::drawOtherLayerTileMap();
 }
 
 

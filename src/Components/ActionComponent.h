@@ -15,6 +15,10 @@ enum Actions
 	WalkDown,
 	WalkRight,
 	WalkLeft,
+	RotateUp,
+	RotateDown,
+	RotateRight,
+	RotateLeft,
 	Observe
 };
 

@@ -29,9 +29,9 @@ Level levelWrapper(const std::string& path)
 	//INIT ID GRAPHICTILELAYER
 	for (int z = 0; z < MAX_Z_MAP; z++)
 	{
-		for (int y = 0; y < level.dim.y; y++)
+		for (int y = 0; y < MAX_H_MAP; y++)
 		{
-			for (int x = 0; x < level.dim.x; x++)
+			for (int x = 0; x < MAX_W_MAP; x++)
 			{
 				level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = -1;
 			}
@@ -56,7 +56,7 @@ Level levelWrapper(const std::string& path)
 			{
 				if (z == 2 || z == 1)
 				{
-					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
+					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = -1;
 				}
 				else
 				{
@@ -66,19 +66,36 @@ Level levelWrapper(const std::string& path)
 		}
 	}
 
-	int z = 0,x = 59;
-	//for (int y = 0; y < level.dim.y; y++)
-	//{
-	//	level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
-	//}
-
-	z = 0, x = 30;
-	for (int y = 0; y < level.dim.y; y++)
+	for (int y = 0, z = 0, x = 30; y < level.dim.y; y++)
 	{
 		level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
 	}
 	//SET ID TO DRAW
 	///FOR TESTING
+
+
+
+	//Set logic id of tile
+	level.tileMap.tiles.resize(level.maxZ * level.dim.y * level.dim.x);
+
+	for (int z = 0; z < level.maxZ; z++)
+	{
+		for (int y = 0; y < level.dim.y; y++)
+		{
+			for (int x = 0; x < level.dim.x; x++)
+			{
+				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::Ground);
+			}
+		}
+	}
+
+	///FOR TESTING
+	level.tileMap.tiles[0 * level.dim.x * level.dim.y + 0 * level.dim.x + 2].logicType = static_cast<short int>(LogicType::Wall);
+	///FOR TESTING
+
+	//Set logic id of tile
+
+
 
 	return level;
 }

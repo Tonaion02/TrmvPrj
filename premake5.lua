@@ -1,4 +1,4 @@
-workspace "SDL_TEST_PREMAKE"
+workspace "TiledMaker"
 	architecture "x64"
 
     configurations { "Debug", "Release" }
@@ -10,7 +10,7 @@ workspace "SDL_TEST_PREMAKE"
 
 	--location "build"
 
-project "SDL_TEST_PREMAKE"
+project "TiledMaker"
     kind "ConsoleApp"
     language "C++"
 
