@@ -19,6 +19,9 @@
 
 
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class RenderSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------
 void RenderSystem::draw()
 {
 	Game* gameInstance = Game::get();
@@ -53,8 +56,8 @@ void RenderSystem::draw()
 
 		SDL_RenderCopy(
 			renderer,
-			world->currentLevel.texture,
-			&world->currentLevel.tileSet.srcRects[drawCmp->mPackedArray[i].id],
+			world->textureActor,
+			&world->tilesetActor->srcRects[drawCmp->mPackedArray[i].id],
 			&destRect
 		);
 	}
@@ -156,3 +159,6 @@ void RenderSystem::drawOtherLayerTileMap()
 	}
 	//Render other layer of tilemap
 }
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class RenderSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------

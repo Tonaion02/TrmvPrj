@@ -37,7 +37,6 @@ TileSet* TileSetHandler::loadTileSet(const std::string& path)
 		}
 	}
 
-	//mTileSets.emplace(path, tileSet);
 	mTileSets[path] = tileSet;
 
 	return tileSet;

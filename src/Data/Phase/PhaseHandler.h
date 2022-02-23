@@ -6,7 +6,7 @@
 
 
 
-class Phase;
+struct Phase;
 
 class PhaseHandler
 {

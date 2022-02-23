@@ -9,7 +9,6 @@
 struct TiledAnimation
 {
 	std::vector<int> ids;
-	float currentAnimation;
 	float incrementIndex;
 };
 
@@ -20,4 +19,5 @@ struct TiledAnimation
 struct AnimationComponent
 {
 	std::unordered_map<int, TiledAnimation> animations;
+	float currentId;
 };

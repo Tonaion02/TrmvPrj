@@ -27,6 +27,9 @@
 
 
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class MoveSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------
 void MoveSystem::move()
 {
 	Game* gameInstance = Game::get();
@@ -157,6 +160,9 @@ void MoveSystem::startMove(Entity e)
 		start(&ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction]);
 	}
 	//If the currentDirection is equal to the lastdirection do move
+
+
+
 	//If the currentDirection is not equal to the lastdirection do rotation
 	else
 	{
@@ -182,14 +188,27 @@ bool MoveSystem::isValid(const Vector2f& pos, short int z)
 {
 	World* world = Game::get()->getWorld();
 
+	//Controll if is in the range of the level the position
 	if (pos.x < 0.0f 
 		|| pos.x >= world->currentLevel.dim.x-1
 		|| pos.y < 0.0f
 		|| pos.y >= world->currentLevel.dim.y-1)
 		return false;
+	//Controll if is in the range of the level the position
 
+
+
+	//Controll if isWalkable the tile
 	if (!TileSystem::isWalkable(pos, z))
 		return false;
+	//Controll if isWalkable the tile
 
+
+
+	//If all is good return true
 	return true;
+	//If all is good return true
 }
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class MoveSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------

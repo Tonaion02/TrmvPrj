@@ -19,7 +19,7 @@ Entity EntityManager::createEntity()
 	Entity e;
 	e = mNextId++;
 
-	///ADD ASSERT ON MUX NUMBER OF ENTITIES
+	///ADD ASSERT ON MAX NUMBER OF ENTITIES
 	return e;
 }
 

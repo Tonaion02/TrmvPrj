@@ -16,8 +16,6 @@ struct CameraData
 	Vector2i startToRender;
 	Vector2i endToRender;
 	float zoom;
-
-	///BOH
 	float minZoom;
 	float maxZoom;
 };

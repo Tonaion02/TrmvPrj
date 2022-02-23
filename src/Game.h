@@ -32,6 +32,13 @@ public:
 
 
 
+	//Handling flow of the program
+	void startBattle();
+	void endBattle(); //TO ADD
+	//Handling flow of the program
+
+
+
 	//Encapsulation Methods
 	inline struct World* getWorld() { return mWorld; }
 	//Encapsulation Methods

@@ -34,8 +34,11 @@ void PhaseHandler::setStatePhase(int typePhase, int statePhase)
 		if (phaseStack[iter]->phaseType == typePhase)
 		{
 			phaseStack[iter]->statePhase = (StatePhase)statePhase;
+			return;
 		}
 	}
+
+	//CALL ASSERT IF WE ARRIVE TO THIS POINT
 }
 
 

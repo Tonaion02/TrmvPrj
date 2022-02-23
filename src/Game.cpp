@@ -2,6 +2,8 @@
 
 //Including Generals
 #include "Direction.h"
+#include "Data/Phase/Phase.h"
+#include "Data/Phase/PhaseHandler.h"
 //Including Generals
 
 //Including Enviroment
@@ -29,6 +31,7 @@
 #include "Systems/MoveSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/ActionSystem.h"
+#include "Systems/AnimationSystem.h"
 //Including System
 
 //Some Shit
@@ -51,24 +54,46 @@ Game* Game::sGameInstance = nullptr;
 
 void Game::update()
 {
-	MoveSystem::move();
-
-	CameraSystem::updateCamera();
-
-	//Update Component
-	ActionSystem::updateAction();
-	//Update Component
-
-	//Update debugInfoTimer
-	if (!isEnd(mWorld->debugInfoTimer))
+	for (auto iter : mWorld->phaseHandler.phaseStack)
 	{
-		mWorld->debugInfoTimer.timePassed += mDeltaTime;
-	}
-	//Update debugInfoTimer
+		if (iter->phaseType == PhaseType::Exploring)
+		{
+			if (iter->statePhase == StatePhase::On)
+			{
+				//First input and then AI decides what is the action
 
-	//Controll if the action is ended
-	ActionSystem::endAction();
-	//Controll if the action is ended
+				//Execute current action of all Entity
+				MoveSystem::move();
+
+				AnimationSystem::animate();
+
+				CameraSystem::updateCamera();
+				//Execute current action of all Entity
+
+				//Update Component
+				ActionSystem::updateAction();
+				//Update Component
+
+				//Update debugInfoTimer
+				if (!isEnd(mWorld->debugInfoTimer))
+				{
+					mWorld->debugInfoTimer.timePassed += mDeltaTime;
+				}
+				//Update debugInfoTimer
+
+				//Controll if the action is ended
+				ActionSystem::endAction();
+				//Controll if the action is ended
+
+				//Now the action that is ended is set to NoneAction
+			}
+		}
+		else if (iter->phaseType == PhaseType::Battle)
+		{
+
+		}
+	}
+
 }
 
 
@@ -123,6 +148,7 @@ void Game::input()
 		{
 			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkUp;
 			MoveSystem::startMove(mWorld->player);
+			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_S])
@@ -131,6 +157,7 @@ void Game::input()
 		{
 			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkDown;
 			MoveSystem::startMove(mWorld->player);
+			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_D])
@@ -139,6 +166,7 @@ void Game::input()
 		{
 			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkRight;
 			MoveSystem::startMove(mWorld->player);
+			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_A])
@@ -147,6 +175,7 @@ void Game::input()
 		{
 			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkLeft;
 			MoveSystem::startMove(mWorld->player);
+			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	//For moving player
@@ -165,6 +194,19 @@ void Game::input()
 		start(&mWorld->debugInfoTimer);
 	}
 	//For debuggingInfo
+
+
+
+	//For startingBattle
+	else if (keyStates[SDL_SCANCODE_4])
+	{
+		static bool first = true;
+
+		Game::startBattle();
+
+		first = false;
+	}
+	//For startingBattle
 }
 
 
@@ -176,10 +218,22 @@ void Game::generateOutput()
 	//Clean screen
 
 
+	for (auto iter : mWorld->phaseHandler.phaseStack)
+	{
+		if (iter->phaseType == PhaseType::Exploring)
+		{
+			if (iter->statePhase != StatePhase::Paused)
+			{
+				//Prepare rendering
+				RenderSystem::draw();
+				//Prepare rendering
+			}
+		}
+		else if (iter->phaseType == PhaseType::Battle)
+		{
 
-	//Prepare rendering
-	RenderSystem::draw();
-	//Prepare rendering
+		}
+	}
 
 
 
@@ -247,6 +301,9 @@ void Game::loadData()
 	mWorld->currentLevel.texture = TextureHandler::get().getTexture("data/buch-outdoor.png");
 	mWorld->mTileSetHandler.loadTileSet("data/buch-outdoor.png");
 	mWorld->currentLevel.tileSet = *mWorld->mTileSetHandler.getTileSet("data/buch-outdoor.png");
+	mWorld->textureActor = TextureHandler::get().getTexture("data/player.png");
+	mWorld->mTileSetHandler.loadTileSet("data/player.png");
+	mWorld->tilesetActor = mWorld->mTileSetHandler.getTileSet("data/player.png");
 	//Load TileSet and Texture
 
 
@@ -275,7 +332,7 @@ void Game::loadData()
 		mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[e]].tileOccupied = { (int)x, (int)x };
 		mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[e]].z = 0;
 		registerEntity(&mWorld->mPoolDrawComponent, e);
-		mWorld->mPoolDrawComponent.mPackedArray[mWorld->mPoolDrawComponent.mReverseArray[e]].id = 10;
+		mWorld->mPoolDrawComponent.mPackedArray[mWorld->mPoolDrawComponent.mReverseArray[e]].id = 17;
 
 		x += 1.0f;
 	}
@@ -298,7 +355,7 @@ void Game::loadData()
 	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkUp].coolDown = 0.5f;
 	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkDown].coolDown = 0.5f;
 	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkRight].coolDown = 0.5f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkLeft].coolDown = 0.5f;	
+	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkLeft].coolDown = 0.5f;
 	///ADD WALK DELAY
 
 	///ADD ROTATE DELAY
@@ -310,6 +367,22 @@ void Game::loadData()
 
 	///Register and init entity to PoolActionComponent
 
+	///Register and init entity to poolAnimationComponent
+	registerEntity(&mWorld->mPoolAnimationComponent, mWorld->player);
+
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::NoneActions].ids = { 18 };
+
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkUp].ids = { 18, 19 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkDown].ids = { 21, 22 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkRight].ids = { 27, 28 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkLeft].ids = { 24, 25 };
+
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateUp].ids = { 18 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateDown].ids = { 21 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateRight].ids = { 27 };
+	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateLeft].ids = { 24 };
+	///Register and init entity to poolAnimationComponent
+
 	///Init camera
 	Camera camera = EntityManager::get().createEntity();
 	mWorld->camera = camera;
@@ -320,6 +393,11 @@ void Game::loadData()
 	///Init camera
 
 
+	///Init PhaseHandler
+	mWorld->phaseHandler.addPhaseBack(PhaseType::Exploring, StatePhase::On);
+	///Init PhaseHandler
+
+
 
 	SDL_Log("Ended creation");
 	
@@ -327,8 +405,20 @@ void Game::loadData()
 
 	//Init all system
 	CameraSystem::init();
+
+	AnimationSystem::init();
 	//Init all system
 	///FOR TESTING
+}
+
+
+
+void Game::startBattle()
+{
+	//Set the PhaseHandler
+	mWorld->phaseHandler.addPhaseBack(PhaseType::Battle, StatePhase::On);
+	mWorld->phaseHandler.setStatePhase(PhaseType::Exploring, StatePhase::Paused);
+	//Set the PhaseHandler
 }
 
 
