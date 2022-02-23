@@ -1,9 +1,5 @@
 #include "Systems/MoveSystem.h"
 
-//Including some general
-#include "Direction.h"
-//Including some general
-
 //Include World
 #include "Game.h"
 #include "World.h"
@@ -47,25 +43,51 @@ void MoveSystem::move()
 
 		float incr;
 
+		//switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
+		//{
+		//case WalkUp:
+		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkUp].coolDown);
+		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y -= incr * deltaTime;
+		//	break;
+		//case WalkDown:
+		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkDown].coolDown);
+		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y += incr * deltaTime;
+		//	break;
+		//case WalkRight:
+		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkRight].coolDown);
+		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x += incr * deltaTime;
+		//	break;
+		//case WalkLeft:
+		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkLeft].coolDown);
+		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x -= incr * deltaTime;
+		//	break;
+
+		//default:
+		//	break;
+		//}
 		switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
 		{
-		case WalkUp:
-			incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkUp].coolDown);
-			TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y -= incr * deltaTime;
-			break;
-		case WalkDown:
-			incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkDown].coolDown);
-			TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y += incr * deltaTime;
-			break;
-		case WalkRight:
-			incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkRight].coolDown);
-			TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x += incr * deltaTime;
-			break;
-		case WalkLeft:
-			incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkLeft].coolDown);
-			TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x -= incr * deltaTime;
-			break;
+		case Walk:
+			incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[Walk].coolDown);
+			switch (MoveCmp->mPackedArray[i].currentDirection)
+			{
+			case Up:
+				TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y -= incr * deltaTime;
+				break;
+			case Down:
+				TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y += incr * deltaTime;
+				break;
+			case Right:
+				TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x += incr * deltaTime;
+				break;
+			case Left:
+				TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x -= incr * deltaTime;
+				break;
+			default:
+				break;
+			}
 
+			break;
 		default:
 			break;
 		}
@@ -97,7 +119,7 @@ void MoveSystem::endMove(Entity e)
 
 
 
-void MoveSystem::startMove(Entity e)
+void MoveSystem::startMove(Entity e, Direction direction)
 {
 	Game* gameInstance = Game::get();
 	World* world = Game::get()->getWorld();
@@ -107,27 +129,53 @@ void MoveSystem::startMove(Entity e)
 	ComponentPool<ActionComponent>* ActionCmp = &world->mPoolActionComponent;
 
 	Vector2i pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
-	Direction direction;
+	MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
 
+	//switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
+	//{
+	//case WalkUp:
+	//	direction = Up;
+	//	pos.y -= 1;
+	//	break;
+	//case WalkDown:
+	//	pos.y += 1;
+	//	direction = Down;
+	//	break;
+	//case WalkRight:
+	//	pos.x += 1;
+	//	direction = Right;
+	//	break;
+	//case WalkLeft:
+	//	pos.x -= 1;
+	//	direction = Left;
+	//	break;
+	//
+	//default:
+	//	break;
+	//}
 	switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
 	{
-	case WalkUp:
-		direction = Up;
-		pos.y -= 1;
+	case Walk:
+		switch (MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection)
+		{
+		case Up:
+			pos.y -= 1;
+			break;
+		case Down:
+			pos.y += 1;
+			break;
+		case Right:
+			pos.x += 1;
+			break;
+		case Left:
+			pos.x -= 1;
+			break;
+
+		default:
+			break;
+		}
 		break;
-	case WalkDown:
-		pos.y += 1;
-		direction = Down;
-		break;
-	case WalkRight:
-		pos.x += 1;
-		direction = Right;
-		break;
-	case WalkLeft:
-		pos.x -= 1;
-		direction = Left;
-		break;
-	
+
 	default:
 		break;
 	}
@@ -137,21 +185,21 @@ void MoveSystem::startMove(Entity e)
 	//If the currentDirection is equal to the lastdirection do move
 	if (MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].lastDirection != direction)
 	{
-		MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
+		//MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
 
 		switch (direction)
 		{
 		case Up:
-			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = RotateUp;
+			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = Rotate;
 			break;
 		case Down:
-			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = RotateDown;
+			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = Rotate;
 			break;
 		case Right:
-			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = RotateRight;
+			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = Rotate;
 			break;
 		case Left:
-			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = RotateLeft;
+			ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction = Rotate;
 			break;
 		default:
 			break;
@@ -166,7 +214,7 @@ void MoveSystem::startMove(Entity e)
 	//If the currentDirection is not equal to the lastdirection do rotation
 	else
 	{
-		MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
+		//MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
 
 		if (MoveSystem::isValid(pos, TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z))
 		{

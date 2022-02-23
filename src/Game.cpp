@@ -98,7 +98,7 @@ void Game::update()
 
 
 
-void Game::input()
+void Game::processInput()
 {
 	SDL_Event event;
 
@@ -145,36 +145,37 @@ void Game::input()
 	if (keyStates[SDL_SCANCODE_W])
 	{
 		if (mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction == Actions::NoneActions)
+		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
-			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkUp;
-			MoveSystem::startMove(mWorld->player);
+			ActionSystem::startAction(mWorld->player, Actions::Walk);
+			MoveSystem::startMove(mWorld->player, Direction::Up);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_S])
 	{
-		if (mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction == Actions::NoneActions)
+		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
-			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkDown;
-			MoveSystem::startMove(mWorld->player);
+			ActionSystem::startAction(mWorld->player, Actions::Walk);
+			MoveSystem::startMove(mWorld->player, Direction::Down);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_D])
 	{
-		if (mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction == Actions::NoneActions)
+		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
-			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkRight;
-			MoveSystem::startMove(mWorld->player);
+			ActionSystem::startAction(mWorld->player, Actions::Walk);
+			MoveSystem::startMove(mWorld->player, Direction::Right);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
 	else if (keyStates[SDL_SCANCODE_A])
 	{
-		if (mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction == Actions::NoneActions)
+		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
-			mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = Actions::WalkLeft;
-			MoveSystem::startMove(mWorld->player);
+			ActionSystem::startAction(mWorld->player, Actions::Walk);
+			MoveSystem::startMove(mWorld->player, Direction::Left);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
@@ -218,6 +219,7 @@ void Game::generateOutput()
 	//Clean screen
 
 
+
 	for (auto iter : mWorld->phaseHandler.phaseStack)
 	{
 		if (iter->phaseType == PhaseType::Exploring)
@@ -231,7 +233,7 @@ void Game::generateOutput()
 		}
 		else if (iter->phaseType == PhaseType::Battle)
 		{
-
+			//Here code to draw battle graphic element
 		}
 	}
 
@@ -240,40 +242,6 @@ void Game::generateOutput()
 	//Render elements
 	SDL_RenderPresent(WindowHandler::get().getRenderer());
 	//Render elements
-}
-
-
-
-void Game::init()
-{
-	//Init principle reference to Game class
-	Game::sGameInstance = this;
-	//Init principle reference to Game class
-
-
-
-	//Initialization of enviroment
-	SDL_Log("STARTING INITIALIZATION:");
-	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) )
-	{
-		SDL_Log("ERROR DURING SDL ENVIROMENT INITIALIZATION: %s", SDL_GetError());
-		exit(1);
-	}
-	SDL_Log("\t-Succes initialization of SDL Enviroment");
-	//Initialization of enviroment
-	
-
-
-	//Init other enviroment
-	WindowHandler::get();
-
-	TextureHandler::get();
-	//Init other enviroment
-
-
-
-	SDL_Log("\t-Initialization ended without problems");
-	SDL_Log("");
 }
 
 
@@ -340,56 +308,63 @@ void Game::loadData()
 	mWorld->player = 1;
 	registerEntity(&mWorld->mPoolMoveComponent, mWorld->player);
 	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos = { 7.0f, 1.0f };
-	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].tileOccupied = 
+	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].tileOccupied =
 		mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos;
 
 	mWorld->mPoolMoveComponent.mPackedArray[mWorld->mPoolMoveComponent.mReverseArray[mWorld->player]].currentDirection = NoneDirection;
-	mWorld->mPoolMoveComponent.mPackedArray[mWorld->mPoolMoveComponent.mReverseArray[mWorld->player]].lastDirection = NoneDirection;
+	mWorld->mPoolMoveComponent.mPackedArray[mWorld->mPoolMoveComponent.mReverseArray[mWorld->player]].lastDirection = Direction::Down;
 
 	///Register and init entity to PoolActionComponent
 	registerEntity(&mWorld->mPoolActionComponent, mWorld->player);
-	
+
 	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = NoneActions;
-	
-	///ADD WALK DELAY
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkUp].coolDown = 0.5f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkDown].coolDown = 0.5f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkRight].coolDown = 0.5f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::WalkLeft].coolDown = 0.5f;
-	///ADD WALK DELAY
 
-	///ADD ROTATE DELAY
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::RotateUp].coolDown = 0.2f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::RotateDown].coolDown = 0.2f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::RotateRight].coolDown = 0.2f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::RotateLeft].coolDown = 0.2f;
-	///ADD ROTATE DELAY
-
+	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Walk].coolDown = 0.5f;
+	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Rotate].coolDown = 0.5f;
 	///Register and init entity to PoolActionComponent
 
 	///Register and init entity to poolAnimationComponent
 	registerEntity(&mWorld->mPoolAnimationComponent, mWorld->player);
 
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::NoneActions].ids = { 18 };
+	TiledAnimation tiledAnimation;
 
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkUp].ids = { 18, 19 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkDown].ids = { 21, 22 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkRight].ids = { 27, 28 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::WalkLeft].ids = { 24, 25 };
+	tiledAnimation.ids = { 17 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::NoneActions, Direction::Up);
+	tiledAnimation.ids = { 20 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::NoneActions, Direction::Down);
+	tiledAnimation.ids = { 26 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::NoneActions, Direction::Right);
+	tiledAnimation.ids = { 23 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::NoneActions, Direction::Left);
 
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateUp].ids = { 18 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateDown].ids = { 21 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateRight].ids = { 27 };
-	mWorld->mPoolAnimationComponent.mPackedArray[mWorld->mPoolAnimationComponent.mReverseArray[mWorld->player]].animations[Actions::RotateLeft].ids = { 24 };
+	tiledAnimation.ids = { 18, 19 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Walk, Direction::Up);
+	tiledAnimation.ids = { 21, 22 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Walk, Direction::Down);
+	tiledAnimation.ids = { 27, 28 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Walk, Direction::Right);
+	tiledAnimation.ids = { 24, 25 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Walk, Direction::Left);
+
+	tiledAnimation.ids = { 17 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Rotate, Direction::Up);
+	tiledAnimation.ids = { 20 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Rotate, Direction::Down);
+	tiledAnimation.ids = { 26 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Rotate, Direction::Right);
+	tiledAnimation.ids = { 23 };
+	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::Rotate, Direction::Left);
 	///Register and init entity to poolAnimationComponent
+
+
 
 	///Init camera
 	Camera camera = EntityManager::get().createEntity();
 	mWorld->camera = camera;
 	registerEntity(&mWorld->mPoolTransformComponent, camera);
-	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[camera]].pos 
-		= 
-	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos;
+	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[camera]].pos
+		=
+		mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos;
 	///Init camera
 
 
@@ -400,8 +375,8 @@ void Game::loadData()
 
 
 	SDL_Log("Ended creation");
-	
-	
+
+
 
 	//Init all system
 	CameraSystem::init();
@@ -409,6 +384,40 @@ void Game::loadData()
 	AnimationSystem::init();
 	//Init all system
 	///FOR TESTING
+}
+
+
+
+void Game::init()
+{
+	//Init principle reference to Game class
+	Game::sGameInstance = this;
+	//Init principle reference to Game class
+
+
+
+	//Initialization of enviroment
+	SDL_Log("STARTING INITIALIZATION:");
+	if ( SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS | SDL_INIT_TIMER) )
+	{
+		SDL_Log("ERROR DURING SDL ENVIROMENT INITIALIZATION: %s", SDL_GetError());
+		exit(1);
+	}
+	SDL_Log("\t-Succes initialization of SDL Enviroment");
+	//Initialization of enviroment
+	
+
+
+	//Init other enviroment
+	WindowHandler::get();
+
+	TextureHandler::get();
+	//Init other enviroment
+
+
+
+	SDL_Log("\t-Initialization ended without problems");
+	SDL_Log("");
 }
 
 
@@ -476,7 +485,7 @@ void run()
 	while (game->isRunning())
 	{
 		game->calcDeltaTime();
-		game->input();
+		game->processInput();
 		game->update();
 		game->generateOutput();
 		game->sleep();

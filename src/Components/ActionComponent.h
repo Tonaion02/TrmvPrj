@@ -2,25 +2,11 @@
 
 #include <unordered_map>
 
+#include "Action.h"
+
 #include "Time/Timer.h"
 
 
-
-
-
-enum Actions
-{
-	NoneActions=-1,
-	WalkUp,
-	WalkDown,
-	WalkRight,
-	WalkLeft,
-	RotateUp,
-	RotateDown,
-	RotateRight,
-	RotateLeft,
-	Observe
-};
 
 
 

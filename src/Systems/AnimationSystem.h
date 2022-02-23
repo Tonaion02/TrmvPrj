@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Direction.h"
+#include "Components/AnimationComponent.h"
+#include "Components/ActionComponent.h"
+
 #include "ECS/Entity.h"
 
 
@@ -11,4 +15,5 @@ public:
 	static void init();
 	static void animate();
 	static void startAnimation(Entity e);
+	static void addAnimation(Entity e, const TiledAnimation& tiledAnimation, Actions action, Direction direction);
 };

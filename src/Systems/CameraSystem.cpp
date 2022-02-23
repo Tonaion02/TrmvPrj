@@ -37,7 +37,8 @@ void CameraSystem::init()
 	//Calculate clamp value for scale
 	int maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
 	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tan30;
-	world->cameraData.minZoom = (5 * world->currentLevel.tileSet.tileDim.x) * tan30;
+	int minVisibleSpaceDim = static_cast<int>( (5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale) );
+	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tan30;
 	world->cameraData.zoom = world->cameraData.maxZoom;
 	//Calculate clamp value for scale
 
@@ -148,6 +149,8 @@ void CameraSystem::onUpdateWindowSize()
 
 	//Calculate clamp value of Camera
 	int maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
+	int minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale));
+	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tan30;
 	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tan30;
 	world->cameraData.zoom = world->cameraData.maxZoom;
 	//Calculate clamp value of Camera	

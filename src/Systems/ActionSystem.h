@@ -14,4 +14,5 @@ public:
 	static void endAction();
 	static void updateAction();
 	static void startAction(Entity entity,Actions action);
+	static bool isDoingNothing(Entity e);
 };

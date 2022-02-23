@@ -48,14 +48,8 @@ void ActionSystem::endAction()
 				switch (currentAction)
 				{
 
-				case WalkUp:
-				case WalkDown:
-				case WalkRight:
-				case WalkLeft:
-				case RotateUp:
-				case RotateDown:
-				case RotateRight:
-				case RotateLeft:
+				case Walk:
+				case Rotate:
 					MoveSystem::endMove(poolActionCmp->mDirectArray[i]);
 					break;
 
@@ -106,6 +100,17 @@ void ActionSystem::startAction(Entity e, Actions action)
 		poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction = action;
 		start(&poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].actionDelays[poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction]);
 	}
+}
+
+
+
+bool ActionSystem::isDoingNothing(Entity e)
+{
+	World* world = Game::get()->getWorld();
+
+	ComponentPool<ActionComponent>* poolActionCmp = &world->mPoolActionComponent;
+
+	return poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction == Actions::NoneActions;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ActionSystem

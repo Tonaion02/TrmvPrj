@@ -17,7 +17,7 @@ protected:
 	void loadData();
 	void sleep();
 	void calcDeltaTime();
-	void input();
+	void processInput();
 	void update();
 	void generateOutput();
 	void shutdown();
