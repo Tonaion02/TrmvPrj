@@ -12,3 +12,9 @@ enum Direction
 	Right,
 	Left
 };
+
+
+
+
+
+Direction reverseDirection(Direction direction);

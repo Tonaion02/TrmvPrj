@@ -42,29 +42,6 @@ void MoveSystem::move()
 		Entity e = MoveCmp->mDirectArray[i];
 
 		float incr;
-
-		//switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
-		//{
-		//case WalkUp:
-		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkUp].coolDown);
-		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y -= incr * deltaTime;
-		//	break;
-		//case WalkDown:
-		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkDown].coolDown);
-		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.y += incr * deltaTime;
-		//	break;
-		//case WalkRight:
-		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkRight].coolDown);
-		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x += incr * deltaTime;
-		//	break;
-		//case WalkLeft:
-		//	incr = 1.0f / (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[WalkLeft].coolDown);
-		//	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos.x -= incr * deltaTime;
-		//	break;
-
-		//default:
-		//	break;
-		//}
 		switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
 		{
 		case Walk:
@@ -131,28 +108,6 @@ void MoveSystem::startMove(Entity e, Direction direction)
 	Vector2i pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
 	MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
 
-	//switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
-	//{
-	//case WalkUp:
-	//	direction = Up;
-	//	pos.y -= 1;
-	//	break;
-	//case WalkDown:
-	//	pos.y += 1;
-	//	direction = Down;
-	//	break;
-	//case WalkRight:
-	//	pos.x += 1;
-	//	direction = Right;
-	//	break;
-	//case WalkLeft:
-	//	pos.x -= 1;
-	//	direction = Left;
-	//	break;
-	//
-	//default:
-	//	break;
-	//}
 	switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
 	{
 	case Walk:
@@ -185,8 +140,6 @@ void MoveSystem::startMove(Entity e, Direction direction)
 	//If the currentDirection is equal to the lastdirection do move
 	if (MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].lastDirection != direction)
 	{
-		//MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
-
 		switch (direction)
 		{
 		case Up:
@@ -214,11 +167,10 @@ void MoveSystem::startMove(Entity e, Direction direction)
 	//If the currentDirection is not equal to the lastdirection do rotation
 	else
 	{
-		//MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
-
 		if (MoveSystem::isValid(pos, TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z))
 		{
-			///Manca la registerPos della TileMap
+			TileSystem::unRegisterPos(TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].tileOccupied, TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z);
+			TileSystem::registerPos(pos, TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z, e);
 			TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].tileOccupied = pos;
 			start(&ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].actionDelays[ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction]);
 		}
@@ -238,9 +190,9 @@ bool MoveSystem::isValid(const Vector2f& pos, short int z)
 
 	//Controll if is in the range of the level the position
 	if (pos.x < 0.0f 
-		|| pos.x >= world->currentLevel.dim.x-1
+		|| pos.x > world->currentLevel.dim.x-1
 		|| pos.y < 0.0f
-		|| pos.y >= world->currentLevel.dim.y-1)
+		|| pos.y > world->currentLevel.dim.y-1)
 		return false;
 	//Controll if is in the range of the level the position
 
@@ -250,6 +202,13 @@ bool MoveSystem::isValid(const Vector2f& pos, short int z)
 	if (!TileSystem::isWalkable(pos, z))
 		return false;
 	//Controll if isWalkable the tile
+
+
+	
+	//Controll if there is another Entity on that position
+	if (TileSystem::isOccupied(pos, z))
+		return false;
+	//Controll if there is another Entity on that position
 
 
 

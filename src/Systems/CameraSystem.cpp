@@ -23,7 +23,7 @@ void CameraSystem::init()
 	World* world = Game::get()->getWorld();
 
 	world->cameraData.adj = { 0, 0 };
-	world->cameraData.nTileToRender = { 20, 20 };
+	world->cameraData.nTileToRender = { 30, 30 };
 	world->cameraData.baseScale = 1.0f;
 
 	Vector2i screenDim = WindowHandler::get().getWindowDimension();

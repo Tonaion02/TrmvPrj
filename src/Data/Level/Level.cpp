@@ -87,18 +87,40 @@ Level levelWrapper(const std::string& path)
 		{
 			for (int x = 0; x < level.dim.x; x++)
 			{
-				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::Ground);
+				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::NoneLogicType);
 			}
 		}
 	}
 
 	///FOR TESTING
+
+	for (int z = 0; z < 1; z++)
+	{
+		for (int y = 0; y < level.dim.y; y++)
+		{
+			for (int x = 0; x < level.dim.x; x++)
+			{
+				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::Ground);
+			}
+		}
+	}
+
 	level.tileMap.tiles[0 * level.dim.x * level.dim.y + 0 * level.dim.x + 2].logicType = static_cast<short int>(LogicType::Wall);
 	///FOR TESTING
-
+	
 	//Set logic id of tile
 
-
+	level.tileMap.mappedEntities.resize(level.maxZ * level.dim.x * level.dim.y);
+	for (int z = 0; z < level.maxZ; z++)
+	{
+		for (int y = 0; y < level.dim.y; y++)
+		{
+			for (int x = 0; x < level.dim.x; x++)
+			{
+				level.tileMap.mappedEntities[z * level.dim.x * level.dim.y + y * level.dim.x + x] = EntityOccupier::NoneEntityOccupier;
+			}
+		}
+	}
 
 	return level;
 }

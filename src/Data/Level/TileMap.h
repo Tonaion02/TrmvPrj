@@ -15,6 +15,14 @@ enum LogicType
 };
 
 
+enum EntityOccupier
+{
+	NoneEntityOccupier = -1,
+	PlayerOccupier,
+	EnemyOccupier
+};
+
+
 
 
 
@@ -28,9 +36,14 @@ struct Tile
 
 
 
+//struct TileMap
+//{
+//	std::vector<Tile> tiles;
+//	std::vector<int> mappedUniqueTiles;
+//	std::vector<int> mappedEntities;
+//};
 struct TileMap
 {
 	std::vector<Tile> tiles;
-	std::vector<int> mappedUniqueTiles;
 	std::vector<int> mappedEntities;
 };

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "Data/Phase/PhaseHandler.h"
 
 #include "Enviroment/TileSet.h"
@@ -12,6 +14,7 @@
 #include "Components/MoveComponent.h"
 #include "Components/ActionComponent.h"
 #include "Components/AnimationComponent.h"
+#include "Components/BaseEnemyComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -41,7 +44,12 @@ struct World
 	ComponentPool<MoveComponent> mPoolMoveComponent;
 	ComponentPool<ActionComponent> mPoolActionComponent;
 	ComponentPool<AnimationComponent> mPoolAnimationComponent;
+	ComponentPool<BaseEnemyComponent> mPoolBaseEnemyComponent;
 	//POOL OF COMPONENTS
+
+	std::vector<Entity> battleEntities;
+	std::vector<Entity> allertingEntities;
+	Timer delayTransictionToBattle;
 
 	//Camera
 	Camera camera;

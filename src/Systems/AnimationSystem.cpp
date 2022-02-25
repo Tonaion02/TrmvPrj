@@ -34,22 +34,6 @@ void AnimationSystem::init()
 		{
 			animationCmp->mPackedArray[i].currentId = 0.0f;
 
-			//if (groupAnimation->first != NoneActions)
-			//{
-			//	for (auto animation = groupAnimation->second.begin(); animation != groupAnimation->second.end(); animation++)
-			//	{
-			//		animation->second.incrementIndex = animation->second.ids.size() /
-			//			(actionCmp->mPackedArray[actionCmp->mReverseArray[e]].actionDelays[animation->first].coolDown * 1000.0f);
-			//	}
-			//}
-			//else
-			//{
-			//	for (auto animation = groupAnimation->second.begin(); animation != groupAnimation->second.end(); animation++)
-			//	{
-			//		animation->second.incrementIndex = 1.0f;
-			//	}
-			//}
-
 			for (auto animation = groupAnimation->second.begin(); animation != groupAnimation->second.end(); animation++)
 			{
 				if (animation->second.ids.size() == 1)
@@ -58,28 +42,11 @@ void AnimationSystem::init()
 				}
 				else
 				{
-					//animation->second.incrementIndex = animation->second.ids.size() /
-					//(actionCmp->mPackedArray[actionCmp->mReverseArray[e]].actionDelays[animation->first].coolDown * 1000.0f);
 					animation->second.incrementIndex = animation->second.ids.size() / 
 						(actionCmp->mPackedArray[actionCmp->mReverseArray[e]].actionDelays[groupAnimation->first].coolDown * 1000.0f);
 				}
 			}
 		}
-
-		//for (auto animation = animationCmp->mPackedArray[i].animations.begin(); animation != animationCmp->mPackedArray[i].animations.end(); animation++)
-		//{
-		//	animationCmp->mPackedArray[i].currentId = 0.0f;
-		//	if (animation->first != NoneActions)
-		//	{
-		//		animation->second.incrementIndex = animation->second.ids.size() /
-		//			(actionCmp->mPackedArray[actionCmp->mReverseArray[e]].actionDelays[animation->first].coolDown * 1000.0f);
-		//	}
-		//	else
-		//	{
-		//		animation->second.incrementIndex = 1.0f;
-		//	}
-		//	int wewe = 0;
-		//}
 	}
 }
 
@@ -126,11 +93,6 @@ void AnimationSystem::animate()
 		if (animationCmp->mPackedArray[i].currentId >= iter->second.ids.size() - 1)
 			animationCmp->mPackedArray[i].currentId = static_cast<float>(iter->second.ids.size() - 1);
 		drawCmp->mPackedArray[drawCmp->mReverseArray[e]].id = iter->second.ids[static_cast<int>(animationCmp->mPackedArray[i].currentId)];
-
-		//animationCmp->mPackedArray[i].currentId += iter->second.incrementIndex * deltaTime * 1000.0f;
-		//if (animationCmp->mPackedArray[i].currentId >= iter->second.ids.size() - 1)
-		//	animationCmp->mPackedArray[i].currentId = static_cast<float>(iter->second.ids.size() - 1);
-		//drawCmp->mPackedArray[drawCmp->mReverseArray[e]].id = iter->second.ids[static_cast<int>(animationCmp->mPackedArray[i].currentId)];
 	}
 }
 
