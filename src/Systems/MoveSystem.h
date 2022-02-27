@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Direction.h"
+#include "Misc/Direction.h"
 
 #include "ECS/System.h"
 #include "ECS/Entity.h"

@@ -22,8 +22,6 @@
 #include "Data/Camera/Camera.h"
 //Including some Data
 
-#include "Time/Delay.h"
-
 
 
 

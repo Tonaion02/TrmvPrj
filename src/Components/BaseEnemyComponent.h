@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Direction.h"
+#include "Misc/Direction.h"
 
 #include "Math/Math.h"
 

@@ -13,5 +13,4 @@ public:
 	static void aiBaseEnemy();
 protected:
 	static void reversePath(Entity e);
-	//static void createAllertingEntity();
 };
