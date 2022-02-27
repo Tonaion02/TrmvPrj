@@ -3,7 +3,7 @@
 #include "Data/Level/TileMap.h"
 
 //Including some utils
-#include "Direction.h"
+#include "Misc/Direction.h"
 //Including some utils
 
 //Including Base ECS
@@ -154,8 +154,11 @@ void EnemySystem::aiBaseEnemy()
 						AnimationSystem::startAnimation(e);
 						BaseEnemyCmp->mPackedArray[i].currentStepPath++;
 
+
+						//Controll if is terminated the path and reverse it
 						if (BaseEnemyCmp->mPackedArray[i].currentStepPath == BaseEnemyCmp->mPackedArray[i].path.size())
 							EnemySystem::reversePath(e);
+						//Controll if is terminated the path and reverse it
 						//Start an action if enemies not found the player
 					}
 				}
@@ -172,6 +175,11 @@ void EnemySystem::aiBaseEnemy()
 
 		if (ActionSystem::isDoingNothing(world->player) && isEnd(world->delayTransictionToBattle))
 		{
+			//Before to startBattle try to delete allerting entities
+			world->allertingEntities.clear();
+			//Before to startBattle try to delete allerting entities
+
+
 			//start battle
 			Game::get()->startBattle();
 		}
@@ -195,7 +203,6 @@ void EnemySystem::reversePath(Entity e)
 	}
 
 	BaseEnemyCmp->mPackedArray[BaseEnemyCmp->mReverseArray[e]].currentStepPath = 0;
-	/*MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].lastDirection = BaseEnemyCmp->mPackedArray[BaseEnemyCmp->mReverseArray[e]].path[0];*/
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class EnemySystem

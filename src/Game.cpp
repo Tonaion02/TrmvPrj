@@ -1,7 +1,7 @@
 #include "Game.h"
 
 //Including Generals
-#include "Direction.h"
+#include "Misc/Direction.h"
 #include "Data/Phase/Phase.h"
 #include "Data/Phase/PhaseHandler.h"
 //Including Generals
@@ -12,11 +12,10 @@
 //Including Enviroment
 
 //Including Utils
-#include "Utils/Grid.h"
+#include "Misc/Grid.h"
 //Including Utils
 
 //Including Ecs
-#include "ECS/Family.h"
 #include "ECS/EntityManager.h"
 #include "ECS/ComponentManager.h"
 #include "ECS/System.h"
@@ -143,14 +142,14 @@ void Game::processInput()
 	//For moving player
 	if (keyStates[SDL_SCANCODE_W])
 	{
-		if (ActionSystem::isDoingNothing(mWorld->player))
+		if (ActionSystem::isDoingNothing(mWorld->player) && mWorld->battleEntities.empty())
 		{
 			ActionSystem::startAction(mWorld->player, Actions::Walk);
 			MoveSystem::startMove(mWorld->player, Direction::Up);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
-	else if (keyStates[SDL_SCANCODE_S])
+	else if (keyStates[SDL_SCANCODE_S] && mWorld->battleEntities.empty())
 	{
 		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
@@ -161,14 +160,14 @@ void Game::processInput()
 	}
 	else if (keyStates[SDL_SCANCODE_D])
 	{
-		if (ActionSystem::isDoingNothing(mWorld->player))
+		if (ActionSystem::isDoingNothing(mWorld->player) && mWorld->battleEntities.empty())
 		{
 			ActionSystem::startAction(mWorld->player, Actions::Walk);
 			MoveSystem::startMove(mWorld->player, Direction::Right);
 			AnimationSystem::startAnimation(mWorld->player);
 		}
 	}
-	else if (keyStates[SDL_SCANCODE_A])
+	else if (keyStates[SDL_SCANCODE_A] && mWorld->battleEntities.empty())
 	{
 		if (ActionSystem::isDoingNothing(mWorld->player))
 		{
@@ -369,7 +368,7 @@ void Game::loadData()
 	mWorld->player = 1;
 
 	TileSystem::unRegisterPos(mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].tileOccupied, z);
-	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos = { 7.0f, 1.0f };
+	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos = { 7.0f, 7.0f };
 	mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].tileOccupied =
 		mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].pos;
 	TileSystem::registerPos(mWorld->mPoolTransformComponent.mPackedArray[mWorld->mPoolTransformComponent.mReverseArray[mWorld->player]].tileOccupied, z, mWorld->player);
@@ -383,14 +382,14 @@ void Game::loadData()
 
 	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].currentAction = NoneActions;
 
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Walk].coolDown = 0.1f;
-	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Rotate].coolDown = 0.5f;
+	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Walk].coolDown = 0.5f;
+	mWorld->mPoolActionComponent.mPackedArray[mWorld->mPoolActionComponent.mReverseArray[mWorld->player]].actionDelays[Actions::Rotate].coolDown = 0.2f;
 	///Register and init entity to PoolActionComponent
 
 	///Register and init entity to poolAnimationComponent
 	registerEntity(&mWorld->mPoolAnimationComponent, mWorld->player);
 
-	TiledAnimation tiledAnimation;
+ 	TiledAnimation tiledAnimation;
 
 	tiledAnimation.ids = { 17 };
 	AnimationSystem::addAnimation(mWorld->player, tiledAnimation, Actions::NoneActions, Direction::Up);

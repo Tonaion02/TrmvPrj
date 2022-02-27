@@ -13,8 +13,8 @@ output
 
 #Other files
 src/ToDo.h
-src/Time/Delay.h
-src/Time/Delay.cpp
+src/Inspiration/**.h
+src/Inspiration/**.cpp
 
 # Directories
 Inspiration

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Direction.h"
+#include "Misc/Direction.h"
 #include "Components/AnimationComponent.h"
 #include "Components/ActionComponent.h"
 
