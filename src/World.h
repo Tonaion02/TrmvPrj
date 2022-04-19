@@ -2,6 +2,9 @@
 
 #include <vector>
 
+#include <set>
+#include <iterator>
+
 #include "Data/Phase/PhaseHandler.h"
 
 #include "Enviroment/TileSet.h"
@@ -15,6 +18,17 @@
 #include "Components/ActionComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/BaseEnemyComponent.h"
+
+#include "Components/Battle/TransformBattleComponent.h"
+#include "Components/Battle/DrawBattleComponent.h"
+#include "Components/Battle/AnimationBattleComponent.h"
+#include "Components/Battle/RectColliderComponent.h"
+#include "Components/Battle/MoveBattleComponent.h"
+#include "Components/Battle/PyshicBoxComponent.h"
+#include "Components/Battle/EnemyBattleComponent.h"
+#include "Components/Battle/PlayerBattleComponent.h"
+#include "Components/Battle/ControlledRectCollider.h"
+#include "Components/Battle/FreeRectCollider.h"
 //Including ComponentPools
 
 //Including some Data
@@ -43,21 +57,45 @@ struct World
 	ComponentPool<ActionComponent> mPoolActionComponent;
 	ComponentPool<AnimationComponent> mPoolAnimationComponent;
 	ComponentPool<BaseEnemyComponent> mPoolBaseEnemyComponent;
+
+	//POOL OF BATTLE-COMPONENTS
+	ComponentPool<TransformBattleComponent> mPoolTransformBattleComponent;
+	ComponentPool<AnimationBattleComponent> mPoolAnimationBattleComponent;
+	ComponentPool<DrawBattleComponent> mPoolDrawBattleComponent;
+	ComponentPool<RectColliderComponent> mPoolRectColliderComponent;
+	ComponentPool<MoveBattleComponent> mPoolMoveBattleComponent;
+	ComponentPool<PyshicBoxComponent> mPoolPhysicBoxComponent;
+	ComponentPool<EnemyBattleComponent> mPoolEnemyBattleComponent;
+	ComponentPool<PlayerBattleComponent> mPoolPlayerBattleComponent;
+	ComponentPool<ControlledRectCollider> mPoolControlledRectColliderComponent;
+	ComponentPool<FreeRectCollider> mPoolFreeRectColliderComponent;
+	//POOL OF BATTLE-COMPONENTS
+
+	std::vector<std::pair<Entity, Entity>> collisions;
+	//std::vector<Entity> entitiesInCollisions;
+	std::set<Entity> entitiesInCollisions;
 	//POOL OF COMPONENTS
 
+	//For the Exploring Phase
 	std::vector<Entity> battleEntities;
 	std::vector<Entity> allertingEntities;
 	Timer delayTransictionToBattle;
+	//For the Exploring Phase
 
 	//Camera
 	Camera camera;
 	CameraData cameraData;
+	CameraData backupBattleCameraData;
+	CameraData backupExploringCameraData;
 
 	//Player
 	Player player;
+	Entity BattlePlayerEntity;
+	Timer delayFiring;
 
 	//Levels of game
 	Level currentLevel;
+	
 	//Base info
 
 	///FOR TESTING
@@ -68,5 +106,7 @@ struct World
 	TileSet* tilesetActor;
 	
 	Timer debugInfoTimer;
+
+	Entity entityToMove;
 	///FOR TESTING
 };

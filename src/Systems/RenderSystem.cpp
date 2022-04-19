@@ -41,8 +41,6 @@ void RenderSystem::draw()
 
 	RenderSystem::drawFirstLayerTileMap();
 
-
-
 	//Draw all drawCmp
 	for (unsigned int i = 0; i < drawCmp->mNext; i++)
 	{
@@ -62,8 +60,6 @@ void RenderSystem::draw()
 		);
 	}
 	//Draw all drawCmp
-
-
 
 	RenderSystem::drawOtherLayerTileMap();
 }
@@ -109,8 +105,6 @@ void RenderSystem::drawFirstLayerTileMap()
 		}
 	}
 	//Render first layer of tilemap
-
-
 }
 
 

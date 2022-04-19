@@ -10,6 +10,7 @@ using Camera = Entity;
 
 struct CameraData
 {
+	Vector2f pos;
 	Vector2i nTileToRender;
 	Vector2i adj;
 	float baseScale;

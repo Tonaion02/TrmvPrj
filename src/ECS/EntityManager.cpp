@@ -16,8 +16,7 @@ Entity EntityManager::createEntity()
 		return e;
 	}
 
-	Entity e;
-	e = mNextId++;
+	Entity e = mNextId++;
 
 	///ADD ASSERT ON MAX NUMBER OF ENTITIES
 	return e;

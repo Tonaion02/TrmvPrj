@@ -1,14 +1,17 @@
-#include "Game.h"
+#include "Systems/CameraSystem.h"
 
+//Including some context
+#include "Game.h"
 #include "World.h"
+//Including some context
+
+#include "Data/Phase/Phase.h"
 
 //Including enviroment
 #include "Enviroment/WindowHandler.h"
 //Including enviroment
 
 #include "Data/Camera/Camera.h"
-
-#include "Systems/CameraSystem.h"
 
 
 
@@ -47,30 +50,49 @@ void CameraSystem::init()
 	Vector2f scaleZoom = { screenDim.x / (float)visibleSpaceDim, screenDim.y / (float)visibleSpaceDim };
 	world->cameraData.baseScale *= std::max(scaleZoom.x, scaleZoom.y);
 	//Calculate scaleZoom and add to the baseScale
+
+	//Init the backup of the CameraData
+	world->backupBattleCameraData = world->cameraData;
+	world->backupExploringCameraData = world->cameraData;
+	//Init the backup of the CameraData
 }
 
 
 
-void CameraSystem::updateCamera()
+void CameraSystem::updateCamera(const Vector2f& newPos)
 {
 	World* world = Game::get()->getWorld();
 
-	//Update position of Camera
-	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->camera]].pos
-		=
-		world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
-	//Update position of Camera
+	//Update position of Camera (following the player)
+	//world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->camera]].pos
+	//	=
+	//	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
+	world->cameraData.pos = newPos;
+	//Update position of Camera (following the player)
 
 
 
 	//Take base info about
 	Vector2i screenDim = WindowHandler::get().getWindowDimension();
-	Vector2f pos = world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
+	//Vector2f pos = world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
+	Vector2f pos = world->cameraData.pos;
 	//Take base info about
 
 
 
 	//Calculate startToRender and endToRender tile
+
+	//Dividere per lunghezza tile la posizione se si è in battaglia
+	Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
+	Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
+
+	if (world->phaseHandler.isTherePhase(PhaseType::Battle))
+	{
+		pos.x = pos.x / static_cast<float>( world->currentLevel.tileSet.tileDim.x );
+		pos.y = pos.y / static_cast<float>( world->currentLevel.tileSet.tileDim.y );
+	}
+
+
 	world->cameraData.startToRender = { (int)pos.x - world->cameraData.nTileToRender.x / 2,(int)pos.y - world->cameraData.nTileToRender.y / 2 };
 	world->cameraData.endToRender = { (int)pos.x + world->cameraData.nTileToRender.x / 2 + 2,(int)pos.y + world->cameraData.nTileToRender.y / 2 + 2 };
 
@@ -100,8 +122,8 @@ void CameraSystem::updateCamera()
 
 
 	//Calculate adj of the screen
-	Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
-	Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
+	//Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
+	//Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
 	pos = pos * scaledTileDim + scaledTileDim;
 
 

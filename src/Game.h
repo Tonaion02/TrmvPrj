@@ -34,7 +34,7 @@ public:
 
 	//Handling flow of the program
 	void startBattle();
-	void endBattle(); //TO ADD
+	void endBattle(); ///TO ADD
 	//Handling flow of the program
 
 
@@ -50,8 +50,10 @@ public:
 	//Access to this class from everywhere
 protected:
 	bool mIsRunning;
-
+	
 	bool mVsync;
+
+	bool mDebugMode;
 
 	float mDeltaTime;
 	float mTicksCount;

@@ -54,6 +54,21 @@ void PhaseHandler::removePhase(int typePhase)
 		}
 	}
 }
+
+
+
+std::size_t PhaseHandler::isTherePhase(int typePhase)
+{
+	for (std::size_t iter = 0; iter < phaseStack.size(); iter++)
+	{
+		if (phaseStack[iter]->phaseType == typePhase)
+		{
+			return iter;
+		}
+	}
+
+	return phaseStack.size();
+}
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class PhaseHandler
 //-----------------------------------------------------------------------------------------------------------------------------------------
