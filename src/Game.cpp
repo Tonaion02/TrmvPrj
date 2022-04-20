@@ -323,7 +323,9 @@ void Game::processInput()
 				}
 				//Apply force to move the projectile
 
+				//Start the timer of delayFiring
 				start(&mWorld->delayFiring);
+				//Start the timer of delayFiring
 			}
 		}
 	}
@@ -722,6 +724,8 @@ Game* Game::get()
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class Game
 //-----------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 //RUN METHOD
 void run()
