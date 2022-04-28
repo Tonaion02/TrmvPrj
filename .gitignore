@@ -12,6 +12,7 @@ output
 **.dll
 
 #Other files
+src/ComponentManager.h
 src/ToDo.h
 src/Inspiration/**.h
 src/Inspiration/**.cpp

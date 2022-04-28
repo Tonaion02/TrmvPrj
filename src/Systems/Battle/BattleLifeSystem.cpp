@@ -1,33 +1,45 @@
-#include "ECS/EntityManager.h"
+#include "BattleLifeSystem.h"
+
+//Including some context
+#include "Game.h"
+#include "World.h"
+//Including some context
 
 
 
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Class EntityManager
+//Class LifeSystem
 //-----------------------------------------------------------------------------------------------------------------------------------------
-Entity EntityManager::createEntity()
+void LifeSystem::init()
 {
-	if (!mDeadEntities.empty())
+
+}
+
+
+
+void LifeSystem::onCollision()
+{
+
+}
+
+
+
+void LifeSystem::checkIfIsDead()
+{
+	World* world = Game::get()->getWorld();
+
+	for (unsigned int i = 0; i < world->mPoolLifeBarComponent.mNext; i++)
 	{
-		Entity e = mDeadEntities.back();
-		mDeadEntities.pop_back();
-		return e;
+		Entity e = world->mPoolLifeBarComponent.mDirectArray[i];
+
+		if (world->mPoolLifeBarComponent.mPackedArray[i].health <= 0.0f)
+		{
+			//destroy the dead entities
+		}
 	}
-
-	Entity e = mNextId++;
-
-	///ADD ASSERT ON MAX NUMBER OF ENTITIES
-	return e;
-}
-
-
-
-void EntityManager::deleteEntity(Entity entityToDelete)
-{
-	mDeadEntities.push_back(entityToDelete);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Class EntityManager
+//Class LifeSystem
 //-----------------------------------------------------------------------------------------------------------------------------------------

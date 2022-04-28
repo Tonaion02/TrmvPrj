@@ -40,7 +40,7 @@ public:
 
 
 	//Encapsulation Methods
-	inline struct World* getWorld() { return mWorld; }
+	inline struct World* getWorld() { return world; }
 	//Encapsulation Methods
 
 
@@ -58,7 +58,7 @@ protected:
 	float mDeltaTime;
 	float mTicksCount;
 
-	struct World* mWorld;
+	struct World* world;
 
 	static const float sMaxDeltaTime;
 	static class Game* sGameInstance;

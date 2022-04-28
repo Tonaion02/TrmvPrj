@@ -19,7 +19,7 @@ public:
 	}
 
 	Entity createEntity();
-	void deleteEntity(const Entity& entityToDelete);
+	void deleteEntity(Entity entityToDelete);
 
 	//Friend function
 	friend void debugInfoEntity();

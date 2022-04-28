@@ -18,5 +18,6 @@ public:
 	static void detectCollisions();
 	static void collisionsResolution();
 	static void collisionsInfoClear();
-	static Vector2f penetration(const Vector2f& pos, const Vector2i& dim, const Vector2f& pos2, const Vector2i& dim2);;
+	static Vector2f penetration(const Vector2f& pos, const Vector2i& dim, const Vector2f& pos2, const Vector2i& dim2);
+	static Vector2f distance(const Vector2f& pos, const Vector2i& dim, const Vector2f& pos2, const Vector2i& dim2);
 };

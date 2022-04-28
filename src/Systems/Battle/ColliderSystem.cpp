@@ -45,14 +45,14 @@ void ColliderSystem::detectCollisions()
 {
 	World* world = Game::get()->getWorld();
 
-	for (int i = 0; i < world->mPoolRectColliderComponent.mNext; i++)
+	for (unsigned int i = 0; i < world->mPoolRectColliderComponent.mNext; i++)
 	{
 		Entity e = world->mPoolRectColliderComponent.mDirectArray[i];
 
 		Vector2f pos = world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos;
 		Vector2i dim = world->mPoolRectColliderComponent.mPackedArray[i].dim;
 
-		for (int j = i+1; j < world->mPoolRectColliderComponent.mNext; j++)
+		for (unsigned int j = i+1; j < world->mPoolRectColliderComponent.mNext; j++)
 		{
 			Entity e2 = world->mPoolRectColliderComponent.mDirectArray[j];
 
@@ -93,4 +93,16 @@ Vector2f ColliderSystem::penetration(const Vector2f& pos, const Vector2i& dim, c
 	float y2 = std::min(pos.y + static_cast<float>(dim.y), pos2.y + static_cast<float>(dim.y));
 	
 	return Vector2f( x - x2, y - y2 );
+}
+
+
+
+Vector2f ColliderSystem::distance(const Vector2f& pos, const Vector2i& dim, const Vector2f& pos2, const Vector2i& dim2)
+{
+	float x = std::max(pos.x, pos2.x);
+	float y = std::max(pos.y, pos2.y);
+	float x2 = std::min(pos.x + static_cast<float>(dim.x), pos2.x + static_cast<float>(dim.x));
+	float y2 = std::min(pos.y + static_cast<float>(dim.y), pos2.y + static_cast<float>(dim.y));
+
+	return Vector2f(x - x2, y - y2);
 }

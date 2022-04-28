@@ -21,7 +21,6 @@ public:
 	void registerEntity(const Entity & e)
 	{
 		mReverseArray[e.id] = mLast;
-		//mDirectArray[mLast] = e.id;
 		mDirectArray[mLast] = e;
 
 		mLast++;
@@ -47,7 +46,6 @@ protected:
 	ComponentManager() : mLast(0) {}
 
 public:
-	//DirectArray
 	std::array<Entity, MAX_ENTITIES> mDirectArray;
 	std::array<TypeComponent, MAX_ENTITIES> mPackedArray;
 	std::array<unsigned int, MAX_ENTITIES> mReverseArray;

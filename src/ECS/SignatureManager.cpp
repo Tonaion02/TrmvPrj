@@ -1,33 +1,22 @@
-#include "ECS/EntityManager.h"
+#include "ECS/SignatureManager.h"
 
 
 
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Class EntityManager
+//Class SignatureManager
 //-----------------------------------------------------------------------------------------------------------------------------------------
-Entity EntityManager::createEntity()
+SignatureManager::SignatureManager()
 {
-	if (!mDeadEntities.empty())
+	for (unsigned int e = 0; e < MAX_ENTITIES; e++)
 	{
-		Entity e = mDeadEntities.back();
-		mDeadEntities.pop_back();
-		return e;
+		for (unsigned int i = 0; i < MAX_TYPE_CMPS; i++)
+		{
+			signatures[(Entity)e][i] = 0;
+		}
 	}
-
-	Entity e = mNextId++;
-
-	///ADD ASSERT ON MAX NUMBER OF ENTITIES
-	return e;
-}
-
-
-
-void EntityManager::deleteEntity(Entity entityToDelete)
-{
-	mDeadEntities.push_back(entityToDelete);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Class EntityManager
+//Class SignatureManager
 //-----------------------------------------------------------------------------------------------------------------------------------------

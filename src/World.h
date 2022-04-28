@@ -29,6 +29,8 @@
 #include "Components/Battle/PlayerBattleComponent.h"
 #include "Components/Battle/ControlledRectCollider.h"
 #include "Components/Battle/FreeRectCollider.h"
+#include "Components/Battle/LifeBarComponent.h"
+#include "Components/Battle/StateBattleComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -69,6 +71,9 @@ struct World
 	ComponentPool<PlayerBattleComponent> mPoolPlayerBattleComponent;
 	ComponentPool<ControlledRectCollider> mPoolControlledRectColliderComponent;
 	ComponentPool<FreeRectCollider> mPoolFreeRectColliderComponent;
+	ComponentPool<LifeBarComponent> mPoolLifeBarComponent;
+
+	ComponentPool<StateBattleComponent> mPoolStateBattleComponent;
 	//POOL OF BATTLE-COMPONENTS
 
 	std::vector<std::pair<Entity, Entity>> collisions;

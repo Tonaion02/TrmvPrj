@@ -11,6 +11,6 @@
 struct PyshicBoxComponent
 {
 	Vector2f v;
-	unsigned int mass;
+	float mass;
 	Direction lastDirection;
 };
