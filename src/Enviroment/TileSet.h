@@ -2,7 +2,7 @@
 
 #include "SDL_Enviroment.h"
 
-#include "Math/Math.h"
+#include "utils/Math/Math.h"
 
 #include <unordered_map>
 

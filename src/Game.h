@@ -28,6 +28,7 @@ public:
 	//Secondary Methods
 	bool isRunning() { return mIsRunning; }
 	float getDeltaTime() { return mDeltaTime; }
+	bool isInBattle();
 	//Secondary Methods
 
 

@@ -3,7 +3,7 @@
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/ColliderSystem.h"
 
-#include "Math/Math.h"
+#include "utils/Math/Math.h"
 
 //Including some context
 #include "World.h"

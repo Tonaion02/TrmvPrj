@@ -16,6 +16,7 @@ public:
 	void setStatePhase(int typePhase, int statePhase);
 	void removePhase(int typePhase);
 	std::size_t isTherePhase(int typePhase);
+	std::size_t Nphases();
 
 public:
 	std::vector<Phase*> phaseStack;

@@ -82,7 +82,7 @@ void MoveSystem::endMove(Entity e)
 	ComponentPool<TransformComponent>* TransformCmp = &world->mPoolTransformComponent;
 
 	//Fix position
-	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].tileOccupied;
+	TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos = static_cast<Vector2f>(TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].tileOccupied);
 	//Fix position
 
 	//Set lastDirection to currentDirection
@@ -199,14 +199,14 @@ bool MoveSystem::isValid(const Vector2f& pos, short int z)
 
 
 	//Controll if isWalkable the tile
-	if (!TileSystem::isWalkable(pos, z))
+	if (!TileSystem::isWalkable(static_cast<Vector2f>(pos), z))
 		return false;
 	//Controll if isWalkable the tile
 
 
 	
 	//Controll if there is another Entity on that position
-	if (TileSystem::isOccupied(pos, z))
+	if (TileSystem::isOccupied(static_cast<Vector2f>(pos), z))
 		return false;
 	//Controll if there is another Entity on that position
 

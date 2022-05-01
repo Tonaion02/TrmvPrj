@@ -1,6 +1,6 @@
 #include "PrecompiledHeaders.h"
 
-#include "Math/Math.h"
+#include "utils/Math/Math.h"
 
 #include "Systems/Battle/ColliderSystem.h"
 

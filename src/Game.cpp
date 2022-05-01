@@ -532,7 +532,7 @@ void Game::loadData()
 	TileSystem::unRegisterPos(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied, z);
 	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos = { 7.0f, 7.0f };
 	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied =
-		world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
+		static_cast<Vector2i>(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos);
 	TileSystem::registerPos(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied, z, world->player);
 
 	registerEntity(&world->mPoolMoveComponent, world->player);
@@ -696,6 +696,13 @@ void Game::init()
 
 	SDL_Log("\t-Initialization ended without problems");
 	SDL_Log("");
+}
+
+
+
+bool Game::isInBattle()
+{
+	return world->phaseHandler.isTherePhase(PhaseType::Battle) != world->phaseHandler.Nphases();
 }
 
 

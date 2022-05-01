@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Math/Math.h"
+#include "utils/Math/Math.h"
 
 #include "SDL_Enviroment.h"
 
