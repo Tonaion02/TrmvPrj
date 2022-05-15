@@ -51,10 +51,44 @@ void CameraSystem::init()
 	world->cameraData.baseScale *= std::max(scaleZoom.x, scaleZoom.y);
 	//Calculate scaleZoom and add to the baseScale
 
+
+
 	//Init the backup of the CameraData
-	world->backupBattleCameraData = world->cameraData;
+
 	world->backupExploringCameraData = world->cameraData;
+
+	///FOR TESTING BATTLE CAMERA
+	world->cameraData.adj = { 0, 0 };
+	world->cameraData.nTileToRender = { 15, 15 };
+	world->cameraData.baseScale = 1.0f;
+
+	screenDim = WindowHandler::get().getWindowDimension();
+	outputDim = world->currentLevel.tileSet.tileDim * world->cameraData.nTileToRender;
+	//Init some base info about Camera
+
+	//Set baseScale based on screen size
+	world->cameraData.baseScale = std::max(screenDim.x / (float)outputDim.x, screenDim.y / (float)outputDim.y);
+	//Set baseScale based on screen size
+
+	//Calculate clamp value for scale
+	maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
+	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
+	minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale));
+	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
+	world->cameraData.zoom = world->cameraData.maxZoom;
+	//Calculate clamp value for scale
+
+	//Calculate scaleZoom and add to the baseScale
+	visibleSpaceDim = 2 * tanf(ToRadians(60.0f)) * world->cameraData.zoom;
+	scaleZoom = { screenDim.x / (float)visibleSpaceDim, screenDim.y / (float)visibleSpaceDim };
+	world->cameraData.baseScale *= std::max(scaleZoom.x, scaleZoom.y);
+	//Calculate scaleZoom and add to the baseScale
+	///FOR TESTING BATTLE CAMERA
 	//Init the backup of the CameraData
+
+
+	world->backupBattleCameraData = world->cameraData;
+	world->cameraData = world->backupExploringCameraData;
 }
 
 
@@ -81,57 +115,63 @@ void CameraSystem::updateCamera(const Vector2f& newPos)
 
 
 	//Calculate startToRender and endToRender tile
-
 	//Dividere per lunghezza tile la posizione se si è in battaglia
 	Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
 	Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
+	Vector2i limit = world->currentLevel.dim;
 
 	if (Game::get()->isInBattle() )
 	{
-		pos.x = pos.x / static_cast<float>( world->currentLevel.tileSet.tileDim.x );
-		pos.y = pos.y / static_cast<float>( world->currentLevel.tileSet.tileDim.y );
+		scaledTileDim = (Vector2f)world->currentLevel.battleCamp.tileSet.tileDim * world->cameraData.baseScale;
+		realScaledImageDim = world->currentLevel.battleCamp.dim * scaledTileDim;
+
+		limit = world->currentLevel.battleCamp.dim;
+
+		pos.x = pos.x / static_cast<float>( world->currentLevel.battleCamp.tileSet.tileDim.x );
+		pos.y = pos.y / static_cast<float>( world->currentLevel.battleCamp.tileSet.tileDim.y );
 	}
 
+	Vector2i displacement = { (int)std::round(world->cameraData.nTileToRender.x / 2.0f), (int)std::round(world->cameraData.nTileToRender.y / 2.0f) };
+	//world->cameraData.startToRender = {	(int)pos.x - world->cameraData.nTileToRender.x / 2, (int)pos.y - world->cameraData.nTileToRender.y / 2 };
+	//world->cameraData.endToRender = { (int)pos.x + world->cameraData.nTileToRender.x / 2 + 1, (int)pos.y + world->cameraData.nTileToRender.y / 2 + 1 };
+	world->cameraData.startToRender = { (int)pos.x - displacement.x, (int)pos.y - displacement.y };
+	world->cameraData.endToRender = { (int)pos.x + displacement.x + 2, (int)pos.y + displacement.y + 2 };
 
-	world->cameraData.startToRender = { (int)pos.x - world->cameraData.nTileToRender.x / 2,(int)pos.y - world->cameraData.nTileToRender.y / 2 };
-	world->cameraData.endToRender = { (int)pos.x + world->cameraData.nTileToRender.x / 2 + 2,(int)pos.y + world->cameraData.nTileToRender.y / 2 + 2 };
+
 
 	if (world->cameraData.startToRender.x < 0)
 	{
 		world->cameraData.startToRender.x = 0;
-		world->cameraData.endToRender.x = world->cameraData.nTileToRender.x +1;
+		world->cameraData.endToRender.x = world->cameraData.nTileToRender.x + 2;
 	}
-	else if (world->cameraData.endToRender.x >= world->currentLevel.dim.x)
+	else if (world->cameraData.endToRender.x >= limit.x)
 	{
-		world->cameraData.startToRender.x = world->currentLevel.dim.x - world->cameraData.nTileToRender.x -1;
-		world->cameraData.endToRender.x = world->currentLevel.dim.x;
+		world->cameraData.startToRender.x = limit.x - world->cameraData.nTileToRender.x -2;
+		world->cameraData.endToRender.x = limit.x;
 	}
 		
 	if (world->cameraData.startToRender.y < 0)
 	{
 		world->cameraData.startToRender.y = 0;
-		world->cameraData.endToRender.y = world->cameraData.nTileToRender.y +1;
+		world->cameraData.endToRender.y = world->cameraData.nTileToRender.y + 2;
 	}
-	else if (world->cameraData.endToRender.y >= world->currentLevel.dim.y)
+	else if (world->cameraData.endToRender.y >= limit.y)
 	{
-		world->cameraData.startToRender.y = world->currentLevel.dim.y - world->cameraData.nTileToRender.y -1;
-		world->cameraData.endToRender.y = world->currentLevel.dim.y;
+		world->cameraData.startToRender.y = limit.y - world->cameraData.nTileToRender.y -2;
+		world->cameraData.endToRender.y = limit.y;
 	}
 	//Calculate startToRender and endToRender tile
 
 
 
 	//Calculate adj of the screen
-	//Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
-	//Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
 	pos = pos * scaledTileDim + scaledTileDim;
-
 
 	if (pos.x - screenDim.x / 2.0f < 0.0f)
 	{
 		world->cameraData.adj.x = 0;
 	}
-	else if (pos.x + screenDim.x / 2.0f >= world->currentLevel.dim.x * scaledTileDim.x)
+	else if (pos.x + screenDim.x / 2.0f >= limit.x * scaledTileDim.x)
 	{
 		world->cameraData.adj.x = static_cast<int>(screenDim.x - realScaledImageDim.x);
 	}
@@ -144,7 +184,7 @@ void CameraSystem::updateCamera(const Vector2f& newPos)
 	{
 		world->cameraData.adj.y = 0;
 	}
-	else if (pos.y + screenDim.y / 2.0f >= world->currentLevel.dim.y * scaledTileDim.y)
+	else if (pos.y + screenDim.y / 2.0f >= limit.y * scaledTileDim.y)
 	{
 		world->cameraData.adj.y = static_cast<int>(screenDim.y - realScaledImageDim.y);
 	}

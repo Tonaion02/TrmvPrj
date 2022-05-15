@@ -6,6 +6,6 @@
 
 struct LifeBarComponent
 {
-	unsigned int health;
-	unsigned int maxHealth;
+	float health;
+	float maxHealth;
 };

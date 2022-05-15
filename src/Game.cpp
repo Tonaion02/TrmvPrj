@@ -36,6 +36,7 @@
 #include "Systems/Battle/BattleRenderSystem.h"
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/ColliderSystem.h"
+#include "Systems/Battle/BattleLifeSystem.h"
 //Including Battle System
 //Including System
 
@@ -113,6 +114,10 @@ void Game::update()
 			//Trying to detect Collisions
 			ColliderSystem::detectCollisions();
 			//Trying to detect Collisions
+
+			//Detect collisions and apply damage
+			LifeSystem::onCollision();
+			//Detect collisions and apply damage
 
 			//Update Camera
 			CameraSystem::updateCamera(world->mPoolTransformBattleComponent.mPackedArray[
@@ -307,6 +312,11 @@ void Game::processInput()
 				//Assign the categories
 				registerEntity(&world->mPoolFreeRectColliderComponent, projectile);
 				registerEntity(&world->mPoolPlayerBattleComponent, projectile);
+				
+				registerEntity(&world->mPoolProjectileComponent, projectile);
+				getCmpEntity(&world->mPoolProjectileComponent, projectile)->damage = 100.0f;
+
+				SDL_Log("Projectile: %d\n", (int)SignatureManager::get().isThereTypeCmp(projectile, getIndexFromType<ProjectileComponent>()));
 				//Assign the categories
 
 				//Apply force to move the projectile
@@ -391,6 +401,8 @@ void Game::loadData()
 	SDL_Log("%u\n", getIndexFromType<DrawComponent>() );
 	SDL_Log("%u\n", getIndexFromType<TransformComponent>() );
 	SDL_Log("%u\n", getIndexFromType<FreeRectCollider>() );
+	SDL_Log("%u\n", getIndexFromType<TransformComponent>());
+	SDL_Log("Index : %u\n", getIndexFromType<PlayerBattleComponent>());
 	///Testing TypeManager
 
 
@@ -416,10 +428,10 @@ void Game::loadData()
 
 	//Load TileSet and Texture
 	world->currentLevel.texture = TextureHandler::get().getTexture("data/buch-outdoor.png");
-	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png");
+	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", 16);
 	world->currentLevel.tileSet = *world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
 	world->textureActor = TextureHandler::get().getTexture("data/player.png");
-	world->mTileSetHandler.loadTileSet("data/player.png");
+	world->mTileSetHandler.loadTileSet("data/player.png", 16);
 	world->tilesetActor = world->mTileSetHandler.getTileSet("data/player.png");
 	//Load TileSet and Texture
 
@@ -614,14 +626,14 @@ void Game::loadData()
 			world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos = { 80.0f, 1.0f };
 			world->BattlePlayerEntity = e;
 			registerEntity(&world->mPoolPlayerBattleComponent, e);
+
 			world->delayFiring.coolDown = 0.05f;
 			initTimer(&world->delayFiring);
 		}
 		else
 		{
-			//world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos = { 60.0f, 1.0f };
 			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = { 60.0f, 1.0f };
-			//registerEntity(&world->mPoolEnemyBattleComponent, e);
+			registerEntity(&world->mPoolEnemyBattleComponent, e);
 		}
 		registerEntity(&world->mPoolControlledRectColliderComponent, e);
 		registerEntity(&world->mPoolPhysicBoxComponent, e);
@@ -634,6 +646,15 @@ void Game::loadData()
 		world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim = { 16, 16 };
 		registerEntity(&world->mPoolDrawBattleComponent, e);
 		world->mPoolDrawBattleComponent.mPackedArray[world->mPoolDrawBattleComponent.mReverseArray[e]].id = 17;
+
+		registerEntity(&world->mPoolLifeBarComponent, e);
+		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 10.0f;
+
+		if (i == 0)
+		{
+			SignatureManager::get().printSignatureEntity(e);
+			SDL_Log("%d", (int)SignatureManager::get().isThereTypeCmp(e, getIndexFromType<PlayerBattleComponent>()));
+		}
 
 		if (i != 0)
 		{

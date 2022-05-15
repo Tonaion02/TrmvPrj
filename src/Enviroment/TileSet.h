@@ -25,7 +25,7 @@ public:
 	TileSetHandler() {}
 
 	TileSet* getTileSet(const std::string& path);
-	TileSet* loadTileSet(const std::string& path);
+	TileSet* loadTileSet(const std::string& path, unsigned int tileDim);
 
 protected:
 	std::unordered_map<std::string, TileSet*> mTileSets;

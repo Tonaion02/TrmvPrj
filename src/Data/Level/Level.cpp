@@ -8,6 +8,8 @@
 #include "World.h"
 //Including Data Manager
 
+#include "Data/Level/GraphicTileLayer.h"
+
 #include "Data/Level/Level.h"
 
 
@@ -24,7 +26,8 @@ Level levelWrapper(const std::string& path)
 	World* world = Game::get()->getWorld();
 	
 	level.maxZ = 3;
-	level.dim = { 60, 60 };
+	//level.dim = { 60, 60 };
+	level.dim = { 40, 40 };
 	//INIT SOME BASE DATA
 
 
@@ -63,7 +66,7 @@ Level levelWrapper(const std::string& path)
 				}
 				else
 				{
-					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 0;
+					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 54;
 				}
 			}
 		}
@@ -71,7 +74,7 @@ Level levelWrapper(const std::string& path)
 
 	for (int y = 0, z = 0, x = 30; y < level.dim.y; y++)
 	{
-		level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 68;
+		level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 126;
 	}
 	//SET ID TO DRAW
 	///FOR TESTING
@@ -106,10 +109,13 @@ Level levelWrapper(const std::string& path)
 	}
 
 	level.tileMap.tiles[0 * level.dim.x * level.dim.y + 0 * level.dim.x + 2].logicType = static_cast<short int>(LogicType::Wall);
+
 	///FOR TESTING
-	
 	//Set logic id of tile
 
+
+
+	//Initialize the map of the Entity on the map
 	level.tileMap.mappedEntities.resize(level.maxZ * level.dim.x * level.dim.y);
 	for (int z = 0; z < level.maxZ; z++)
 	{
@@ -121,7 +127,41 @@ Level levelWrapper(const std::string& path)
 			}
 		}
 	}
+	//Initialize the map of the Entity on the map
 
+
+
+	//Initialize the BattleCamp of the Level
+	nameTexture = "data/buch-outdoor.png";
+	level.battleCamp.texture = TextureHandler::get().getTexture(nameTexture);
+	level.battleCamp.tileSet = *world->mTileSetHandler.getTileSet(nameTexture);
+
+	level.battleCamp.dim = { 20, 20 };
+	level.battleCamp.maxZ = 2;
+
+	for (int z = 0; z < level.battleCamp.maxZ; z++)
+	{
+		for (int y = 0; y < level.battleCamp.dim.y; y++)
+		{
+			for (int x = 0; x < level.battleCamp.dim.x; x++)
+			{
+				level.battleCamp.graphicTileLayer.gTiles[z * level.battleCamp.dim.x * level.battleCamp.dim.y + y * level.battleCamp.dim.x + x] = -1;
+			}
+		}
+	}
+
+	for (int z = 0; z < level.battleCamp.maxZ; z++)
+	{
+		for (int y = 0; y < level.battleCamp.dim.y; y++)
+		{
+			for (int x = 0; x < level.battleCamp.dim.x; x++)
+			{
+				level.battleCamp.graphicTileLayer.gTiles[z * level.battleCamp.dim.x * level.battleCamp.dim.y + y * level.battleCamp.dim.x + x] = 13;
+			}
+		}
+	}
+	//Initialize the BattleCamp of the Level
+	
 	return level;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------

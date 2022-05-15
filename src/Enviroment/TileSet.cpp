@@ -10,13 +10,13 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 
 //PROBABLY ADD A TILEDIMENSION FROM VARIABLE TO PASS
-TileSet* TileSetHandler::loadTileSet(const std::string& path)
+TileSet* TileSetHandler::loadTileSet(const std::string& path, unsigned int tileDim)
 {
 	TileSet* tileSet = nullptr;
 	tileSet = new TileSet;
 	
 	///PER ORA
-	tileSet->tileDim = { 16, 16 };
+	tileSet->tileDim = { static_cast<int>(tileDim), static_cast<int>(tileDim) };
 
 	Vector2i textureDim = TextureHandler::get().getTextureDimension(path);
 	tileSet->grid = { textureDim.x / tileSet->tileDim.x, 

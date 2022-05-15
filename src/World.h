@@ -31,6 +31,7 @@
 #include "Components/Battle/FreeRectCollider.h"
 #include "Components/Battle/LifeBarComponent.h"
 #include "Components/Battle/StateBattleComponent.h"
+#include "Components/Battle/ProjectileComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -72,6 +73,8 @@ struct World
 	ComponentPool<ControlledRectCollider> mPoolControlledRectColliderComponent;
 	ComponentPool<FreeRectCollider> mPoolFreeRectColliderComponent;
 	ComponentPool<LifeBarComponent> mPoolLifeBarComponent;
+
+	ComponentPool<ProjectileComponent> mPoolProjectileComponent;
 
 	ComponentPool<StateBattleComponent> mPoolStateBattleComponent;
 	//POOL OF BATTLE-COMPONENTS

@@ -12,7 +12,7 @@ static unsigned int getIndexOfTypeCmps()
 }
 
 template<typename Type>
-static unsigned int getIndexFromType()
+unsigned int getIndexFromType()
 {
 	static unsigned int i = getIndexOfTypeCmps();
 	return i;

@@ -2,6 +2,8 @@
 
 #include <array>
 
+#include "SDL_Enviroment.h"
+
 #include "ECS/Entity.h"
 #include "ECS/Signature.h"
 
@@ -18,9 +20,13 @@ public:
 		return instance;
 	}
 
-	inline bool isThereTypeCmp(Entity e, int type) { return (bool)signatures[e][type]; }
-	inline void registerTypeCmp(Entity e, int type) { signatures[e][type] = 1; }
-	inline void unRegisterTypeCmp(Entity e, int type) { signatures[e][type] = 0; }
+	inline bool isThereTypeCmp(Entity e, unsigned int type) { return (bool)signatures[e][type]; }
+	inline void registerTypeCmp(Entity e, unsigned int type) { signatures[e][type] = 1; }
+	inline void unRegisterTypeCmp(Entity e, unsigned int type) { signatures[e][type] = 0; }
+	void printSignatureEntity(Entity e) 
+	{
+		SDL_Log("%s", signatures[e].to_string().c_str());
+	}
 
 protected:
 	SignatureManager();

@@ -5,6 +5,9 @@
 #include "Enviroment/TileSet.h"
 
 #include "GraphicTileLayer.h"
+
+#include "Data/Level/BattleCamp.h"
+
 #include "Data/Level/TileMap.h"
 
 
@@ -19,6 +22,8 @@ struct Level
 	TileSet tileSet;
 	Vector2i dim;
 	int maxZ;
+
+	BattleCamp battleCamp;
 };
 
 

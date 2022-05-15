@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Enviroment/TileSet.h"
+
+#include "utils/Math/Math.h"
+
 #include "Data/Level/GraphicTileLayer.h"
 
 
@@ -17,5 +21,9 @@
 
 struct BattleCamp
 {
-	GraphicTileLayer<MAX_W_CAMP * MAX_H_CAMP * MAX_Z_CAMP> gTiles;
+	GraphicTileLayer<MAX_W_CAMP * MAX_H_CAMP * MAX_Z_CAMP> graphicTileLayer;
+	Vector2i dim;
+	TileSet tileSet;
+	SDL_Texture* texture;
+	int maxZ;
 };

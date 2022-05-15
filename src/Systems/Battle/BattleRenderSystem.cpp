@@ -29,13 +29,46 @@ void BattleRenderSystem::draw()
 	World* world = Game::get()->getWorld();
 
 	SDL_Rect destRect;
-	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
-	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
+	//destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
+	//destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
+	///It's better to add a separate texture for Actor
+	destRect.w = static_cast<int>(world->currentLevel.battleCamp.tileSet.tileDim.x * world->cameraData.baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.battleCamp.tileSet.tileDim.y * world->cameraData.baseScale);
+
 
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
 	ComponentPool<DrawBattleComponent>* drawBattleCmp = &world->mPoolDrawBattleComponent;
 	ComponentPool<TransformBattleComponent>* transformBattleCmp = &world->mPoolTransformBattleComponent;
+
+	Vector2i dim = world->currentLevel.battleCamp.dim;
+
+
+
+	//Draw the battleCamp
+	for (int y = world->cameraData.startToRender.y; y < world->cameraData.endToRender.y; y++)
+	{
+		destRect.y = static_cast<int>(y * destRect.h);
+		destRect.y += static_cast<int>(world->cameraData.adj.y);
+
+		for (int x = world->cameraData.startToRender.x; x < world->cameraData.endToRender.x; x++)
+		{
+			destRect.x = static_cast<int>(x * destRect.w);
+			destRect.x += static_cast<int>(world->cameraData.adj.x);
+
+			int id = world->currentLevel.battleCamp.graphicTileLayer.gTiles[y * dim.x + x];
+
+			SDL_RenderCopy(
+				renderer,
+				world->currentLevel.battleCamp.texture,
+				&world->currentLevel.battleCamp.tileSet.srcRects[id],
+				&destRect
+			);
+		}
+	}
+	//Draw the battleCamp
+
+
 
 	//Draw all drawCmp
 	for (unsigned int i = 0; i < drawBattleCmp->mNext; i++)
