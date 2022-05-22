@@ -7,8 +7,7 @@
 //Including some utils
 
 //Including Base ECS
-#include "ECS/ComponentPool.h"
-#include "ECS/EntityManager.h"
+#include "ECS/ECS.h"
 //Including Base ECS
 
 //Including components

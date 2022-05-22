@@ -4,14 +4,13 @@
 
 #include "Misc/Direction.h"
 
-#include "ECS/System.h"
 #include "ECS/Entity.h"
 
 
 
 
 
-class MoveSystem : public System
+class MoveSystem
 {
 public:
 	static void move();

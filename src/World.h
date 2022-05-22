@@ -32,6 +32,7 @@
 #include "Components/Battle/LifeBarComponent.h"
 #include "Components/Battle/StateBattleComponent.h"
 #include "Components/Battle/ProjectileComponent.h"
+#include "Components/Battle/DamageComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -73,15 +74,13 @@ struct World
 	ComponentPool<ControlledRectCollider> mPoolControlledRectColliderComponent;
 	ComponentPool<FreeRectCollider> mPoolFreeRectColliderComponent;
 	ComponentPool<LifeBarComponent> mPoolLifeBarComponent;
+	ComponentPool<DamageComponent> mPoolDamageComponent;
 
 	ComponentPool<ProjectileComponent> mPoolProjectileComponent;
 
 	ComponentPool<StateBattleComponent> mPoolStateBattleComponent;
 	//POOL OF BATTLE-COMPONENTS
 
-	std::vector<std::pair<Entity, Entity>> collisions;
-	//std::vector<Entity> entitiesInCollisions;
-	std::set<Entity> entitiesInCollisions;
 	//POOL OF COMPONENTS
 
 	//For the Exploring Phase
@@ -89,6 +88,16 @@ struct World
 	std::vector<Entity> allertingEntities;
 	Timer delayTransictionToBattle;
 	//For the Exploring Phase
+
+	//For the Battle Phase
+	std::vector<std::pair<Entity, Entity>> collisions;
+	std::set<Entity> entitiesInCollisions;
+
+	//std::vector<Entity> entityToDelete;
+	std::set<Entity> entityToDelete;
+
+	//std::vector<Entity> entityToAdd;
+	//For the Battle Phase
 
 	//Camera
 	Camera camera;
@@ -102,7 +111,7 @@ struct World
 	Timer delayFiring;
 
 	//Levels of game
-	Level currentLevel;
+	Level currentLevel;///Modify with a pointer
 	
 	//Base info
 

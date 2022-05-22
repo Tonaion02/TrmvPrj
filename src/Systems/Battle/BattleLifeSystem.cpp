@@ -9,6 +9,11 @@
 #include "Systems/Battle/ColliderSystem.h"
 //Including some systems
 
+//Including some Base ECS
+#include "ECS/EntityManager.h"
+#include "ECS/ECS.h"
+//Including some Base ECS
+
 //Including some context
 #include "Game.h"
 #include "World.h"
@@ -41,15 +46,17 @@ void onCollisionForCategories(Entity e, ComponentPool<TypeCmp>* pool)
 	{
 		Entity e2 = pool->mDirectArray[j];
 
-		if (SignatureManager::get().isThereTypeCmp(e2, getIndexFromType<ProjectileComponent>()))
+		if (!LifeSystem::isDead(e2))
 		{
-			RectColliderComponent* rectColliderCmp2 = getCmpEntity(&world->mPoolRectColliderComponent, e);
-			TransformBattleComponent* transformBattleCmp2 = getCmpEntity(&world->mPoolTransformBattleComponent, e2);
-
-			if (ColliderSystem::detectCollision(transformBattleCmp->pos, rectColliderCmp->dim, transformBattleCmp2->pos, rectColliderCmp2->dim))
+			if (isThereTypeCmp<ProjectileComponent>(e2))
 			{
-				getCmpEntity(&world->mPoolLifeBarComponent, e)->health -= getCmpEntity(&world->mPoolProjectileComponent, e2)->damage;
-				SDL_Log("damaged!");
+				RectColliderComponent* rectColliderCmp2 = getCmpEntity(&world->mPoolRectColliderComponent, e);
+				TransformBattleComponent* transformBattleCmp2 = getCmpEntity(&world->mPoolTransformBattleComponent, e2);
+
+				if (ColliderSystem::detectCollision(transformBattleCmp->pos, rectColliderCmp->dim, transformBattleCmp2->pos, rectColliderCmp2->dim))
+				{
+					getCmpEntity(&world->mPoolLifeBarComponent, e)->health -= getCmpEntity(&world->mPoolProjectileComponent, e2)->damage;
+				}
 			}
 		}
 	}
@@ -65,8 +72,11 @@ void LifeSystem::onCollision()
 	{
 		Entity e = world->mPoolLifeBarComponent.mDirectArray[i];
 
-		onCollisionForCategories(e, &world->mPoolPlayerBattleComponent);
-		onCollisionForCategories(e, &world->mPoolEnemyBattleComponent);
+		if (!LifeSystem::isDead(e))
+		{
+			onCollisionForCategories(e, &world->mPoolPlayerBattleComponent);
+			onCollisionForCategories(e, &world->mPoolEnemyBattleComponent);
+		}
 	}
 }
 
@@ -81,9 +91,36 @@ void LifeSystem::checkIfIsDead()
 		Entity e = world->mPoolLifeBarComponent.mDirectArray[i];
 
 		if (world->mPoolLifeBarComponent.mPackedArray[i].health <= 0.0f)
-		{
-			//destroy the dead entities
-		}
+			//Add to entityToDelete
+			world->entityToDelete.insert(e);
+	}
+}
+
+
+
+void LifeSystem::cleanInfo()
+{
+	World* world = Game::get()->getWorld();
+
+	world->entityToDelete.clear();
+}
+
+
+
+bool LifeSystem::isDead(Entity e)
+{
+	return Game::get()->getWorld()->entityToDelete.find(e) != Game::get()->getWorld()->entityToDelete.end();
+}
+
+
+
+void LifeSystem::cleanDeadEntity()
+{
+	World* world = Game::get()->getWorld();
+
+	for (auto e : world->entityToDelete)
+	{
+		EntityManager::get().deleteEntity(e);
 	}
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------

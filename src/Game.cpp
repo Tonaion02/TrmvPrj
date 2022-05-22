@@ -19,8 +19,7 @@
 
 //Including Ecs
 #include "ECS/EntityManager.h"
-#include "ECS/ComponentManager.h"
-#include "ECS/System.h"
+#include "ECS/ECS.h"
 //Including Ecs
 
 //Including System
@@ -37,6 +36,7 @@
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/ColliderSystem.h"
 #include "Systems/Battle/BattleLifeSystem.h"
+#include "Systems/Battle/BattleSystem.h"
 //Including Battle System
 //Including System
 
@@ -116,17 +116,25 @@ void Game::update()
 			//Trying to detect Collisions
 
 			//Detect collisions and apply damage
-			LifeSystem::onCollision();
+			BattleSystem::updateBattle();
 			//Detect collisions and apply damage
 
 			//Update Camera
-			CameraSystem::updateCamera(world->mPoolTransformBattleComponent.mPackedArray[
-				world->mPoolTransformBattleComponent.mReverseArray[world->player]].pos);
+			CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity)->pos);
 			//Update Camera
 
 			//Update timer
 			world->delayFiring.timePassed += mDeltaTime;
 			//Update timer
+
+			//Check if some Entities is died
+			LifeSystem::checkIfIsDead();
+			//Check if some Entities is died
+
+
+
+			LifeSystem::cleanDeadEntity();
+			LifeSystem::cleanInfo();
 		}
 	}
 }
@@ -188,7 +196,7 @@ void Game::processInput()
 			//For debugging
 			if (keyStates[SDL_SCANCODE_B])
 			{
-				SignatureManager::get();
+
 			}
 			//For debugging
 
@@ -289,25 +297,18 @@ void Game::processInput()
 				
 				registerEntity(&world->mPoolTransformBattleComponent, projectile);
 				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos = getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
-				//world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[projectile]].pos = world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[world->BattlePlayerEntity]].pos;
 				
 				registerEntity(&world->mPoolPhysicBoxComponent, projectile);
 				getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->lastDirection = getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection;
 				getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->mass = 1.0f;
 				getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->v = { 0.0f, 0.0f };
-				//world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[projectile]].lastDirection = world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection;
-				//world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[projectile]].mass = 1.0f;
-				//world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[projectile]].v = { 0.0f, 0.0f };
 				
 				registerEntity(&world->mPoolRectColliderComponent, projectile);
 				getCmpEntity(&world->mPoolRectColliderComponent, projectile)->dim = { 16, 16 };
-				//world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[projectile]].dim = { 16, 16 };
 				
 				registerEntity(&world->mPoolDrawBattleComponent, projectile);
 				getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->id = 117;
 				getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->personalScale = 1.0f;
-				//world->mPoolDrawBattleComponent.mPackedArray[world->mPoolDrawBattleComponent.mReverseArray[projectile]].id = 117;
-				//world->mPoolDrawBattleComponent.mPackedArray[world->mPoolDrawBattleComponent.mReverseArray[projectile]].personalScale = 1.0f;
 				
 				//Assign the categories
 				registerEntity(&world->mPoolFreeRectColliderComponent, projectile);
@@ -316,7 +317,7 @@ void Game::processInput()
 				registerEntity(&world->mPoolProjectileComponent, projectile);
 				getCmpEntity(&world->mPoolProjectileComponent, projectile)->damage = 100.0f;
 
-				SDL_Log("Projectile: %d\n", (int)SignatureManager::get().isThereTypeCmp(projectile, getIndexFromType<ProjectileComponent>()));
+				SDL_Log("Projectile: %d\n", (int)isThereTypeCmp<ProjectileComponent>(projectile));
 				//Assign the categories
 
 				//Apply force to move the projectile
@@ -396,13 +397,7 @@ void Game::generateOutput()
 void Game::loadData()
 {
 	///Testing TypeManager
-	SDL_Log("%u\n", getIndexFromType<DrawComponent>() );
-	SDL_Log("%u\n", getIndexFromType<TransformComponent>() );
-	SDL_Log("%u\n", getIndexFromType<DrawComponent>() );
-	SDL_Log("%u\n", getIndexFromType<TransformComponent>() );
-	SDL_Log("%u\n", getIndexFromType<FreeRectCollider>() );
-	SDL_Log("%u\n", getIndexFromType<TransformComponent>());
-	SDL_Log("Index : %u\n", getIndexFromType<PlayerBattleComponent>());
+
 	///Testing TypeManager
 
 
@@ -461,12 +456,8 @@ void Game::loadData()
 		getCmpEntity(&world->mPoolTransformComponent, e)->pos = { x, x };
 		getCmpEntity(&world->mPoolTransformComponent, e)->tileOccupied = { (int)x, (int)x };
 		getCmpEntity(&world->mPoolTransformComponent, e)->z = z;
-		//world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[e]].pos = { x, x };
-		//world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[e]].tileOccupied = { (int)x, (int)x };
-		//world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[e]].z = z;
 		registerEntity(&world->mPoolDrawComponent, e);
 		getCmpEntity(&world->mPoolDrawComponent, e)->id = 17;
-		//world->mPoolDrawComponent.mPackedArray[world->mPoolDrawComponent.mReverseArray[e]].id = 17;
 
 		if (e != 1)
 		{
@@ -475,16 +466,11 @@ void Game::loadData()
 			registerEntity(&world->mPoolMoveComponent, e);
 			getCmpEntity(&world->mPoolMoveComponent, e)->currentDirection = NoneDirection;
 			getCmpEntity(&world->mPoolMoveComponent, e)->lastDirection = Direction::Right;
-			//world->mPoolMoveComponent.mPackedArray[world->mPoolMoveComponent.mReverseArray[e]].currentDirection = NoneDirection;
-			//world->mPoolMoveComponent.mPackedArray[world->mPoolMoveComponent.mReverseArray[e]].lastDirection = Direction::Right;
 
 			registerEntity(&world->mPoolActionComponent, e);
 			getCmpEntity(&world->mPoolActionComponent, e)->currentAction = NoneActions;
 			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Walk].coolDown = 0.5f;
 			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Rotate].coolDown = 0.5f;
-			//world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[e]].currentAction = NoneActions;
-			//world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[e]].actionDelays[Actions::Walk].coolDown = 0.5f;
-			//world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[e]].actionDelays[Actions::Rotate].coolDown = 0.5f;
 
 			registerEntity(&world->mPoolAnimationComponent, e);
 			TiledAnimation tiledAnimation;
@@ -530,7 +516,6 @@ void Game::loadData()
 			path.push_back(Direction::Down);
 			path.push_back(Direction::Down);
 
-			//world->mPoolBaseEnemyComponent.mPackedArray[world->mPoolBaseEnemyComponent.mReverseArray[e]].path = path;
 			getCmpEntity(&world->mPoolBaseEnemyComponent, e)->path = path;
 		}
 
@@ -605,11 +590,6 @@ void Game::loadData()
 	///Init camera
 	Camera camera = EntityManager::get().createEntity();
 	world->camera = camera;
-	//registerEntity(&world->mPoolTransformComponent, camera);
-	//world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[camera]].pos
-	//	=
-	//	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos;
-
 	///Init camera
 
 
@@ -635,25 +615,26 @@ void Game::loadData()
 			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = { 60.0f, 1.0f };
 			registerEntity(&world->mPoolEnemyBattleComponent, e);
 		}
+
 		registerEntity(&world->mPoolControlledRectColliderComponent, e);
 		registerEntity(&world->mPoolPhysicBoxComponent, e);
 
 		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->mass = 1.0f;
-		//world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[e]].mass = 1.0f;
 		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
-		//world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[e]].v = { 0.0f, 0.0f };
 		registerEntity(&world->mPoolRectColliderComponent, e);
-		world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim = { 16, 16 };
+		getCmpEntity(&world->mPoolRectColliderComponent, e)->dim = { 16, 16 };
 		registerEntity(&world->mPoolDrawBattleComponent, e);
-		world->mPoolDrawBattleComponent.mPackedArray[world->mPoolDrawBattleComponent.mReverseArray[e]].id = 17;
+		getCmpEntity(&world->mPoolDrawBattleComponent, e)->id = 17;
+
+		registerEntity(&world->mPoolDamageComponent, e);
 
 		registerEntity(&world->mPoolLifeBarComponent, e);
-		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 10.0f;
+		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 300.0f;
 
 		if (i == 0)
 		{
-			SignatureManager::get().printSignatureEntity(e);
-			SDL_Log("%d", (int)SignatureManager::get().isThereTypeCmp(e, getIndexFromType<PlayerBattleComponent>()));
+			//SignatureManager::get().printSignatureEntity(e);
+			SDL_Log("%d", (int)isThereTypeCmp<PlayerBattleComponent>(e));
 		}
 
 		if (i != 0)

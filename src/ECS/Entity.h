@@ -1,9 +1,9 @@
 #pragma once
 
+#include "ECS/Limits.h"
 
 
 
 
-#define MAX_ENTITIES 300
 
 using Entity = unsigned int;

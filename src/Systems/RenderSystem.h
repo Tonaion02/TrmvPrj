@@ -1,12 +1,10 @@
 #pragma once
 
-#include "ECS/System.h"
 
 
 
 
-
-class RenderSystem : public System
+class RenderSystem
 {
 public:
 	static void draw();

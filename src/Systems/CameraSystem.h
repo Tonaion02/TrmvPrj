@@ -1,12 +1,10 @@
 #pragma once
 
-#include "ECS/System.h"
 
 
 
 
-
-class CameraSystem : public System
+class CameraSystem
 {
 public:
 	static void init();

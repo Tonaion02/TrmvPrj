@@ -1,83 +1,58 @@
 #pragma once
 
-#include "ECS/TypeManager.h"
-#include "ECS/SignatureManager.h"
-
-#include "ECS/Entity.h"
-
-#include "SDL_Enviroment.h"
-
 #include <array>
 
+#include "ECS/Entity.h"
+#include "ECS/TypeManager.h"
+#include "ECS/EntityManager.h"
+#include "ECS/DataManager.h"
 
 
 
 
-template<typename TypeCmp>
-struct ComponentPool
+
+struct BaseComponentPool
 {
-	std::array<Entity, MAX_ENTITIES> mDirectArray;
-	std::array<unsigned int, MAX_ENTITIES> mReverseArray;
-	std::array<TypeCmp, MAX_ENTITIES> mPackedArray;
-	unsigned int mNext = 0;
+	virtual void unRegisterEntity(Entity e) = 0;
 };
 
 
 
 template<typename TypeCmp>
-TypeCmp* getCmpEntity(ComponentPool<TypeCmp>* pool, Entity e)
+struct ComponentPool : public BaseComponentPool
 {
-	return &pool->mPackedArray[pool->mReverseArray[e]];
-}
+	std::array<Entity, MAX_ENTITIES> mDirectArray;
+	std::array<unsigned int, MAX_ENTITIES> mReverseArray;
+	std::array<TypeCmp, MAX_ENTITIES> mPackedArray;
+	unsigned int mNext = 0;
 
-
-
-template<typename TypeCmp>
-void registerEntity(ComponentPool<TypeCmp>* pool, Entity e)
-{
-	pool->mReverseArray[e] = pool->mNext;
-	pool->mDirectArray[pool->mNext] = e;
-
-	pool->mNext++;
-
-	//Unregister a type on the signature of the Entity
-	SignatureManager::get().registerTypeCmp(e, (int)getIndexFromType<TypeCmp>() );
-}
-
-
-
-template<typename TypeCmp>
-void unregisterEntity(ComponentPool<TypeCmp>* pool, Entity e)
-{
-	//Controll if we are unregistering under the limit
-	if (pool->mNext == 1)
+	ComponentPool()
 	{
-		SDL_Log("!!!Unregistering under the limit!!!");
-		return;
-	}
-	//Controll if we are unregistering under the limit
+		for (unsigned int i = 0; i < MAX_ENTITIES; i++)
+			mDirectArray[i] = MAX_ENTITIES;
 
-	//Controll if this entity is already unregistered
-	if (pool->mReverseArray[e.id] == pool->mDirectArray.size())
+		for (unsigned int i = 0; i < MAX_ENTITIES; i++)
+			mReverseArray[i] = MAX_ENTITIES;
+
+		(*DataManager::get().getPools())[idTypeCmp<TypeCmp>()] = this;
+	}
+
+	void unRegisterEntity(Entity e)
 	{
-		SDL_Log("!!!Entity is already unregistered!!!");
-		return;
+		Entity newId = this->mDirectArray[this->mNext - 1];
+
+		this->mDirectArray[this->mReverseArray[e]] = this->mDirectArray[this->mNext - 1];
+		this->mPackedArray[this->mReverseArray[e]] = this->mPackedArray[this->mNext - 1];
+
+		//pool->mDirectArray[pool->mReverseArray[newId]] = 0;
+		this->mDirectArray[this->mReverseArray[newId]] = MAX_ENTITIES;
+
+		this->mReverseArray[newId] = this->mReverseArray[e];
+
+		this->mNext--;
+
+		this->mReverseArray[e] = (unsigned int)this->mDirectArray.size();
+
+		EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
 	}
-	//Controll if this entity is already unregistered
-
-	unsigned int newId = pool->mDirectArray[pool->mNext - 1];
-
-	pool->mDirectArray[pool->mReverseArray[e]] = pool->mDirectArray[pool->mNext - 1];
-	pool->mPackedArray[pool->mReverseArray[e]] = pool->mPackedArray[pool->mNext - 1];
-
-	pool->mDirectArray[pool->mReverseArray[newId]] = 0;
-
-	pool->mReverseArray[newId] = pool->mReverseArray[e];
-
-	pool->mNext--;
-
-	pool->mReverseArray[e] = pool->mDirectArray.size();
-
-	//Unregister a type from the signature of the Entity
-	SignatureManager::get().unRegisterTypeCmp(e, getIndexFromType<TypeCmp>());
-}
+};

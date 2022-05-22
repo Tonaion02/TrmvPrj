@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "ECS/Entity.h"
+#include "ECS/Signature.h"
 
 
 
@@ -20,20 +21,21 @@ public:
 
 	Entity createEntity();
 	void deleteEntity(Entity entityToDelete);
-
-	//Friend function
-	friend void debugInfoEntity();
+	bool isThereTypeCmp(Entity e, unsigned int typeCmp);
+	void registerSignature(Entity e, unsigned int typeCmp);
+	void unRegisterSignature(Entity e, unsigned int typeCmp);
 
 protected:
 	EntityManager()
-		:mNextId(1)
+		:mNextId(0)
 	{
 	}
 
 protected:
-
 	std::array<Entity, MAX_ENTITIES> mEntities;
 	std::vector<Entity> mDeadEntities;
+
+	std::array<Signature, MAX_ENTITIES> signatures;
 
 	unsigned int mNextId;
 };
