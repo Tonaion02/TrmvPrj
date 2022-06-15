@@ -42,6 +42,8 @@ public:
 
 	//Encapsulation Methods
 	inline struct World* getWorld() { return world; }
+	inline class ExploringScene* getExploringScene() { return exploringScene; }
+	inline class BattleScene* getBattleScene() { return battleScene; }
 	//Encapsulation Methods
 
 
@@ -58,6 +60,9 @@ protected:
 
 	float mDeltaTime;
 	float mTicksCount;
+
+	class ExploringScene* exploringScene;
+	class BattleScene* battleScene;
 
 	struct World* world;
 

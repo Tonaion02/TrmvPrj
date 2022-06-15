@@ -4,10 +4,18 @@
 
 #include "ECS/Entity.h"
 
+#include "ECS/GroupEntity.h"
+
 #include "ECS/EntityManager.h"
+
 #include "ECS/TypeManager.h"
+#include "ECS/TypeManagerComponents.h"
+#include "ECS/TypeManagerScenes.h"
 
 #include "ECS/ComponentPool.h"
+
+#include "ECS/Scene.h"
+#include "ECS/SceneManager.h"
 
 #include "ECS/DataManager.h"
 
@@ -54,9 +62,6 @@ void unRegisterSignature(Entity e)
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //ComponentPool interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//template<typename TypeCmp>
-//ComponentPool<TypeCmp>* getCmpPool();
-
 template<typename TypeCmp>
 TypeCmp* getCmpEntity(Entity e)
 {
@@ -115,6 +120,69 @@ void unRegisterEntity(ComponentPool<TypeCmp>* pool, Entity e)
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
+//SceneManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+inline BaseScene* currentScene()
+{
+	return SceneManager::get().getCurrentScene();
+}
+
+inline void nextScene()
+{
+	SceneManager::get().nextScene();
+}
+
+inline void resetIteratorScene()
+{
+	SceneManager::get().resetIterator();
+}
+
+inline bool isEndedScenes()
+{
+	return SceneManager::get().isEndedScenes();
+}
+
+inline BaseScene* getScene(const std::string& nameScene)
+{
+	return SceneManager::get().getScene(nameScene);
+}
+
+inline bool isActiveScene(BaseScene* baseScene)
+{
+	return SceneManager::get().isActive(baseScene);
+}
+
+inline void addScene(const std::string& nameScene, BaseScene* baseScene)
+{
+	SceneManager::get().addScene(nameScene, baseScene);
+}
+
+inline void activateScene(const std::string& nameScene)
+{
+	SceneManager::get().activateScene(nameScene);
+}
+
+inline void deactivateScene(const std::string& nameScene)
+{
+	SceneManager::get().deactivateScene(nameScene);
+}
+
+inline void registerEntity(BaseScene* scene, Entity e)
+{
+
+}
+
+inline void unRegisterEntity(BaseScene* scene, Entity e)
+{
+
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//SceneManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
 //DataManager interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
 template<typename TypeCmp>
@@ -129,4 +197,44 @@ inline std::array<struct BaseComponentPool*, MAX_TYPE_CMPS>* getCmpPools()
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //DataManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//TypeComponentManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+template<typename TypeCmp>
+unsigned int idTypeCmp()
+{
+	return TypeManagerComponent::get().idTypeCmp<TypeCmp>();
+}
+
+template<typename TypeCmp>
+std::string stringTypeCmp()
+{
+	return TypeManagerComponent::get().stringTypeCmp<TypeCmp>();
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//TypeComponentManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//TypeComponentManager interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+template<typename TypeScenes>
+unsigned int idTypeScenes()
+{
+	return TypeManagerScenes::get().idTypeCmp<TypeScenes>();
+}
+
+template<typename TypeScenes>
+std::string stringTypeScenes()
+{
+	return TypeManagerScenes::get().stringTypeCmp<TypeScenes>();
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//TypeComponentManager interface
 //-----------------------------------------------------------------------------------------------------------------------------------------

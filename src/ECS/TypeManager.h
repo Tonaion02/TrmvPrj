@@ -10,40 +10,29 @@
 
 
 
-template<typename TypeCmp>
-unsigned int idTypeCmp()
-{
-	return TypeManager::get().idTypeCmp<TypeCmp>();
-}
-
-template<typename TypeCmp>
-std::string stringTypeCmp()
-{
-	return TypeManager::get().stringTypeCmp<TypeCmp>();
-}
 
 
 
 class TypeManager
 {
 public:
-	static TypeManager& get()
-	{
-		static TypeManager instance;
-		return instance;
-	}
+	//static TypeManager& get()
+	//{
+	//	static TypeManager instance;
+	//	return instance;
+	//}
 
 	template<typename TypeCmp>
 	unsigned int idTypeCmp()
 	{
-		static const unsigned int id = TypeManager::get().nextId();
+		static const unsigned int id = nextId();
 		return id;
 	}
 
 	template<typename TypeCmp>
 	std::string stringTypeCmp()
 	{
-		static std::string s = TypeManager::get().newString<TypeCmp>();
+		static std::string s = newString<TypeCmp>();
 		return s;
 	}
 

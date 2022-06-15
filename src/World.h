@@ -93,7 +93,6 @@ struct World
 	std::vector<std::pair<Entity, Entity>> collisions;
 	std::set<Entity> entitiesInCollisions;
 
-	//std::vector<Entity> entityToDelete;
 	std::set<Entity> entityToDelete;
 
 	//std::vector<Entity> entityToAdd;

@@ -4,6 +4,7 @@
 
 #include "ECS/Entity.h"
 #include "ECS/TypeManager.h"
+#include "ECS/TypeManagerComponents.h"
 #include "ECS/EntityManager.h"
 #include "ECS/DataManager.h"
 
@@ -34,7 +35,7 @@ struct ComponentPool : public BaseComponentPool
 		for (unsigned int i = 0; i < MAX_ENTITIES; i++)
 			mReverseArray[i] = MAX_ENTITIES;
 
-		(*DataManager::get().getPools())[idTypeCmp<TypeCmp>()] = this;
+		(*DataManager::get().getPools())[TypeManagerComponent::get().idTypeCmp<TypeCmp>()] = this;
 	}
 
 	void unRegisterEntity(Entity e)
@@ -53,6 +54,7 @@ struct ComponentPool : public BaseComponentPool
 
 		this->mReverseArray[e] = (unsigned int)this->mDirectArray.size();
 
-		EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
+		//EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
+		EntityManager::get().unRegisterSignature(e, TypeManagerComponent::get().idTypeCmp<TypeCmp>());
 	}
 };

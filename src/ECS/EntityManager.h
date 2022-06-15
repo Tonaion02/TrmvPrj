@@ -35,7 +35,9 @@ protected:
 	std::array<Entity, MAX_ENTITIES> mEntities;
 	std::vector<Entity> mDeadEntities;
 
-	std::array<Signature, MAX_ENTITIES> signatures;
+	std::array<Signature, MAX_ENTITIES> typeSignatures;
+
+	std::array<Signature, MAX_ENTITIES> sceneSignatures;
 
 	unsigned int mNextId;
 };
