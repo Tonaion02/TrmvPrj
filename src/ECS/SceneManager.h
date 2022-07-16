@@ -18,23 +18,23 @@ public:
 		return instance;
 	}
 
-	void addScene(const std::string& nameScene, class BaseScene* newScene);
-	void activateScene(const std::string& nameScene);
-	void deactivateScene(const std::string& nameScene);
+	void addScene(unsigned int typeScene, class BaseScene* newScene);
+	void activateScene(unsigned int typeScene);
+	void deActivateScene(unsigned int typeScene);
 
 	class BaseScene* getCurrentScene();
 	void nextScene();
 	void resetIterator();
 	bool isEndedScenes();
 
-	bool isActive(class BaseScene* scene);
-	class BaseScene* getScene(const std::string& nameScene);
+	bool isActive(unsigned int typeScene);
+	class BaseScene* getScene(unsigned int typeScene);
 
 protected:
 	SceneManager();
 
 protected:
-	std::map<const std::string, BaseScene*> scenes;
+	std::map<unsigned int, class BaseScene*> scenes;
 	std::vector<class BaseScene*> activeScenes;
 	unsigned int currentScene;
 };

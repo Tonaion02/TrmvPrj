@@ -8,6 +8,10 @@
 #include "World.h"
 //Including Data Manager
 
+//Including some physics Data Structures
+#include "utils/Physic/GridSP.h"
+//Including some physics Data Structures
+
 #include "Data/Level/GraphicTileLayer.h"
 
 #include "Data/Level/Level.h"
@@ -160,6 +164,41 @@ Level levelWrapper(const std::string& path)
 			}
 		}
 	}
+
+
+
+	//Initialize the bound of the BattleCamp
+	//Top
+	level.battleCamp.boundCamp[0].start.x = 0;
+	level.battleCamp.boundCamp[0].end.x = level.battleCamp.dim.x * level.battleCamp.tileSet.tileDim.x;
+	level.battleCamp.boundCamp[0].start.y = (level.battleCamp.boundCamp[0].end.y = 0);
+	level.battleCamp.boundCamp[0].orientation = 0;
+	//Bottom
+	level.battleCamp.boundCamp[1].start.x = 0;
+	level.battleCamp.boundCamp[1].end.x = level.battleCamp.dim.x * level.battleCamp.tileSet.tileDim.x;
+	level.battleCamp.boundCamp[1].start.y = (level.battleCamp.boundCamp[1].end.y = level.battleCamp.dim.y * level.battleCamp.tileSet.tileDim.y);
+	level.battleCamp.boundCamp[1].orientation = 0;
+	//Left
+	level.battleCamp.boundCamp[2].start.x = (level.battleCamp.boundCamp[2].end.x = 0);
+	level.battleCamp.boundCamp[2].start.y = 0;
+	level.battleCamp.boundCamp[2].end.y = level.battleCamp.dim.y * level.battleCamp.tileSet.tileDim.y;
+	level.battleCamp.boundCamp[2].orientation = 1;
+	//Right
+	level.battleCamp.boundCamp[3].start.x = (level.battleCamp.boundCamp[3].end.x = level.battleCamp.dim.x * level.battleCamp.tileSet.tileDim.x);
+	level.battleCamp.boundCamp[3].start.y = 0;
+	level.battleCamp.boundCamp[3].end.y = level.battleCamp.dim.y * level.battleCamp.tileSet.tileDim.y;
+	level.battleCamp.boundCamp[3].orientation = 1;
+	//Initialize the bound of the BattleCamp
+
+	
+	
+	//Initialize the grid for spatial partition
+	
+	//level.battleCamp.gridSP = GridSP(Vector2i(MAX_W_CAMP * level.tileSet.tileDim.x, MAX_H_CAMP * level.tileSet.tileDim.y), Vector2i(2 * level.tileSet.tileDim.x, 2 * level.tileSet.tileDim.y));
+	level.battleCamp.gridSP = GridSP(Vector2i(level.battleCamp.dim.x * level.tileSet.tileDim.x, level.battleCamp.dim.y * level.tileSet.tileDim.y), 
+									 Vector2i(2 * level.tileSet.tileDim.x, 2 * level.tileSet.tileDim.y));
+	//Initialize the grid for spatial partition
+
 	//Initialize the BattleCamp of the Level
 	
 	return level;

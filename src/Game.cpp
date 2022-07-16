@@ -38,7 +38,6 @@
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/ColliderSystem.h"
 #include "Systems/Battle/BattleLifeSystem.h"
-#include "Systems/Battle/BattleSystem.h"
 //Including Battle System
 //Including System
 
@@ -48,12 +47,13 @@
 
 
 ///FOR TESTING
-#include "ECS/View.h"
-
 #include "ECS/Scene.h"
 
 #include "Scenes/ExploringScene.h"
 #include "Scenes/BattleScene.h"
+
+#include "utils/Physic/DataGridSP.h"
+#include "utils/Physic/GridSP.h"
 ///FOR TESTING
 
 
@@ -82,86 +82,6 @@ void Game::update()
 
 		nextScene();
 	}
-
-
-
-	//for (auto iter : world->phaseHandler.phaseStack)
-	//{
-	//	if (iter->phaseType == PhaseType::Exploring)
-	//	{
-	//		if (iter->statePhase == StatePhase::On)
-	//		{
-	//			//First input and then AI decides what is the action
-
-	//			//Execute current action of all Entity
-	//			MoveSystem::move();
-
-	//			AnimationSystem::animate();
-
-	//			CameraSystem::updateCamera(world->mPoolTransformComponent.mPackedArray[
-	//				world->mPoolTransformComponent.mReverseArray[world->player]].pos);
-	//			//Execute current action of all Entity
-
-	//			//Update Component
-	//			ActionSystem::updateAction();
-	//			//Update Component
-
-	//			//Update debugInfoTimer
-	//			if (!isEnd(world->debugInfoTimer))
-	//			{
-	//				world->debugInfoTimer.timePassed += mDeltaTime;
-	//			}
-	//			//Update debugInfoTimer
-
-	//			//Controll if the action is ended
-	//			ActionSystem::endAction();
-	//			//Controll if the action is ended
-
-	//			//Now the action that is ended is set to NoneAction
-	//			EnemySystem::aiBaseEnemy();
-	//		}
-	//	}
-	//	else if (iter->phaseType == PhaseType::Battle)
-	//	{
-	//		//Clear buffers of collisions
-	//		ColliderSystem::collisionsInfoClear();
-	//		//Clear buffers of collisions
-
-	//		//Update Move System
-	//		BattleMoveSystem::controlledMoves();
-	//		BattleMoveSystem::freeMove();
-	//		//Update Move System
-
-	//		//Apply friction
-	//		BattleMoveSystem::applyFriction(world->BattlePlayerEntity, 8.0f);
-	//		//Apply friction
-
-	//		//Trying to detect Collisions
-	//		ColliderSystem::detectCollisions();
-	//		//Trying to detect Collisions
-
-	//		//Detect collisions and apply damage
-	//		BattleSystem::updateBattle();
-	//		//Detect collisions and apply damage
-
-	//		//Update Camera
-	//		CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity)->pos);
-	//		//Update Camera
-
-	//		//Update timer
-	//		world->delayFiring.timePassed += mDeltaTime;
-	//		//Update timer
-
-	//		//Check if some Entities is died
-	//		LifeSystem::checkIfIsDead();
-	//		//Check if some Entities is died
-
-
-
-	//		LifeSystem::cleanDeadEntity();
-	//		LifeSystem::cleanInfo();
-	//	}
-	//}
 }
 
 
@@ -216,14 +136,6 @@ void Game::processInput()
 	//ProcessInput for each scene
 	resetIteratorScene();
 
-	//while (!isEndedScenes())
-	//{
-	//	BaseScene* current = currentScene();
-
-	//	current->processInputScene();
-
-	//	nextScene();
-	//}
 	if (!isEndedScenes())
 	{
 		BaseScene* current = currentScene();
@@ -231,174 +143,6 @@ void Game::processInput()
 		current->processInputScene();
 	}
 	//ProcessInput for each scene
-
-
-
-
-	////Handling of the Input from the various phase
-	//for (auto iter : world->phaseHandler.phaseStack)
-	//{
-	//	if (iter->phaseType == PhaseType::Exploring && iter->statePhase == StatePhase::On)
-	//	{
-	//		//For debugging
-	//		if (keyStates[SDL_SCANCODE_B])
-	//		{
-
-	//		}
-	//		//For debugging
-
-
-
-	//		//For moving player
-	//		if (keyStates[SDL_SCANCODE_W])
-	//		{
-	//			if (ActionSystem::isDoingNothing(world->player) && world->battleEntities.empty() )
-	//			{
-	//				ActionSystem::startAction(world->player, Actions::Walk);
-	//				MoveSystem::startMove(world->player, Direction::Up);
-	//				AnimationSystem::startAnimation(world->player);
-	//			}
-	//		}
-	//		else if (keyStates[SDL_SCANCODE_S] && world->battleEntities.empty() )
-	//		{
-	//			if (ActionSystem::isDoingNothing(world->player))
-	//			{
-	//				ActionSystem::startAction(world->player, Actions::Walk);
-	//				MoveSystem::startMove(world->player, Direction::Down);
-	//				AnimationSystem::startAnimation(world->player);
-	//			}
-	//		}
-	//		else if (keyStates[SDL_SCANCODE_D])
-	//		{
-	//			if (ActionSystem::isDoingNothing(world->player) && world->battleEntities.empty() )
-	//			{
-	//				ActionSystem::startAction(world->player, Actions::Walk);
-	//				MoveSystem::startMove(world->player, Direction::Right);
-	//				AnimationSystem::startAnimation(world->player);
-	//			}
-	//		}
-	//		else if (keyStates[SDL_SCANCODE_A] && world->battleEntities.empty() )
-	//		{
-	//			if (ActionSystem::isDoingNothing(world->player))
-	//			{
-	//				ActionSystem::startAction(world->player, Actions::Walk);
-	//				MoveSystem::startMove(world->player, Direction::Left);
-	//				AnimationSystem::startAnimation(world->player);
-	//			}
-	//		}
-	//		//For moving player
-
-
-
-	//		//For debuggingInfo
-	//		else if (keyStates[SDL_SCANCODE_3] && isEnd(world->debugInfoTimer))
-	//		{
-	//			SDL_Log(
-	//				"Player pos: ( %f, %f )",
-	//				world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos.x,
-	//				world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos.y
-	//			);
-
-	//			start(&world->debugInfoTimer);
-	//		}
-	//		//For debuggingInfo
-
-
-
-	//		//For startingBattle
-	//		else if (keyStates[SDL_SCANCODE_4])
-	//		{
-	//			static bool first = true;
-
-	//			Game::startBattle();
-
-	//			first = false;
-	//		}
-	//		//For startingBattle
-	//	}
-	//	else if (iter->phaseType == PhaseType::Battle)
-	//	{
-	//		if (keyStates[SDL_SCANCODE_W])
-	//		{
-	//			BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 0.0f, -50.0f });
-	//			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Up;
-	//		}
-	//		if (keyStates[SDL_SCANCODE_S])
-	//		{
-	//			BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 0.0f, 50.0f });
-	//			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Down;
-	//		}
-	//		if (keyStates[SDL_SCANCODE_D])
-	//		{
-	//			BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 50.0f, 0.0f });
-	//			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Right;
-	//		}
-	//		if (keyStates[SDL_SCANCODE_A])
-	//		{
-	//			BattleMoveSystem::applyForce(world->BattlePlayerEntity, { -50.0f, 0.0f });
-	//			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Left;
-	//		}
-	//		if (keyStates[SDL_SCANCODE_M] && isEnd(world->delayFiring))
-	//		{
-	//			Entity projectile = EntityManager::get().createEntity();
-	//			
-	//			registerEntity(&world->mPoolTransformBattleComponent, projectile);
-	//			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos = getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
-	//			
-	//			registerEntity(&world->mPoolPhysicBoxComponent, projectile);
-	//			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->lastDirection = getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection;
-	//			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->mass = 1.0f;
-	//			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->v = { 0.0f, 0.0f };
-	//			
-	//			registerEntity(&world->mPoolRectColliderComponent, projectile);
-	//			getCmpEntity(&world->mPoolRectColliderComponent, projectile)->dim = { 16, 16 };
-	//			
-	//			registerEntity(&world->mPoolDrawBattleComponent, projectile);
-	//			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->id = 117;
-	//			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->personalScale = 1.0f;
-	//			
-	//			//Assign the categories
-	//			registerEntity(&world->mPoolFreeRectColliderComponent, projectile);
-	//			registerEntity(&world->mPoolPlayerBattleComponent, projectile);
-	//			
-	//			registerEntity(&world->mPoolProjectileComponent, projectile);
-	//			getCmpEntity(&world->mPoolProjectileComponent, projectile)->damage = 100.0f;
-
-	//			SDL_Log("Projectile: %d\n", (int)isThereTypeCmp<ProjectileComponent>(projectile));
-	//			//Assign the categories
-
-	//			//Apply force to move the projectile
-	//			switch (getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->lastDirection)
-	//			{
-
-	//			case Up:
-	//				BattleMoveSystem::applyForce(projectile, { 0.0f, -100.0f } );
-	//				break;
-
-	//			case Down:
-	//				BattleMoveSystem::applyForce(projectile, { 0.0f, 100.0f } );
-	//				break;
-
-	//			case Right:
-	//				BattleMoveSystem::applyForce(projectile, { 100.0f, 0.0f } );
-	//				break;
-
-	//			case Left:
-	//				BattleMoveSystem::applyForce(projectile, { -100.0f, 0.0f } );
-	//				break;
-
-	//			default:
-	//				break;
-	//			}
-	//			//Apply force to move the projectile
-
-	//			//Start the timer of delayFiring
-	//			start(&world->delayFiring);
-	//			//Start the timer of delayFiring
-	//		}
-	//	}
-	//}
-	////Handling of the Input from the various phase
 }
 
 
@@ -422,26 +166,6 @@ void Game::generateOutput()
 
 		nextScene();
 	}
-	//for (auto iter : world->phaseHandler.phaseStack)
-	//{
-	//	if (iter->phaseType == PhaseType::Exploring)
-	//	{
-	//		if (iter->statePhase != StatePhase::Paused)
-	//		{
-	//			//Prepare rendering
-	//			RenderSystem::draw();
-	//			//Prepare rendering
-	//		}
-	//	}
-	//	else if (iter->phaseType == PhaseType::Battle)
-	//	{
-	//		//Here code to draw battle graphic element
-	//		BattleRenderSystem::draw();
-
-	//		BattleRenderSystem::drawColliders();
-	//	}
-	//}
-
 
 
 	//Render elements
@@ -473,8 +197,9 @@ void Game::loadData()
 	//Create Scenes
 	exploringScene = new ExploringScene();
 	battleScene = new BattleScene();
-	activateScene(GET_STRING_FROM_TOKEN(ExploringScene));
+	activateScene<ExploringScene>();
 	//Create Scenes
+
 
 
 	//Load TileSet and Texture
@@ -489,7 +214,7 @@ void Game::loadData()
 
 
 	//Load Level	
-	world->currentLevel = levelWrapper("casual generate level");
+	world->currentLevel = levelWrapper("random level");
 	//Load Level
 
 
@@ -651,10 +376,21 @@ void Game::loadData()
 
 
 	///Init test for Battle Phase
-	int n = 2;
+
+
+	int n = 200;
+	bool first = true;
+	Entity firstEntity;
+	Entity iteratorEntity;
 	for (int i = 0; i < n; i++)
 	{
 		Entity e = EntityManager::get().createEntity();
+
+		if (first)
+		{
+			firstEntity = e;
+			first = false;
+		}
 
 		registerEntity(&world->mPoolTransformBattleComponent, e);
 		if (i == 0)
@@ -668,7 +404,19 @@ void Game::loadData()
 		}
 		else
 		{
-			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = { 60.0f, 1.0f };
+			Vector2i pos = { random() % (world->currentLevel.battleCamp.dim.x * 16), random() % (world->currentLevel.battleCamp.dim.y * 16) };
+			
+			for (int j = 0, iteratorEntity = firstEntity; j < i; j++, iteratorEntity++)
+			{
+				TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, iteratorEntity);
+				if (ColliderSystem::detectCollision(pos, Vector2i(16, 16), transform->pos, {16, 16}))
+				{
+					pos = { random() % (world->currentLevel.battleCamp.dim.x * 16), random() % (world->currentLevel.battleCamp.dim.y * 16) };
+					j = 0, iteratorEntity = firstEntity;
+				}
+			}
+			
+			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = pos;
 			registerEntity(&world->mPoolEnemyBattleComponent, e);
 		}
 
@@ -687,24 +435,18 @@ void Game::loadData()
 		registerEntity(&world->mPoolLifeBarComponent, e);
 		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 300.0f;
 
-		if (i == 0)
-		{
-			//SignatureManager::get().printSignatureEntity(e);
-			SDL_Log("%d", (int)isThereTypeCmp<PlayerBattleComponent>(e));
-		}
+		//if (i != 0)
+		//{
+		//	BattleMoveSystem::applyForce(e, { -30.0f, 0.0f });
+		//}
 
-		if (i != 0)
-		{
-			BattleMoveSystem::applyForce(e, { -30.0f, 0.0f });
-		}
+
+
+		//register Entity to GridSP for collision detection
+		registerEntity(e, world->currentLevel.battleCamp.gridSP);
+		//register Entity to GridSP for collision detection
 	}
 	///Init test for Battle Phase
-
-
-
-	///Init PhaseHandler
-	world->phaseHandler.addPhaseBack(PhaseType::Exploring, StatePhase::On);
-	///Init PhaseHandler
 
 
 
@@ -760,22 +502,17 @@ void Game::init()
 
 bool Game::isInBattle()
 {
-	return isActiveScene(getScene(GET_STRING_FROM_TOKEN(BattleScene)));
+	return isActiveScene<BattleScene>();
 }
 
 
 
 void Game::startBattle()
 {
-	//Set the PhaseHandler
-	world->phaseHandler.addPhaseBack(PhaseType::Battle, StatePhase::On);
-	world->phaseHandler.setStatePhase(PhaseType::Exploring, StatePhase::Paused);
-
-	//getScene("exploringScene")->setStatus(statusScene::PauseScene);
-	//activateScene("battleScene");
-	getScene(GET_STRING_FROM_TOKEN(ExploringScene))->setStatus(statusScene::PauseScene);
-	activateScene(GET_STRING_FROM_TOKEN(BattleScene));
-	//Set the PhaseHandler
+	//Push up the BattleScene
+	getScene<ExploringScene>()->setStatus(statusScene::PauseScene);
+	activateScene<BattleScene>();
+	//Push up the BattleScene
 
 
 

@@ -1,5 +1,7 @@
 #include "ECS/SceneManager.h"
 
+#include "ECS/TypeManagerScenes.h"
+
 
 
 
@@ -15,25 +17,27 @@ SceneManager::SceneManager()
 
 
 
-void SceneManager::addScene(const std::string& nameScene, BaseScene* newScene)
+void SceneManager::addScene(unsigned int typeScene, class BaseScene* newScene)
 {
-	scenes[nameScene] = newScene;
+	scenes[typeScene] = newScene;
 }
 
 
 
-void SceneManager::activateScene(const std::string& nameScene)
+void SceneManager::activateScene(unsigned int typeScene)
 {
-	//Controllo se è gia presente la scene
+	//ASSERT: controlla se la scene è stata aggiunta nella lista
 
-	activeScenes.emplace(activeScenes.begin(), scenes[nameScene]);
+	//ASSERT: controlla se la scene è già presente
+
+	activeScenes.emplace(activeScenes.begin(), scenes[typeScene]);
 }
 
 
 
-void SceneManager::deactivateScene(const std::string& nameScene)
+void SceneManager::deActivateScene(unsigned int typeScene)
 {
-	activeScenes.erase(std::find(activeScenes.begin(), activeScenes.end(), scenes[nameScene]));
+	activeScenes.erase(std::find(activeScenes.begin(), activeScenes.end(), scenes[typeScene]));
 }
 
 
@@ -66,26 +70,28 @@ bool SceneManager::isEndedScenes()
 
 
 
-bool SceneManager::isActive(BaseScene* scene)
+bool SceneManager::isActive(unsigned int typeScene)
 {
 	//ASSERT: Controll if the scenes is in the list
+
+	BaseScene* scene = scenes[typeScene];
 
 	auto f = std::find(activeScenes.begin(), activeScenes.end(), scene);
 
 	if (f != activeScenes.end())
 		return true;
-
+	
 	return false;
 }
 
 
 
-BaseScene* SceneManager::getScene(const std::string& nameScene)
+BaseScene* SceneManager::getScene(unsigned int typeScene)
 {
 	//ASSERT: Controll if the scenes is in the list
 
-	return scenes[nameScene];
+	return scenes[typeScene];
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class SceneManager
-//-----------------------------------------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------------- 

@@ -14,6 +14,8 @@
 
 #include "ECS/ComponentPool.h"
 
+#include "ECS/GroupEntity.h"
+
 #include "ECS/Scene.h"
 #include "ECS/SceneManager.h"
 
@@ -43,13 +45,13 @@ bool isThereTypeCmp(Entity e)
 }
 
 template<typename TypeCmp>
-void registerSignature(Entity e)
+void registerType(Entity e)
 {
 	EntityManager::get().registerSignature(e, idTypeCmp<TypeCmp>());
 }
 
 template<typename TypeCmp>
-void unRegisterSignature(Entity e)
+void unRegisterType(Entity e)
 {
 	EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
 }
@@ -83,7 +85,7 @@ void registerEntity(ComponentPool<TypeCmp>* pool, Entity e)
 
 	pool->mNext++;
 
-	EntityManager::get().registerSignature(e, idTypeCmp<TypeCmp>());
+	EntityManager::get().registerTypeSignature(e, idTypeCmp<TypeCmp>());
 }
 
 template<typename TypeCmp>
@@ -120,6 +122,43 @@ void unRegisterEntity(ComponentPool<TypeCmp>* pool, Entity e)
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
+//GroupEntity interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+inline void registerEntity(GroupEntity<>* group, Entity e)
+{
+	//ASSERT: Controll if next is less than MAX_ENTITIES
+
+	group->next++;
+	group->reverseArray[e] = group->next;
+	group->directArray[group->next] = e;
+}
+
+inline void unRegisterEntity(GroupEntity<>* group, Entity e)
+{
+	//ASSERT: Controll if next is not less than zero
+
+	Entity entityToMove = group->directArray[group->next - 1];
+	unsigned int pos = group->reverseArray[e];
+	group->reverseArray[e] = MAX_ENTITIES;
+	group->reverseArray[entityToMove] = pos;
+	group->directArray[pos] = entityToMove;
+	group->directArray[group->next - 1] = MAX_ENTITIES;
+	group->next--;
+}
+
+inline bool isThereEntity(GroupEntity<>* group, Entity e)
+{
+	//ASSERT: 
+
+	return group->directArray[group->reverseArray[e]] != MAX_ENTITIES;
+}
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//GroupEntity interface
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------
 //SceneManager interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
 inline BaseScene* currentScene()
@@ -142,39 +181,34 @@ inline bool isEndedScenes()
 	return SceneManager::get().isEndedScenes();
 }
 
-inline BaseScene* getScene(const std::string& nameScene)
+template<typename TypeScene>
+BaseScene* getScene()
 {
-	return SceneManager::get().getScene(nameScene);
+	return SceneManager::get().getScene(idTypeScenes<TypeScene>());
 }
 
-inline bool isActiveScene(BaseScene* baseScene)
+template<typename TypeScene>
+bool isActiveScene()
 {
-	return SceneManager::get().isActive(baseScene);
+	return SceneManager::get().isActive(idTypeScenes<TypeScene>());
 }
 
-inline void addScene(const std::string& nameScene, BaseScene* baseScene)
+template<typename TypeScene>
+void addScene(class BaseScene* baseScene)
 {
-	SceneManager::get().addScene(nameScene, baseScene);
+	SceneManager::get().addScene(idTypeScenes<TypeScene>(), baseScene);
 }
 
-inline void activateScene(const std::string& nameScene)
+template<typename TypeScene>
+void activateScene()
 {
-	SceneManager::get().activateScene(nameScene);
+	SceneManager::get().activateScene(idTypeScenes<TypeScene>());
 }
 
-inline void deactivateScene(const std::string& nameScene)
+template<typename TypeScene>
+void deActivateScene()
 {
-	SceneManager::get().deactivateScene(nameScene);
-}
-
-inline void registerEntity(BaseScene* scene, Entity e)
-{
-
-}
-
-inline void unRegisterEntity(BaseScene* scene, Entity e)
-{
-
+	SceneManager::get().deActivateScene(idTypeScenes<TypeScene>());
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //SceneManager interface
@@ -207,13 +241,13 @@ inline std::array<struct BaseComponentPool*, MAX_TYPE_CMPS>* getCmpPools()
 template<typename TypeCmp>
 unsigned int idTypeCmp()
 {
-	return TypeManagerComponent::get().idTypeCmp<TypeCmp>();
+	return TypeManagerComponent::get().idType<TypeCmp>();
 }
 
 template<typename TypeCmp>
 std::string stringTypeCmp()
 {
-	return TypeManagerComponent::get().stringTypeCmp<TypeCmp>();
+	return TypeManagerComponent::get().stringType<TypeCmp>();
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //TypeComponentManager interface
@@ -227,13 +261,13 @@ std::string stringTypeCmp()
 template<typename TypeScenes>
 unsigned int idTypeScenes()
 {
-	return TypeManagerScenes::get().idTypeCmp<TypeScenes>();
+	return TypeManagerScenes::get().idType<TypeScenes>();
 }
 
 template<typename TypeScenes>
 std::string stringTypeScenes()
 {
-	return TypeManagerScenes::get().stringTypeCmp<TypeScenes>();
+	return TypeManagerScenes::get().stringType<TypeScenes>();
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //TypeComponentManager interface

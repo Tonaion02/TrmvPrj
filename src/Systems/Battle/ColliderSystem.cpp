@@ -41,6 +41,32 @@ bool ColliderSystem::detectCollision(const Vector2f& pos, const Vector2i& dim, c
 
 
 
+bool ColliderSystem::detectCollision(const Line& line, const Vector2f& pos, const Vector2f& dim)
+{
+	//Orizzontal
+	if (line.orientation == 0)
+	{
+		if (!(pos.y <= line.start.y && pos.y + dim.y >= line.start.y))
+			return false;
+
+		if (pos.x + dim.x < line.start.x || pos.x > line.end.x)
+			return false;
+	}
+	//Vertical
+	else
+	{
+		if (!(pos.x <= line.start.x && pos.x + dim.x >= line.start.x))
+			return false;
+
+		if (pos.y + dim.y < line.start.y || pos.y > line.end.y)
+			return false;
+	}
+
+	return true;
+}
+
+
+
 void ColliderSystem::detectCollisions()
 {
 	World* world = Game::get()->getWorld();

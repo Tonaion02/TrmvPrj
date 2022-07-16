@@ -32,3 +32,10 @@ inline float lengthQuad(const Vector2i& v) { return static_cast<float>(v.x * v.x
 inline float ToDegree(float radians) { return radians * 180.0f / Pi; }
 inline float ToRadians(float degree) { return degree * Pi / 180.0f; }
 //Some inline method for Goniometry
+
+
+
+//Method for random generator of numbers
+void setRandomGenerator(unsigned int seed);
+int random();
+//Method for random generator of numbers

@@ -12,11 +12,10 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class Scene
 //-----------------------------------------------------------------------------------------------------------------------------------------
-BaseScene::BaseScene(const std::string& name)
+BaseScene::BaseScene(unsigned int typeScene)
 	:game(Game::get()), world(Game::get()->getWorld()), status(statusScene::RunningScene)
 {
-	SceneManager::get().addScene(name, this);
-	SDL_Log("%s", name.c_str());
+	SceneManager::get().addScene(typeScene, this);
 }
 
 
@@ -24,15 +23,6 @@ BaseScene::BaseScene(const std::string& name)
 void BaseScene::setStatus(statusScene status)
 {
 	this->status = status;
-}
-
-
-
-void BaseScene::unRegisterEntity(Entity e)
-{
-	//ADD AN ASSERT ON ENTITY
-
-	group.erase(e);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class Scene

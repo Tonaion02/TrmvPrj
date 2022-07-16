@@ -33,6 +33,61 @@ void LifeSystem::init()
 
 
 
+void LifeSystem::applyDamageToEntity(Entity e, float damage)
+{
+	World* world = Game::get()->getWorld();
+
+	LifeBarComponent* lifeBar = getCmpEntity(&world->mPoolLifeBarComponent, e);
+	lifeBar->health -= damage;
+}
+
+
+
+template<typename Category, typename Category2>
+void applyDamageForCategories(ComponentPool<Category>* pool, ComponentPool<Category2>* pool2)
+{
+	World* world = Game::get()->getWorld();
+
+	for (unsigned int i = 0; i < pool->mNext; i++)
+	{
+		Entity e = pool->mDirectArray[i];
+
+		if (isThereTypeCmp<ProjectileComponent>(e))
+		{
+			ProjectileComponent* proj = getCmpEntity(&world->mPoolProjectileComponent, e);
+			RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+			TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, e);
+
+			for (unsigned int j = 0; j < pool2->mNext; j++)
+			{
+				Entity vs = pool2->mDirectArray[j];
+
+				if (isThereTypeCmp<LifeBarComponent>(vs))
+				{
+					RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, vs);
+					TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, vs);
+					
+					if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+					{
+						LifeSystem::applyDamageToEntity(vs, proj->damage);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+void LifeSystem::applyDamage()
+{
+	World* world = Game::get()->getWorld();
+
+	applyDamageForCategories(&world->mPoolPlayerBattleComponent, &world->mPoolEnemyBattleComponent);
+	applyDamageForCategories(&world->mPoolEnemyBattleComponent, &world->mPoolPlayerBattleComponent);
+}
+
+
 
 template<typename TypeCmp>
 void onCollisionForCategories(Entity e, ComponentPool<TypeCmp>* pool)
@@ -58,24 +113,6 @@ void onCollisionForCategories(Entity e, ComponentPool<TypeCmp>* pool)
 					getCmpEntity(&world->mPoolLifeBarComponent, e)->health -= getCmpEntity(&world->mPoolProjectileComponent, e2)->damage;
 				}
 			}
-		}
-	}
-}
-
-
-
-void LifeSystem::onCollision()
-{
-	World* world = Game::get()->getWorld();
-
-	for (unsigned int i = 0; i < world->mPoolLifeBarComponent.mNext; i++)
-	{
-		Entity e = world->mPoolLifeBarComponent.mDirectArray[i];
-
-		if (!LifeSystem::isDead(e))
-		{
-			onCollisionForCategories(e, &world->mPoolPlayerBattleComponent);
-			onCollisionForCategories(e, &world->mPoolEnemyBattleComponent);
 		}
 	}
 }

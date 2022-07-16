@@ -50,10 +50,6 @@ using Player = Entity;
 
 struct World
 {
-	//Phase handler
-	PhaseHandler phaseHandler;
-	//Phase handler
-
 	//POOL OF COMPONENTS
 	ComponentPool<TransformComponent> mPoolTransformComponent;
 	ComponentPool<DrawComponent> mPoolDrawComponent;
@@ -94,8 +90,8 @@ struct World
 	std::set<Entity> entitiesInCollisions;
 
 	std::set<Entity> entityToDelete;
-
 	//std::vector<Entity> entityToAdd;
+
 	//For the Battle Phase
 
 	//Camera
@@ -110,9 +106,7 @@ struct World
 	Timer delayFiring;
 
 	//Levels of game
-	Level currentLevel;///Modify with a pointer
-	
-	//Base info
+	Level currentLevel;
 
 	///FOR TESTING
 	//TILESET
@@ -122,7 +116,5 @@ struct World
 	TileSet* tilesetActor;
 	
 	Timer debugInfoTimer;
-
-	Entity entityToMove;
 	///FOR TESTING
 };

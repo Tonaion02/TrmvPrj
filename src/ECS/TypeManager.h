@@ -10,47 +10,38 @@
 
 
 
-
-
-
 class TypeManager
 {
 public:
-	//static TypeManager& get()
-	//{
-	//	static TypeManager instance;
-	//	return instance;
-	//}
-
-	template<typename TypeCmp>
-	unsigned int idTypeCmp()
+	template<typename Type>
+	unsigned int idType()
 	{
 		static const unsigned int id = nextId();
 		return id;
 	}
 
-	template<typename TypeCmp>
-	std::string stringTypeCmp()
+	template<typename Type>
+	std::string stringType()
 	{
-		static std::string s = newString<TypeCmp>();
+		static std::string s = newString<Type>();
 		return s;
 	}
 
 protected:
 	TypeManager()
-		:nextIDTypeCmps(0)
+		:nextIDType(0)
 	{}
 
-	unsigned int nextId() { return nextIDTypeCmps++; }
+	unsigned int nextId() { return nextIDType++; }
 	
-	template<typename TypeCmp>
+	template<typename Type>
 	std::string newString()
 	{
-		stringTypeCmps[idTypeCmp<TypeCmp>()] = typeid(TypeCmp).name();
-		return stringTypeCmps[idTypeCmp<TypeCmp>()];
+		stringTypes[idType<Type>()] = typeid(Type).name();
+		return stringTypes[idType<Type>()];
 	}
 
 protected:
-	unsigned int nextIDTypeCmps;
-	std::array<std::string, MAX_TYPE_CMPS> stringTypeCmps;
+	unsigned int nextIDType;
+	std::array<std::string, MAX_TYPE_CMPS> stringTypes;
 };

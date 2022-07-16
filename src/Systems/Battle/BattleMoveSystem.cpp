@@ -3,7 +3,13 @@
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/ColliderSystem.h"
 
+#include "ECS/ECS.h"
+
 #include "utils/Math/Math.h"
+
+//Including some Physics elements
+#include "utils/Physic/GridSP.h"
+//Including some Physics elements
 
 //Including some context
 #include "World.h"
@@ -106,6 +112,9 @@ void BattleMoveSystem::freeMove()
 
 		world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos +=
 			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v * Game::get()->getDeltaTime();
+
+		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
+		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}
 }
 
@@ -122,46 +131,106 @@ void BattleMoveSystem::controlledMoves()
 		world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos +=
 			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v * Game::get()->getDeltaTime();
 
-		for (unsigned int j = 0; j < world->mPoolControlledRectColliderComponent.mNext; j++)
+		//for (unsigned int j = 0; j < world->mPoolControlledRectColliderComponent.mNext; j++)
+		//{
+		//	if (i != j)
+		//	{
+		//		Entity e2 = world->mPoolControlledRectColliderComponent.mDirectArray[j];
+
+		//		if (ColliderSystem::detectCollision(world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos,
+		//			world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim,
+		//			world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos,
+		//			world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e2]].dim))
+		//		{
+		//			Vector2f penetration = ColliderSystem::penetration(world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos,
+		//				world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim,
+		//				world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos,
+		//				world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e2]].dim);
+
+		//			Vector2i signs;
+		//			if (world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.x > world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos.x)
+		//				signs.x = -1;
+		//			else
+		//				signs.x = 1;
+
+		//			if (world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.y > world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos.y)
+		//				signs.y = -1;
+		//			else
+		//				signs.y = 1;
+
+		//			if (penetration.x >= penetration.y)
+		//			{
+		//				world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.x += signs.x * penetration.x;
+		//			}
+		//			else
+		//			{
+		//				world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.y += signs.y * penetration.y;
+		//			}
+
+		//			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v = { 0.0f, 0.0f };
+		//		}
+		//	}
+		//}
+
+		TransformBattleComponent* transform= getCmpEntity(&world->mPoolTransformBattleComponent, e);
+		RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+
+		std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform->pos, rect->dim);
+
+		unsigned int index;
+		for (unsigned int h = 0; h <= indexes[2]; h++)
 		{
-			if (i != j)
+			index = indexes[0] + h * world->currentLevel.battleCamp.gridSP.sizeCamp.x;
+
+			for (unsigned int w = 0; w <= indexes[1]; w++, index++)
 			{
-				Entity e2 = world->mPoolControlledRectColliderComponent.mDirectArray[j];
+				std::set<Entity>::iterator iter;
 
-				if (ColliderSystem::detectCollision(world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos,
-					world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim,
-					world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos,
-					world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e2]].dim))
-				{
-					Vector2f penetration = ColliderSystem::penetration(world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos,
-						world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e]].dim,
-						world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos,
-						world->mPoolRectColliderComponent.mPackedArray[world->mPoolRectColliderComponent.mReverseArray[e2]].dim);
-
-					Vector2i signs;
-					if (world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.x > world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos.x)
-						signs.x = -1;
-					else
-						signs.x = 1;
-
-					if (world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.y > world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e2]].pos.y)
-						signs.y = -1;
-					else
-						signs.y = 1;
-
-					if (penetration.x >= penetration.y)
+				if(index < world->currentLevel.battleCamp.gridSP.rawGrid.size())
+					for (iter = world->currentLevel.battleCamp.gridSP.rawGrid[index].begin(); iter != world->currentLevel.battleCamp.gridSP.rawGrid[index].end(); iter++)
 					{
-						world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.x += signs.x * penetration.x;
-					}
-					else
-					{
-						world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos.y += signs.y * penetration.y;
-					}
+						if (*iter != e)
+						{
+							if (isThereTypeCmp<ControlledRectCollider>(*iter))
+							{
+								TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, *iter);
+								RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, *iter);
 
-					world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v = { 0.0f, 0.0f };
-				}
+								if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+								{
+									Vector2f penetration = ColliderSystem::penetration(transform->pos, rect->dim, transform2->pos, rect2->dim);
+
+									Vector2i signs;
+									if (transform->pos.x > transform2->pos.x)
+										signs.x = -1;
+									else
+										signs.x = 1;
+
+									if (transform->pos.y > transform2->pos.y)
+										signs.y = -1;
+									else
+										signs.y = 1;
+
+									if (penetration.x >= penetration.y)
+									{
+										transform->pos.x += signs.x * penetration.x;
+									}
+									else
+									{
+										transform->pos.y += signs.y * penetration.y;
+									}
+
+									world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v = { 0.0f, 0.0f };
+									getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
+								}
+							}
+						}
+					}
 			}
 		}
+
+		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
+		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------

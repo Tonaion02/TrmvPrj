@@ -6,6 +6,11 @@
 
 #include "Data/Level/GraphicTileLayer.h"
 
+//Including some Physics Data structures
+#include "utils/Physic/Line.h"
+#include "utils/Physic/DataGridSP.h"
+//Including some Physics Data structures
+
 
 
 
@@ -26,4 +31,7 @@ struct BattleCamp
 	TileSet tileSet;
 	SDL_Texture* texture;
 	int maxZ;
+
+	std::array<Line, 4> boundCamp;
+	GridSP gridSP;
 };

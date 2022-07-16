@@ -19,7 +19,7 @@ enum statusScene
 class BaseScene
 {
 public:
-	BaseScene(const std::string& name);
+	BaseScene(unsigned int typeScene);
 
 	virtual void loadScene() {}
 	virtual void unLoadScene() {}
@@ -30,18 +30,13 @@ public:
 	virtual void processInputScene() {}
 	virtual void saveScene() {}
 
-	void unRegisterEntity(Entity e);
-
 	void setStatus(statusScene status);
 
 	inline class Game* getGame() { return game; }
 	inline struct World* getWorld() { return world; }
-	inline GroupEntity* getGroup() { return &group; }
 
 protected:
 	class Game* game;
 	struct World* world;
 	statusScene status;
-
-	GroupEntity group;
 };

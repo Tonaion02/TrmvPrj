@@ -22,8 +22,8 @@ public:
 	Entity createEntity();
 	void deleteEntity(Entity entityToDelete);
 	bool isThereTypeCmp(Entity e, unsigned int typeCmp);
-	void registerSignature(Entity e, unsigned int typeCmp);
-	void unRegisterSignature(Entity e, unsigned int typeCmp);
+	void registerTypeSignature(Entity e, unsigned int typeCmp);
+	void unRegisterTypeSignature(Entity e, unsigned int typeCmp);
 
 protected:
 	EntityManager()
@@ -36,8 +36,6 @@ protected:
 	std::vector<Entity> mDeadEntities;
 
 	std::array<Signature, MAX_ENTITIES> typeSignatures;
-
-	std::array<Signature, MAX_ENTITIES> sceneSignatures;
 
 	unsigned int mNextId;
 };

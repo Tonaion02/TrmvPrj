@@ -4,9 +4,7 @@
 
 #include "ECS/ComponentPool.h"
 
-#include "ECS/DataManager.h"
-
-#include "ECS/SceneManager.h"
+#include "ECS/DataManager.h" 
 
 
 
@@ -42,12 +40,6 @@ void EntityManager::deleteEntity(Entity entityToDelete)
 		if(typeSignatures[entityToDelete][i])
 			(*DataManager::get().getPools())[i]->unRegisterEntity(entityToDelete);
 
-	//for (unsigned int i = 0; i < MAX_SCENES; i++)
-	//{
-	//	if(sceneSignatures[entityToDelete][i])
-
-	//}
-
 	typeSignatures[entityToDelete].reset();
 }
 
@@ -60,14 +52,14 @@ bool EntityManager::isThereTypeCmp(Entity e, unsigned int typeCmp)
 
 
 
-void EntityManager::registerSignature(Entity e, unsigned int typeCmp)
+void EntityManager::registerTypeSignature(Entity e, unsigned int typeCmp)
 {
 	typeSignatures[e][typeCmp] = 1;
 }
 
 
 
-void EntityManager::unRegisterSignature(Entity e, unsigned int typeCmp)
+void EntityManager::unRegisterTypeSignature(Entity e, unsigned int typeCmp)
 {
 	typeSignatures[e][typeCmp] = 0;
 }

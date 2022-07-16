@@ -10,7 +10,8 @@ class LifeSystem
 {
 public:
 	static void init();
-	static void onCollision();
+	static void applyDamage();
+	static void applyDamageToEntity(Entity e, float damage);
 	static void checkIfIsDead();
 	static void cleanDeadEntity();
 	static void cleanInfo();

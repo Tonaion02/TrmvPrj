@@ -1,6 +1,6 @@
 #include "Scenes/ExploringScene.h"
 
-#include "utils/FromTypeToText.h"
+#include "ECS/ECS.h"
 
 #include "World.h"
 
@@ -21,7 +21,7 @@
 //Class ExploringScene
 //-----------------------------------------------------------------------------------------------------------------------------------------
 ExploringScene::ExploringScene()
-	:BaseScene(std::string(GET_STRING_FROM_TOKEN(ExploringScene)))
+	:BaseScene(idTypeScenes<ExploringScene>())
 {
 
 }

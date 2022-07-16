@@ -1,7 +1,5 @@
 #include "Scenes/BattleScene.h"
 
-#include "utils/FromTypeToText.h"
-
 #include "ECS/ECS.h"
 
 #include "Game.h"
@@ -12,6 +10,7 @@
 #include "Systems/Battle/BattleRenderSystem.h"
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/BattleLifeSystem.h"
+#include "Systems/Battle/ProjectileSystem.h"
 
 #include "Systems/CameraSystem.h"
 
@@ -23,7 +22,7 @@
 //Class BattleScene
 //-----------------------------------------------------------------------------------------------------------------------------------------
 BattleScene::BattleScene()
-	:BaseScene(std::string(GET_STRING_FROM_TOKEN(BattleScene)))
+	:BaseScene(idTypeScenes<BattleScene>())
 {
 
 }
@@ -52,8 +51,12 @@ void BattleScene::updateScene()
 	//Trying to detect Collisions
 
 	//Detect collisions and apply damage
-	BattleSystem::updateBattle();
+	LifeSystem::applyDamage();
 	//Detect collisions and apply damage
+
+	//Check if the projectile is dead
+	ProjectileSystem::checkIfIsDeadProjectile();
+	//Check if the projectile is dead
 
 	//Update Camera
 	CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity)->pos);
@@ -80,7 +83,7 @@ void BattleScene::generateOutputScene()
 	//Here code to draw battle graphic element
 	BattleRenderSystem::draw();
 
-	BattleRenderSystem::drawColliders();
+	//BattleRenderSystem::drawColliders();
 }
 
 
@@ -135,8 +138,6 @@ void BattleScene::processInputScene()
 
 		registerEntity(&world->mPoolProjectileComponent, projectile);
 		getCmpEntity(&world->mPoolProjectileComponent, projectile)->damage = 100.0f;
-
-		SDL_Log("Projectile: %d\n", (int)isThereTypeCmp<ProjectileComponent>(projectile));
 		//Assign the categories
 
 		//Apply force to move the projectile
@@ -167,6 +168,10 @@ void BattleScene::processInputScene()
 		//Start the timer of delayFiring
 		start(&world->delayFiring);
 		//Start the timer of delayFiring
+	}
+	if (keyStates[SDL_SCANCODE_P])
+	{
+		SDL_Log("Count Projectile: %d", world->mPoolProjectileComponent.mNext);
 	}
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
