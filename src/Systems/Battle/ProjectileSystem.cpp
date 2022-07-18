@@ -10,8 +10,10 @@
 #include "utils/Physic/GridSP.h"
 //Including some Phyiscs elements
 
+//Including context
 #include "World.h"
 #include "Game.h"
+//Including context
 
 
 
@@ -43,7 +45,7 @@ bool checkIfIsDeadProjectileForCategory(Entity e)
 		i = indexes[0] + h * world->currentLevel.battleCamp.gridSP.sizeCamp.x;
 		for (unsigned int w = 0; w <= indexes[1]; w++,i++)
 		{
-			std::set<Entity>::iterator iter;
+			std::vector<Entity>::iterator iter;
 
 			if (i < world->currentLevel.battleCamp.gridSP.rawGrid.size())
 			{
@@ -68,24 +70,6 @@ bool checkIfIsDeadProjectileForCategory(Entity e)
 			}
 		}
 	}
-
-
-	//for (unsigned int j = 0; j < world->mPoolControlledRectColliderComponent.mNext; j++)
-	//{
-	//	Entity vs = world->mPoolControlledRectColliderComponent.mDirectArray[j];
-
-
-
-	//	TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, vs);
-	//	RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, vs);
-
-	//	if (isThereTypeCmp<Category>(vs) && ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
-	//	{
-	//		world->entityToDelete.insert(e);
-	//		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
-	//		return true;
-	//	}
-	//}
 
 	return false;
 }
@@ -118,36 +102,6 @@ void ProjectileSystem::checkIfIsDeadProjectile()
 		}
 	}
 }
-
-
-
-//void ProjectileSystem::checkIfIsDeadProjectile()
-//{
-//	World* world = Game::get()->getWorld();
-//
-//	for (unsigned int i = 0; i < world->mPoolProjectileComponent.mNext; i++)
-//	{
-//		Entity e = world->mPoolProjectileComponent.mDirectArray[i];
-//
-//		if (isThereTypeCmp<PlayerBattleComponent>(e))
-//			if (checkIfIsDeadProjectileForCategory<EnemyBattleComponent>(e))
-//				continue;
-//		else if (isThereTypeCmp<EnemyBattleComponent>(e))
-//			if (checkIfIsDeadProjectileForCategory<PlayerBattleComponent>(e))
-//				continue;
-//		
-//		for (unsigned int j = 0; j < world->currentLevel.battleCamp.boundCamp.size(); j++)
-//		{
-//			if (ColliderSystem::detectCollision(world->currentLevel.battleCamp.boundCamp[j],
-//				getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos,
-//				getCmpEntity(&world->mPoolRectColliderComponent, e)->dim))
-//			{
-//				world->entityToDelete.insert(e);
-//				continue;
-//			}
-//		}
-//	}
-//}
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ProjectileSystem
 //-----------------------------------------------------------------------------------------------------------------------------------------

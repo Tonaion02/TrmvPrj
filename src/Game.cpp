@@ -381,7 +381,6 @@ void Game::loadData()
 	int n = 200;
 	bool first = true;
 	Entity firstEntity;
-	Entity iteratorEntity;
 	for (int i = 0; i < n; i++)
 	{
 		Entity e = EntityManager::get().createEntity();
@@ -401,6 +400,8 @@ void Game::loadData()
 
 			world->delayFiring.coolDown = 0.05f;
 			initTimer(&world->delayFiring);
+			world->delayHitBox.coolDown = 0.05f;
+			initTimer(&world->delayHitBox);
 		}
 		else
 		{

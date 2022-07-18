@@ -5,6 +5,8 @@
 #include "Components/Battle/PyshicBoxComponent.h"
 //Including some components
 
+#include "utils/Physic/GridSP.h"
+
 //Including some systems
 #include "Systems/Battle/ColliderSystem.h"
 //Including some systems
@@ -44,6 +46,95 @@ void LifeSystem::applyDamageToEntity(Entity e, float damage)
 
 
 template<typename Category, typename Category2>
+void applyDamageForCategories2(ComponentPool<Category>* pool)
+{
+	World* world = Game::get()->getWorld();
+
+	for (unsigned int i = 0; i < pool->mNext; i++)
+	{
+		Entity e = pool->mDirectArray[i];
+
+		if (isThereTypeCmp<ProjectileComponent>(e))
+		{
+			ProjectileComponent* proj = getCmpEntity(&world->mPoolProjectileComponent, e);
+			RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+			TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, e);
+
+			std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform->pos, rect->dim);
+
+			unsigned int index;
+			for (unsigned int h = 0; h <= indexes[2]; h++)
+			{
+				index = indexes[0] + h * world->currentLevel.battleCamp.gridSP.sizeCamp.x;
+				for (unsigned int w = 0; w <= indexes[1]; w++, index++)
+				{
+					std::vector<Entity>::iterator iter;
+
+					if (index < world->currentLevel.battleCamp.gridSP.rawGrid.size())
+					{
+						for (iter = world->currentLevel.battleCamp.gridSP.rawGrid[index].begin(); iter != world->currentLevel.battleCamp.gridSP.rawGrid[index].end(); iter++)
+						{
+							if (*iter != e)
+							{
+								if (isThereTypeCmp<Category2>(*iter) && isThereTypeCmp<LifeBarComponent>(*iter))
+								{
+									TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, *iter);
+									RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, *iter);
+
+									if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+									{
+										LifeSystem::applyDamageToEntity(*iter, proj->damage);
+									}
+								}
+
+							}
+						}
+					}
+				}
+			}
+
+		}
+		else if (isThereTypeCmp<HitBoxComponent>(e))
+		{
+			HitBoxComponent* hitBox = getCmpEntity(&world->mPoolHitBoxComponent, e);
+			RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+			TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, e);
+
+			std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform->pos, rect->dim);
+
+			unsigned int index;
+			for (unsigned int h = 0; h <= indexes[2]; h++)
+			{
+				index = indexes[0] + h * world->currentLevel.battleCamp.gridSP.sizeCamp.x;
+				for (unsigned int w = 0; w <= indexes[1]; w++, index++)
+				{
+					std::vector<Entity>::iterator iter;
+
+					if (index < world->currentLevel.battleCamp.gridSP.rawGrid.size())
+					{
+						for (iter = world->currentLevel.battleCamp.gridSP.rawGrid[index].begin(); iter != world->currentLevel.battleCamp.gridSP.rawGrid[index].end(); iter++)
+						{
+							if (*iter != e)
+							{
+								if (isThereTypeCmp<Category2>(*iter) && isThereTypeCmp<LifeBarComponent>(*iter))
+								{
+									TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, *iter);
+									RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, *iter);
+
+									if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+										LifeSystem::applyDamageToEntity(*iter, hitBox->damage);
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+template<typename Category, typename Category2>
 void applyDamageForCategories(ComponentPool<Category>* pool, ComponentPool<Category2>* pool2)
 {
 	World* world = Game::get()->getWorld();
@@ -73,6 +164,15 @@ void applyDamageForCategories(ComponentPool<Category>* pool, ComponentPool<Categ
 					}
 				}
 			}
+
+		}
+		else if (isThereTypeCmp<HitBoxComponent>(e))
+		{
+			HitBoxComponent* hitBox = getCmpEntity(&world->mPoolHitBoxComponent, e);
+			RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+			TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, e);
+
+
 		}
 	}
 }
@@ -83,8 +183,10 @@ void LifeSystem::applyDamage()
 {
 	World* world = Game::get()->getWorld();
 
-	applyDamageForCategories(&world->mPoolPlayerBattleComponent, &world->mPoolEnemyBattleComponent);
-	applyDamageForCategories(&world->mPoolEnemyBattleComponent, &world->mPoolPlayerBattleComponent);
+	//applyDamageForCategories(&world->mPoolPlayerBattleComponent, &world->mPoolEnemyBattleComponent);
+	//applyDamageForCategories(&world->mPoolEnemyBattleComponent, &world->mPoolPlayerBattleComponent);
+	applyDamageForCategories2<PlayerBattleComponent, EnemyBattleComponent>(&world->mPoolPlayerBattleComponent);
+	applyDamageForCategories2<EnemyBattleComponent, PlayerBattleComponent>(&world->mPoolEnemyBattleComponent);
 }
 
 

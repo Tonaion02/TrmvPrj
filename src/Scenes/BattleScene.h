@@ -15,8 +15,6 @@ public:
 	void generateOutputScene() override;
 	void processInputScene() override;
 
-protected:
-
 public:
 
 };

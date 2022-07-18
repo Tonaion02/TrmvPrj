@@ -49,8 +49,9 @@ void registerEntity(Entity e, GridSP& gridSP)
 		{
 			index = limits[0] + w + h * gridSP.sizeCamp.x;
 
-			if(index < gridSP.rawGrid.size())
-				gridSP.rawGrid[index].insert(e);
+			if (index < gridSP.rawGrid.size())
+				if (std::find(gridSP.rawGrid[index].begin(), gridSP.rawGrid[index].end(), e) == gridSP.rawGrid[index].end())
+					gridSP.rawGrid[index].push_back(e);
 		}
 	}
 }
@@ -77,7 +78,57 @@ void unRegisterEntity(Entity e, GridSP& gridSP)
 			index = limits[0] + w + h * gridSP.sizeCamp.x;
 			
 			if (index < gridSP.rawGrid.size())
-				gridSP.rawGrid[index].erase(e);
+			{
+				std::vector<Entity>::iterator iter;
+				iter = std::find(gridSP.rawGrid[index].begin(), gridSP.rawGrid[index].end(), e);
+				if (iter != gridSP.rawGrid[index].end())
+					gridSP.rawGrid[index].erase(iter);
+			}
+		}
+	}
+}
+
+
+
+void updateEntity(Entity e, GridSP& gridSP)
+{
+	World* world = Game::get()->getWorld();
+
+	TransformBattleComponent* transformCMP = getCmpEntity(&world->mPoolTransformBattleComponent, e);
+	RectColliderComponent* rectColliderCMP = getCmpEntity(&world->mPoolRectColliderComponent, e);
+
+	std::array<unsigned int, 3> limits = getIndexes(gridSP, transformCMP->pos, rectColliderCMP->dim);
+
+	unsigned int index;
+	unsigned int h = 0;
+	unsigned int w;
+
+	for (h = 0; h <= limits[2]; h++)
+	{
+		for (w = 0; w <= limits[1]; w++)
+		{
+			index = limits[0] + w + h * gridSP.sizeCamp.x;
+
+			if (index < gridSP.rawGrid.size())
+			{
+				std::vector<Entity>::iterator iter;
+				iter = std::find(gridSP.rawGrid[index].begin(), gridSP.rawGrid[index].end(), e);
+				if (iter != gridSP.rawGrid[index].end())
+					gridSP.rawGrid[index].erase(iter);
+			}
+		}
+	}
+
+	limits = getIndexes(gridSP, transformCMP->pos, rectColliderCMP->dim);
+
+	for (h = 0; h <= limits[2]; h++)
+	{
+		for (w = 0; w <= limits[1]; w++)
+		{
+			index = limits[0] + w + h * gridSP.sizeCamp.x;
+
+			if (index < gridSP.rawGrid.size())
+				gridSP.rawGrid[index].push_back(e);
 		}
 	}
 }

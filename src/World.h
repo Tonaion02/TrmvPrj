@@ -33,6 +33,8 @@
 #include "Components/Battle/StateBattleComponent.h"
 #include "Components/Battle/ProjectileComponent.h"
 #include "Components/Battle/DamageComponent.h"
+#include "Components/Battle/HitBoxComponent.h"
+#include "Components/Battle/FollowingComponent.h"
 //Including ComponentPools
 
 //Including some Data
@@ -74,6 +76,9 @@ struct World
 
 	ComponentPool<ProjectileComponent> mPoolProjectileComponent;
 
+	ComponentPool<FollowingComponent> mPoolFollowingComponent;
+	ComponentPool<HitBoxComponent> mPoolHitBoxComponent;
+
 	ComponentPool<StateBattleComponent> mPoolStateBattleComponent;
 	//POOL OF BATTLE-COMPONENTS
 
@@ -104,6 +109,7 @@ struct World
 	Player player;
 	Entity BattlePlayerEntity;
 	Timer delayFiring;
+	Timer delayHitBox;
 
 	//Levels of game
 	Level currentLevel;

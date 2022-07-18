@@ -54,7 +54,6 @@ struct ComponentPool : public BaseComponentPool
 
 		this->mReverseArray[e] = (unsigned int)this->mDirectArray.size();
 
-		//EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
 		EntityManager::get().unRegisterTypeSignature(e, TypeManagerComponent::get().idType<TypeCmp>());
 	}
 };

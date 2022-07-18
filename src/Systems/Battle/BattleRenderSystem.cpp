@@ -29,8 +29,6 @@ void BattleRenderSystem::draw()
 	World* world = Game::get()->getWorld();
 
 	SDL_Rect destRect;
-	//destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
-	//destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
 	///It's better to add a separate texture for Actor
 	destRect.w = static_cast<int>(world->currentLevel.battleCamp.tileSet.tileDim.x * world->cameraData.baseScale);
 	destRect.h = static_cast<int>(world->currentLevel.battleCamp.tileSet.tileDim.y * world->cameraData.baseScale);

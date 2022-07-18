@@ -2,17 +2,24 @@
 
 #include "ECS/ECS.h"
 
-#include "Game.h"
-#include "World.h"
+#include "utils/Physic/GridSP.h"
 
+//Including some Systems
 #include "Systems/Battle/ColliderSystem.h"
-#include "Systems/Battle/BattleSystem.h"
 #include "Systems/Battle/BattleRenderSystem.h"
 #include "Systems/Battle/BattleMoveSystem.h"
 #include "Systems/Battle/BattleLifeSystem.h"
 #include "Systems/Battle/ProjectileSystem.h"
 
 #include "Systems/CameraSystem.h"
+
+#include "Systems/Battle/FollowingSystem.h"
+//Including some Systems
+
+//Including some Context
+#include "Game.h"
+#include "World.h"
+//Including some Context
 
 
 
@@ -42,6 +49,10 @@ void BattleScene::updateScene()
 	BattleMoveSystem::freeMove();
 	//Update Move System
 
+	//Update Following System
+	FollowingSystem::update();
+	//Update Following System
+
 	//Apply friction
 	BattleMoveSystem::applyFriction(world->BattlePlayerEntity, 8.0f);
 	//Apply friction
@@ -64,6 +75,7 @@ void BattleScene::updateScene()
 
 	//Update timer
 	world->delayFiring.timePassed += getGame()->getDeltaTime();
+	world->delayHitBox.timePassed += getGame()->getDeltaTime();
 	//Update timer
 
 	//Check if some Entities is died
@@ -83,7 +95,7 @@ void BattleScene::generateOutputScene()
 	//Here code to draw battle graphic element
 	BattleRenderSystem::draw();
 
-	//BattleRenderSystem::drawColliders();
+	BattleRenderSystem::drawColliders();
 }
 
 
@@ -91,6 +103,7 @@ void BattleScene::generateOutputScene()
 void BattleScene::processInputScene()
 {
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
+
 
 
 	if (keyStates[SDL_SCANCODE_W])
@@ -168,6 +181,31 @@ void BattleScene::processInputScene()
 		//Start the timer of delayFiring
 		start(&world->delayFiring);
 		//Start the timer of delayFiring
+	}
+	if (keyStates[SDL_SCANCODE_N] && isEnd(world->delayHitBox))
+	{
+		Entity entity = createEntityId();
+
+		registerEntity(&world->mPoolHitBoxComponent, entity);
+		getCmpEntity(&world->mPoolHitBoxComponent, entity)->damage = 100.0f;
+
+		registerEntity(&world->mPoolFollowingComponent, entity);
+		getCmpEntity(&world->mPoolFollowingComponent, entity)->parent = world->BattlePlayerEntity;
+		getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(0, 16);
+
+		registerEntity(&world->mPoolTransformBattleComponent, entity);
+		getCmpEntity(&world->mPoolTransformBattleComponent, entity)->pos = getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos 
+																		 + getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
+
+		registerEntity(&world->mPoolRectColliderComponent, entity);
+		getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(32, 120);
+
+		unRegisterEntity(entity, world->currentLevel.battleCamp.gridSP);
+		registerEntity(entity, world->currentLevel.battleCamp.gridSP);
+
+		registerEntity(&world->mPoolPlayerBattleComponent, entity);
+
+		//registerEntity(&world->mPoolDrawBattleComponent, entity);
 	}
 	if (keyStates[SDL_SCANCODE_P])
 	{

@@ -193,10 +193,8 @@ Level levelWrapper(const std::string& path)
 	
 	
 	//Initialize the grid for spatial partition
-	
-	//level.battleCamp.gridSP = GridSP(Vector2i(MAX_W_CAMP * level.tileSet.tileDim.x, MAX_H_CAMP * level.tileSet.tileDim.y), Vector2i(2 * level.tileSet.tileDim.x, 2 * level.tileSet.tileDim.y));
 	level.battleCamp.gridSP = GridSP(Vector2i(level.battleCamp.dim.x * level.tileSet.tileDim.x, level.battleCamp.dim.y * level.tileSet.tileDim.y), 
-									 Vector2i(2 * level.tileSet.tileDim.x, 2 * level.tileSet.tileDim.y));
+									 Vector2i(3 * level.tileSet.tileDim.x, 3 * level.tileSet.tileDim.y));
 	//Initialize the grid for spatial partition
 
 	//Initialize the BattleCamp of the Level
