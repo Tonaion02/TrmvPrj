@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "utils/Math/Vector2i.h"
+
 
 
 
@@ -9,5 +11,6 @@
 struct DrawBattleComponent
 {
 	int id;
-	float personalScale = 1.0f;
+	Vector2i dim;
+	TileSet* tileSet = nullptr;
 };

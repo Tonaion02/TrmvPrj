@@ -48,8 +48,8 @@ void BattleMoveSystem::applyFriction(Entity e, float friction = 1.0f)
 {
 	World* world = Game::get()->getWorld();
 
-	world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[e]].v.x = 0.0f;
-	world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[e]].v.y = 0.0f;
+	getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v.x = 0.0f;
+	getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v.y = 0.0f;
 }
 
 
@@ -62,10 +62,10 @@ void BattleMoveSystem::freeMove()
 	{
 		Entity e = world->mPoolFreeRectColliderComponent.mDirectArray[i];
 
-		world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos +=
-			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v * Game::get()->getDeltaTime();
-
 		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
+
+		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos += getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v * Game::get()->getDeltaTime();
+
 		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}
 }
@@ -80,8 +80,9 @@ void BattleMoveSystem::controlledMoves()
 	{
 		Entity e = world->mPoolControlledRectColliderComponent.mDirectArray[i];
 
-		world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos +=
-			world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v * Game::get()->getDeltaTime();
+		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
+
+		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos += getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v * Game::get()->getDeltaTime();
 
 		TransformBattleComponent* transform= getCmpEntity(&world->mPoolTransformBattleComponent, e);
 		RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
@@ -131,7 +132,6 @@ void BattleMoveSystem::controlledMoves()
 										transform->pos.y += signs.y * penetration.y;
 									}
 
-									world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].v = { 0.0f, 0.0f };
 									getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
 								}
 							}
@@ -140,7 +140,26 @@ void BattleMoveSystem::controlledMoves()
 			}
 		}
 
+		registerEntity(e, world->currentLevel.battleCamp.gridSP);
+	}
+}
+
+
+
+void BattleMoveSystem::followingMoves()
+{
+	World* world = Game::get()->getWorld();
+
+	for (unsigned int i = 0; i < world->mPoolFollowingComponent.mNext; i++)
+	{
+		Entity e = world->mPoolFollowingComponent.mDirectArray[i];
+
 		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
+
+		Entity parent = world->mPoolFollowingComponent.mPackedArray[i].parent;
+
+		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = getCmpEntity(&world->mPoolTransformBattleComponent, parent)->pos + world->mPoolFollowingComponent.mPackedArray[i].tranformPos;
+
 		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}
 }

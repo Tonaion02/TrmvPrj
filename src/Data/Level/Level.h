@@ -19,7 +19,7 @@ struct Level
 	GraphicTileLayer<MAX_W_MAP * MAX_H_MAP * MAX_Z_MAP> graphicTileLayer;
 	TileMap tileMap;
 	struct SDL_Texture* texture;
-	TileSet tileSet;
+	TileSet* tileSet;
 	Vector2i dim;
 	int maxZ;
 

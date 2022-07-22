@@ -30,7 +30,7 @@ void CameraSystem::init()
 	world->cameraData.baseScale = 1.0f;
 
 	Vector2i screenDim = WindowHandler::get().getWindowDimension();
-	Vector2i outputDim = world->currentLevel.tileSet.tileDim * world->cameraData.nTileToRender;
+	Vector2i outputDim = world->currentLevel.tileSet->tileDim * world->cameraData.nTileToRender;
 	//Init some base info about Camera
 
 	//Set baseScale based on screen size
@@ -40,7 +40,7 @@ void CameraSystem::init()
 	//Calculate clamp value for scale
 	int maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
 	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
-	int minVisibleSpaceDim = static_cast<int>( (5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale) );
+	int minVisibleSpaceDim = static_cast<int>( (5 * world->currentLevel.tileSet->tileDim.x * world->cameraData.baseScale) );
 	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
 	world->cameraData.zoom = world->cameraData.maxZoom;
 	//Calculate clamp value for scale
@@ -63,7 +63,7 @@ void CameraSystem::init()
 	world->cameraData.baseScale = 1.0f;
 
 	screenDim = WindowHandler::get().getWindowDimension();
-	outputDim = world->currentLevel.tileSet.tileDim * world->cameraData.nTileToRender;
+	outputDim = world->currentLevel.tileSet->tileDim * world->cameraData.nTileToRender;
 	//Init some base info about Camera
 
 	//Set baseScale based on screen size
@@ -73,7 +73,7 @@ void CameraSystem::init()
 	//Calculate clamp value for scale
 	maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
 	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
-	minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale));
+	minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet->tileDim.x * world->cameraData.baseScale));
 	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
 	world->cameraData.zoom = world->cameraData.maxZoom;
 	//Calculate clamp value for scale
@@ -116,7 +116,7 @@ void CameraSystem::updateCamera(const Vector2f& newPos)
 
 	//Calculate startToRender and endToRender tile
 	//Dividere per lunghezza tile la posizione se si è in battaglia
-	Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet.tileDim * world->cameraData.baseScale;
+	Vector2i scaledTileDim = (Vector2f)world->currentLevel.tileSet->tileDim * world->cameraData.baseScale;
 	Vector2f realScaledImageDim = world->currentLevel.dim * scaledTileDim;
 	Vector2i limit = world->currentLevel.dim;
 
@@ -202,7 +202,7 @@ void CameraSystem::onUpdateWindowSize()
 	//Take base info
 	World* world = Game::get()->getWorld();
 	Vector2i screenDim = WindowHandler::get().getWindowDimension();
-	Vector2i outputDim = world->currentLevel.tileSet.tileDim * world->cameraData.nTileToRender;
+	Vector2i outputDim = world->currentLevel.tileSet->tileDim * world->cameraData.nTileToRender;
 	//Take base info
 
 	//Set baseScale
@@ -211,7 +211,7 @@ void CameraSystem::onUpdateWindowSize()
 
 	//Calculate clamp value of Camera
 	int maxVisibleSpaceDim = std::max(screenDim.x, screenDim.y);
-	int minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale));
+	int minVisibleSpaceDim = static_cast<int>((5 * world->currentLevel.tileSet->tileDim.x * world->cameraData.baseScale));
 	world->cameraData.minZoom = (minVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
 	world->cameraData.maxZoom = (maxVisibleSpaceDim / 2.0f) * tanf(ToRadians(30.0f));
 	world->cameraData.zoom = world->cameraData.maxZoom;
@@ -256,7 +256,7 @@ void CameraSystem::onUpdateZoom()
 	//Take base info
 	World* world = Game::get()->getWorld();
 	Vector2i screenDim = WindowHandler::get().getWindowDimension();
-	Vector2i outputDim = world->currentLevel.tileSet.tileDim * world->cameraData.nTileToRender;
+	Vector2i outputDim = world->currentLevel.tileSet->tileDim * world->cameraData.nTileToRender;
 	//Take base info
 
 	//Set baseScale

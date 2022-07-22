@@ -4,6 +4,10 @@
 
 #include "utils/Physic/GridSP.h"
 
+//Including some Enviroment
+#include "Enviroment/WindowHandler.h"
+//Including some Enviroment
+
 //Including some Systems
 #include "Systems/Battle/ColliderSystem.h"
 #include "Systems/Battle/BattleRenderSystem.h"
@@ -11,9 +15,9 @@
 #include "Systems/Battle/BattleLifeSystem.h"
 #include "Systems/Battle/ProjectileSystem.h"
 
-#include "Systems/CameraSystem.h"
+#include "Systems/Battle/HitBoxSystem.h"
 
-#include "Systems/Battle/FollowingSystem.h"
+#include "Systems/CameraSystem.h"
 //Including some Systems
 
 //Including some Context
@@ -47,11 +51,8 @@ void BattleScene::updateScene()
 	//Update Move System
 	BattleMoveSystem::controlledMoves();
 	BattleMoveSystem::freeMove();
+	BattleMoveSystem::followingMoves();
 	//Update Move System
-
-	//Update Following System
-	FollowingSystem::update();
-	//Update Following System
 
 	//Apply friction
 	BattleMoveSystem::applyFriction(world->BattlePlayerEntity, 8.0f);
@@ -68,6 +69,10 @@ void BattleScene::updateScene()
 	//Check if the projectile is dead
 	ProjectileSystem::checkIfIsDeadProjectile();
 	//Check if the projectile is dead
+
+	//Check if is dead the hitBoxes
+	HitBoxSystem::checkIfIsDead();
+	//Check if is dead the hitBoxes
 
 	//Update Camera
 	CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity)->pos);
@@ -103,29 +108,76 @@ void BattleScene::generateOutputScene()
 void BattleScene::processInputScene()
 {
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
+	std::vector<Direction> directions;
+
+	SDL_Event event;
+
+	//Handle principle events
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			Game::get()->setRunning(false);
+			break;
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
+				WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
+				CameraSystem::onUpdateWindowSize();
+				break;
+			}
+			break;
+		case SDL_KEYDOWN:
+			switch (event.key.keysym.scancode)
+			{
+			case SDL_SCANCODE_W:
+				directions.push_back(Direction::Up);
+				break;
+			case SDL_SCANCODE_S:
+				directions.push_back(Direction::Down);
+				break;
+			case SDL_SCANCODE_D:
+				directions.push_back(Direction::Right);
+				break;
+			case SDL_SCANCODE_A:
+				directions.push_back(Direction::Left);
+				break;
+
+			default:
+				break;
+			}
+			break;
+		}
+	}
+
+	if (!directions.empty())
+		getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection = directions.back();
 
 
+	//Handle principle events
 
 	if (keyStates[SDL_SCANCODE_W])
 	{
 		BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 0.0f, -50.0f });
-		world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Up;
 	}
 	if (keyStates[SDL_SCANCODE_S])
 	{
 		BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 0.0f, 50.0f });
-		world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Down;
 	}
 	if (keyStates[SDL_SCANCODE_D])
 	{
 		BattleMoveSystem::applyForce(world->BattlePlayerEntity, { 50.0f, 0.0f });
-		world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Right;
 	}
 	if (keyStates[SDL_SCANCODE_A])
 	{
 		BattleMoveSystem::applyForce(world->BattlePlayerEntity, { -50.0f, 0.0f });
-		world->mPoolPhysicBoxComponent.mPackedArray[world->mPoolPhysicBoxComponent.mReverseArray[world->BattlePlayerEntity]].lastDirection = Direction::Left;
 	}
+
+
+
 	if (keyStates[SDL_SCANCODE_M] && isEnd(world->delayFiring))
 	{
 		Entity projectile = EntityManager::get().createEntity();
@@ -143,10 +195,12 @@ void BattleScene::processInputScene()
 
 		registerEntity(&world->mPoolDrawBattleComponent, projectile);
 		getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->id = 117;
-		getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->personalScale = 1.0f;
+		getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->tileSet = world->mTileSetHandler.getTileSet("data/player.png");
+		getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->dim = getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->tileSet->tileDim;
 
 		//Assign the categories
 		registerEntity(&world->mPoolFreeRectColliderComponent, projectile);
+
 		registerEntity(&world->mPoolPlayerBattleComponent, projectile);
 
 		registerEntity(&world->mPoolProjectileComponent, projectile);
@@ -159,18 +213,22 @@ void BattleScene::processInputScene()
 
 		case Up:
 			BattleMoveSystem::applyForce(projectile, { 0.0f, -100.0f });
+			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += -16.0f;
 			break;
 
 		case Down:
 			BattleMoveSystem::applyForce(projectile, { 0.0f, 100.0f });
+			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += 16.0f;
 			break;
 
 		case Right:
 			BattleMoveSystem::applyForce(projectile, { 100.0f, 0.0f });
+			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += 16.0f;
 			break;
 
 		case Left:
 			BattleMoveSystem::applyForce(projectile, { -100.0f, 0.0f });
+			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += -16.0f;
 			break;
 
 		default:
@@ -188,24 +246,62 @@ void BattleScene::processInputScene()
 
 		registerEntity(&world->mPoolHitBoxComponent, entity);
 		getCmpEntity(&world->mPoolHitBoxComponent, entity)->damage = 100.0f;
+		getCmpEntity(&world->mPoolHitBoxComponent, entity)->delayHitBox.coolDown = 0.05f;
+		getCmpEntity(&world->mPoolHitBoxComponent, entity)->delayHitBox.timePassed = 0.0f;
 
 		registerEntity(&world->mPoolFollowingComponent, entity);
 		getCmpEntity(&world->mPoolFollowingComponent, entity)->parent = world->BattlePlayerEntity;
-		getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(0, 16);
-
-		registerEntity(&world->mPoolTransformBattleComponent, entity);
-		getCmpEntity(&world->mPoolTransformBattleComponent, entity)->pos = getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos 
-																		 + getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
 
 		registerEntity(&world->mPoolRectColliderComponent, entity);
-		getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(32, 120);
 
-		unRegisterEntity(entity, world->currentLevel.battleCamp.gridSP);
+		registerEntity(&world->mPoolDrawBattleComponent, entity);
+		getCmpEntity(&world->mPoolDrawBattleComponent, entity)->tileSet = world->mTileSetHandler.getTileSet("data/brimstone.png");
+
+		Direction direction = getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection;
+		getCmpEntity(&world->mPoolHitBoxComponent, entity)->direction = direction;
+		switch (direction)
+		{
+		case Up:
+			getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(3, -120);
+			getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(8, 120);
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 0;
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(8, 120);
+			break;
+		
+		case Down:
+			getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(3, 16);
+			getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(8, 120);
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 1;
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(8, 120);
+			break;
+		
+		case Right:
+			getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(16, 3);
+			getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(120, 8);
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 2;
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(120, 8);
+			break;
+		
+		case Left:
+			getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(-120, 3);
+			getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(120, 8);
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 3;
+			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(120, 8);
+			break;
+
+		default:
+			break;
+		}
+
+		registerEntity(&world->mPoolTransformBattleComponent, entity);
+		getCmpEntity(&world->mPoolTransformBattleComponent, entity)->pos = getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos
+			+ getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
+
 		registerEntity(entity, world->currentLevel.battleCamp.gridSP);
 
 		registerEntity(&world->mPoolPlayerBattleComponent, entity);
 
-		//registerEntity(&world->mPoolDrawBattleComponent, entity);
+		start(&world->delayHitBox);
 	}
 	if (keyStates[SDL_SCANCODE_P])
 	{

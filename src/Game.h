@@ -27,6 +27,7 @@ protected:
 public:
 	//Secondary Methods
 	bool isRunning() { return mIsRunning; }
+	void setRunning(bool running) { mIsRunning = running; }
 	float getDeltaTime() { return mDeltaTime; }
 	bool isInBattle();
 	//Secondary Methods

@@ -7,5 +7,6 @@
 class HitBoxSystem
 {
 public:
-	static void update();
+	static void init();
+	static void checkIfIsDead();
 };

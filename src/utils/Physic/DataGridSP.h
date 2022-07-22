@@ -22,9 +22,6 @@ public:
 	GridSP(const Vector2i& dimCamp, const Vector2i& sizeCell)
 		:sizeCell(sizeCell)
 	{
-		//Vector2f sizeCampF = Vector2f(dimCamp.x / static_cast<float>(sizeCell.x), dimCamp.y / static_cast<float>(sizeCell.y));
-		//sizeCamp = Vector2i(static_cast<int>(roundf(sizeCampF.x)), static_cast<int>(roundf(sizeCampF.y)));
-
 		sizeCamp = Vector2i(static_cast<int>(roundf(dimCamp.x / static_cast<float>(sizeCell.x))),
 			static_cast<int>(roundf(dimCamp.y / static_cast<float>(sizeCell.y))));
 

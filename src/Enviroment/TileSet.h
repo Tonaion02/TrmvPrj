@@ -15,6 +15,7 @@ struct TileSet
 	std::vector<SDL_Rect> srcRects;
 	Vector2i grid;
 	Vector2i tileDim;
+	SDL_Texture* texture;
 };
 
 

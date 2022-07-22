@@ -1,22 +1,26 @@
 #include "BattleRenderSystem.h"
 
+//Including some context
+#include "Game.h"
+#include "World.h"
+//Including some context
+
 //Including basic ECS
 #include "ECS/ComponentPool.h"
+#include "ECS/ECS.h"
 //Including basic ECS
 
 //Including some Enviroment
 #include "Enviroment/WindowHandler.h"
 //Including some Enviroment
 
-//Including some context
-#include "Game.h"
-#include "World.h"
-//Including some context
 
 
 
 
-
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class BattleRenderSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------
 void BattleRenderSystem::init()
 {
 
@@ -58,7 +62,7 @@ void BattleRenderSystem::draw()
 
 			SDL_RenderCopy(
 				renderer,
-				world->currentLevel.battleCamp.texture,
+				world->currentLevel.battleCamp.tileSet.texture,
 				&world->currentLevel.battleCamp.tileSet.srcRects[id],
 				&destRect
 			);
@@ -72,17 +76,21 @@ void BattleRenderSystem::draw()
 	for (unsigned int i = 0; i < drawBattleCmp->mNext; i++)
 	{
 		Entity e = drawBattleCmp->mDirectArray[i];
+		TileSet* currentTileSet = getCmpIndex(&world->mPoolDrawBattleComponent, i)->tileSet;
 
-		destRect.x = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.x * world->cameraData.baseScale);
-		destRect.y = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.y * world->cameraData.baseScale);
+		destRect.w = static_cast<int>(getCmpIndex(&world->mPoolDrawBattleComponent, i)->dim.x * world->cameraData.baseScale);
+		destRect.h = static_cast<int>(getCmpIndex(&world->mPoolDrawBattleComponent, i)->dim.y * world->cameraData.baseScale);
+
+		destRect.x = static_cast<int>(getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos.x * world->cameraData.baseScale);
+		destRect.y = static_cast<int>(getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos.y * world->cameraData.baseScale);
 
 		destRect.x += static_cast<int>(world->cameraData.adj.x);
 		destRect.y += static_cast<int>(world->cameraData.adj.y);
 
 		SDL_RenderCopy(
 			renderer,
-			world->textureActor,
-			&world->tilesetActor->srcRects[drawBattleCmp->mPackedArray[i].id],
+			currentTileSet->texture,
+			&currentTileSet->srcRects[getCmpIndex(drawBattleCmp, i)->id],
 			&destRect
 		);
 	}
@@ -96,8 +104,6 @@ void BattleRenderSystem::drawColliders()
 	World* world = Game::get()->getWorld();
 
 	SDL_Rect destRect;
-	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
-	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
 
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
@@ -109,6 +115,9 @@ void BattleRenderSystem::drawColliders()
 	for (unsigned int i = 0; i < rectColliderCmp->mNext; i++)
 	{
 		Entity e = rectColliderCmp->mDirectArray[i];
+
+		destRect.w = static_cast<int>(getCmpEntity(&world->mPoolRectColliderComponent, e)->dim.x * world->cameraData.baseScale);
+		destRect.h = static_cast<int>(getCmpEntity(&world->mPoolRectColliderComponent, e)->dim.y * world->cameraData.baseScale);
 
 		destRect.x = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.x * world->cameraData.baseScale);
 		destRect.y = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.y * world->cameraData.baseScale);
@@ -125,3 +134,6 @@ void BattleRenderSystem::drawColliders()
 	}
 	//Draw all colliders
 }
+//-----------------------------------------------------------------------------------------------------------------------------------------
+//Class BattleRenderSystem
+//-----------------------------------------------------------------------------------------------------------------------------------------

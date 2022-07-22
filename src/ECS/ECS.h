@@ -78,6 +78,12 @@ TypeCmp* getCmpEntity(ComponentPool<TypeCmp>* pool, Entity e)
 }
 
 template<typename TypeCmp>
+TypeCmp* getCmpIndex(ComponentPool<TypeCmp>* pool, unsigned int index)
+{
+	return &pool->mPackedArray[index];
+}
+
+template<typename TypeCmp>
 void registerEntity(ComponentPool<TypeCmp>* pool, Entity e)
 {
 	pool->mReverseArray[e] = pool->mNext;

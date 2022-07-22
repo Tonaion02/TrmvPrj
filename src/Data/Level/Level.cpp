@@ -1,158 +1,168 @@
+//Including stuff about level
+#include "Data/Level/GraphicTileLayer.h"
+#include "Data/Level/Level.h"
+//Including stuff about level
+
+//Including some context
 #include "Game.h"
+#include "World.h"
+//Including some context
 
 //Including Enviroment
 #include "Enviroment/TextureHandler.h"
 //Including Enviroment
 
-//Including Data Manager
-#include "World.h"
-//Including Data Manager
+//Including some file for formatting of strings and files
+#include "utils/StringAndFile/MyString.h"
+#include "utils/StringAndFile/XMLvariab.h"
+//Including some file for formatting of strings and files
 
 //Including some physics Data Structures
 #include "utils/Physic/GridSP.h"
 //Including some physics Data Structures
 
-#include "Data/Level/GraphicTileLayer.h"
-
-#include "Data/Level/Level.h"
-
 
 
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Struct Level and function
+//Struct Level
 //-----------------------------------------------------------------------------------------------------------------------------------------
 Level levelWrapper(const std::string& path)
 {
-	//INIT SOME BASE DATA
-	Level level;
 	World* world = Game::get()->getWorld();
-	
-	level.maxZ = 3;
-	//level.dim = { 60, 60 };
-	level.dim = { 40, 40 };
-	//INIT SOME BASE DATA
+	std::string baseDataPath = "data/";
 
+	Level level;
 
+	std::vector<std::string> lines = getLines(path);
 
-	//INIT ID GRAPHICTILELAYER
-	for (int z = 0; z < MAX_Z_MAP; z++)
+	std::vector<XMLvariab> xmlVariables = getXMLvariables(lines);
+	XMLvariab principle = xmlVariables[0];
+
+	Vector2i levelDim;
+	levelDim.x = stoi(principle.getValue("width"));
+	levelDim.y = stoi(principle.getValue("height"));
+	level.dim = levelDim;
+
+	unsigned int tileDim = stoi(principle.getValue("tilewidth"));
+
+	xmlVariables = getXMLvariables(principle.rawData);
+
+	Vector2i posG = { 0, 0 };
+	int zG = 0;
+
+	Vector2i posT = { 0, 0 };
+	int zT = 0;
+
+	int firstGId;
+
+	for (unsigned int i = 0; i < xmlVariables.size(); i++)
 	{
-		for (int y = 0; y < MAX_H_MAP; y++)
-		{
-			for (int x = 0; x < MAX_W_MAP; x++)
-			{
-				level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = -1;
-			}
+		XMLvariab var = xmlVariables[i];
+
+		//Analyze the xml variables
+		if (var.name == "tileset")
+		{		
+			std::string path = var.getValue("source");
+			path = baseDataPath + path.substr(0, path.find(".")) + ".png";
+
+			if (path != "data/tekTileSet.png")
+				level.tileSet = world->mTileSetHandler.getTileSet(path);
+			else
+				firstGId = std::stoi(var.getValue("firstgid"));
 		}
-	}
-	//INIT ID GRAPHICTILELAYER
-
-
-
-	///FOR TESTING
-	std::string nameTexture = "data/buch-outdoor.png";
-	level.texture = TextureHandler::get().getTexture(nameTexture);
-	level.tileSet = *world->mTileSetHandler.getTileSet(nameTexture);
-	
-	
-	//SET ID TO DRAW
-	for (int z = 0; z < MAX_Z_MAP; z++)
-	{
-		for (int y = 0; y < level.dim.y; y++)
+		else if (var.name == "layer")
 		{
-			for (int x = 0; x < level.dim.x; x++)
+			XMLvariab var2 = getXMLvariables(var.rawData)[0];
+
+			for (unsigned int j = 0; j < var2.rawData.size(); j++)
 			{
-				if (z == 2 || z == 1)
+				std::string line = var2.rawData[j];
+				std::vector<std::string> splittedLine = split(line, ",");
+
+				for (auto stringValue : splittedLine)
 				{
-					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = -1;
+					level.graphicTileLayer.gTiles[zG * levelDim.x * levelDim.y + posG.y * levelDim.x + posG.x] = stoi(stringValue) - 1;
+
+					posG.x++;
+					if (posG.x == levelDim.x)
+					{
+						posG.y++;
+						posG.x = 0;
+					}
 				}
-				else
+			}
+
+			zG++;
+			posG.x = 0;
+			posG.y = 0;
+		}
+		else if (var.name == "objectgroup")
+		{
+			//Distinguish from name beetween entity layer and tecnical layer
+
+
+			//Set all the tiles to Ground
+			level.tileMap.tiles.resize(levelDim.x * levelDim.y * (zT + 1));
+
+			for (posT.y = 0; posT.y < levelDim.y; posT.y++)
+			{
+				for (posT.x = 0; posT.x < levelDim.x; posT.x++)
 				{
-					level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 54;
+					level.tileMap.tiles[zT * levelDim.y * levelDim.x + posT.y * levelDim.x + posT.x].logicType = static_cast<short int>(LogicType::Ground);
 				}
 			}
-		}
-	}
-
-	for (int y = 0, z = 0, x = 30; y < level.dim.y; y++)
-	{
-		level.graphicTileLayer.gTiles[z * level.dim.x * level.dim.y + y * level.dim.x + x] = 126;
-	}
-	//SET ID TO DRAW
-	///FOR TESTING
+			//Set all the tiles to Ground
 
 
 
-	//Set logic id of tile
-	level.tileMap.tiles.resize(level.maxZ * level.dim.y * level.dim.x);
+			//Set all the tiles to unOccupied
+			level.tileMap.mappedEntities.resize(levelDim.x * levelDim.y * (zT + 1));
 
-	for (int z = 0; z < level.maxZ; z++)
-	{
-		for (int y = 0; y < level.dim.y; y++)
-		{
-			for (int x = 0; x < level.dim.x; x++)
+			for (posT.y = 0; posT.y < levelDim.y; posT.y++)
 			{
-				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::NoneLogicType);
+				for (posT.x = 0; posT.x < levelDim.x; posT.x++)
+				{
+					level.tileMap.mappedEntities[zT * levelDim.y * levelDim.x + posT.y * levelDim.x + posT.x] = static_cast<int>(EntityOccupier::NoneEntityOccupier);
+				}
 			}
-		}
-	}
+			//Set all the tiles to unOccupied
 
-	///FOR TESTING
 
-	for (int z = 0; z < 1; z++)
-	{
-		for (int y = 0; y < level.dim.y; y++)
-		{
-			for (int x = 0; x < level.dim.x; x++)
+
+			//Add particular object to this layer
+			if (var.withRawData)
 			{
-				level.tileMap.tiles[z * level.dim.x * level.dim.y + y * level.dim.x + x].logicType = static_cast<short int>(LogicType::Ground);
+				std::vector<XMLvariab> variables = getXMLvariables(var.rawData);
+				for (auto iter : variables)
+				{
+					Vector2i pos = { std::stoi(iter.getValue("x")), std::stoi(iter.getValue("y")) - world->currentLevel.tileSet->tileDim.y };
+					pos = pos / world->currentLevel.tileSet->tileDim;
+					int logicType = std::stoi(iter.getValue("gid")) - firstGId;
+					level.tileMap.tiles[zT * levelDim.y * levelDim.x + pos.y * levelDim.x + pos.x].logicType = static_cast<int>(logicType);
+				}
 			}
+			//Add particular object to this layer
+
+
+
+			zT++;
 		}
+		//Analyze the xml variables
 	}
 
-	level.tileMap.tiles[0 * level.dim.x * level.dim.y + 0 * level.dim.x + 2].logicType = static_cast<short int>(LogicType::Wall);
-
-	///FOR TESTING
-	//Set logic id of tile
+	level.maxZ = zT;
 
 
 
-	//Initialize the map of the Entity on the map
-	level.tileMap.mappedEntities.resize(level.maxZ * level.dim.x * level.dim.y);
-	for (int z = 0; z < level.maxZ; z++)
-	{
-		for (int y = 0; y < level.dim.y; y++)
-		{
-			for (int x = 0; x < level.dim.x; x++)
-			{
-				level.tileMap.mappedEntities[z * level.dim.x * level.dim.y + y * level.dim.x + x] = EntityOccupier::NoneEntityOccupier;
-			}
-		}
-	}
-	//Initialize the map of the Entity on the map
 
 
-
-	//Initialize the BattleCamp of the Level
-	nameTexture = "data/buch-outdoor.png";
-	level.battleCamp.texture = TextureHandler::get().getTexture(nameTexture);
-	level.battleCamp.tileSet = *world->mTileSetHandler.getTileSet(nameTexture);
-
+	//Create the battleCamp
 	level.battleCamp.dim = { 20, 20 };
 	level.battleCamp.maxZ = 2;
 
-	for (int z = 0; z < level.battleCamp.maxZ; z++)
-	{
-		for (int y = 0; y < level.battleCamp.dim.y; y++)
-		{
-			for (int x = 0; x < level.battleCamp.dim.x; x++)
-			{
-				level.battleCamp.graphicTileLayer.gTiles[z * level.battleCamp.dim.x * level.battleCamp.dim.y + y * level.battleCamp.dim.x + x] = -1;
-			}
-		}
-	}
+	level.battleCamp.tileSet = *world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
 
 	for (int z = 0; z < level.battleCamp.maxZ; z++)
 	{
@@ -190,17 +200,19 @@ Level levelWrapper(const std::string& path)
 	level.battleCamp.boundCamp[3].orientation = 1;
 	//Initialize the bound of the BattleCamp
 
-	
-	
+
+
 	//Initialize the grid for spatial partition
-	level.battleCamp.gridSP = GridSP(Vector2i(level.battleCamp.dim.x * level.tileSet.tileDim.x, level.battleCamp.dim.y * level.tileSet.tileDim.y), 
-									 Vector2i(3 * level.tileSet.tileDim.x, 3 * level.tileSet.tileDim.y));
+	level.battleCamp.gridSP = GridSP(Vector2i(level.battleCamp.dim.x * level.tileSet->tileDim.x, level.battleCamp.dim.y * level.tileSet->tileDim.y),
+		Vector2i(3 * level.tileSet->tileDim.x, 3 * level.tileSet->tileDim.y));
 	//Initialize the grid for spatial partition
 
-	//Initialize the BattleCamp of the Level
-	
+	//Create the battleCamp
+
+
+
 	return level;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//Struct Level and function
+//Struct Level
 //-----------------------------------------------------------------------------------------------------------------------------------------

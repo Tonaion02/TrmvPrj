@@ -1,4 +1,6 @@
 #include "TileSet.h"
+
+#include "Enviroment/TextureHandler.h"
 #include "Enviroment/TextureHandler.h"
 
 
@@ -8,7 +10,6 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class TileSet
 //-----------------------------------------------------------------------------------------------------------------------------------------
-
 //PROBABLY ADD A TILEDIMENSION FROM VARIABLE TO PASS
 TileSet* TileSetHandler::loadTileSet(const std::string& path, unsigned int tileDim)
 {
@@ -18,6 +19,7 @@ TileSet* TileSetHandler::loadTileSet(const std::string& path, unsigned int tileD
 	///PER ORA
 	tileSet->tileDim = { static_cast<int>(tileDim), static_cast<int>(tileDim) };
 
+	tileSet->texture = TextureHandler::get().getTexture(path);
 	Vector2i textureDim = TextureHandler::get().getTextureDimension(path);
 	tileSet->grid = { textureDim.x / tileSet->tileDim.x, 
 				      textureDim.y / tileSet->tileDim.y };

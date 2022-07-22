@@ -1,5 +1,10 @@
 #include "Systems/RenderSystem.h"
 
+//Including some context
+#include "Game.h"
+#include "World.h"
+//Including some context
+
 //Including Enviroment
 #include "Enviroment/WindowHandler.h"
 #include "Enviroment/TextureHandler.h"
@@ -9,11 +14,6 @@
 //Including Utils
 #include "Misc/Grid.h"
 //Including Utils
-
-//Including General Instance
-#include "Game.h"
-#include "World.h"
-//Including General Instance
 
 
 
@@ -31,8 +31,8 @@ void RenderSystem::draw()
 	ComponentPool<TransformComponent>* transformCmp = &gameInstance->getWorld()->mPoolTransformComponent;
 
 	SDL_Rect destRect;
-	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
-	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
+	destRect.w = static_cast<int>(world->currentLevel.tileSet->tileDim.x * world->cameraData.baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet->tileDim.y * world->cameraData.baseScale);
 	
 	Vector2i dim = world->currentLevel.dim;
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
@@ -74,11 +74,11 @@ void RenderSystem::drawFirstLayerTileMap()
 	float baseScale = world->cameraData.baseScale;
 
 	SDL_Rect destRect;
-	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * baseScale);
-	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * baseScale);
+	destRect.w = static_cast<int>(world->currentLevel.tileSet->tileDim.x * baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet->tileDim.y * baseScale);
 
 	Vector2i dim = world->currentLevel.dim;
-	Vector2i tileDim = world->currentLevel.tileSet.tileDim;
+	Vector2i tileDim = world->currentLevel.tileSet->tileDim;
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
 
@@ -98,11 +98,13 @@ void RenderSystem::drawFirstLayerTileMap()
 
 			SDL_RenderCopy(
 				renderer,
-				world->currentLevel.texture,
-				&world->currentLevel.tileSet.srcRects[id],
+				world->currentLevel.tileSet->texture,
+				&world->currentLevel.tileSet->srcRects[id],
 				&destRect
 			);
 		}
+
+		int w = 0;
 	}
 	//Render first layer of tilemap
 }
@@ -115,8 +117,8 @@ void RenderSystem::drawOtherLayerTileMap()
 	World* world = gameInstance->getWorld();
 
 	SDL_Rect destRect;
-	destRect.w = static_cast<int>(world->currentLevel.tileSet.tileDim.x * world->cameraData.baseScale);
-	destRect.h = static_cast<int>(world->currentLevel.tileSet.tileDim.y * world->cameraData.baseScale);
+	destRect.w = static_cast<int>(world->currentLevel.tileSet->tileDim.x * world->cameraData.baseScale);
+	destRect.h = static_cast<int>(world->currentLevel.tileSet->tileDim.y * world->cameraData.baseScale);
 
 	int maxZ = world->currentLevel.maxZ;
 	Vector2i dim = world->currentLevel.dim;
@@ -125,7 +127,7 @@ void RenderSystem::drawOtherLayerTileMap()
 
 
 	//Render other layer of tilemap
-	for (int z = 1; z < maxZ; z++)
+	for (int z = 1; z < maxZ * 2; z++)
 	{
 		for (int y = world->cameraData.startToRender.y; y < world->cameraData.endToRender.y; y++)
 		{
@@ -137,15 +139,15 @@ void RenderSystem::drawOtherLayerTileMap()
 				destRect.x = static_cast<int>(x * destRect.w);
 				destRect.x += static_cast<int>(world->cameraData.adj.x);
 
-				int id = world->currentLevel.graphicTileLayer.gTiles[z * dim.x * dim.y + dim.x + x];
+				int id = world->currentLevel.graphicTileLayer.gTiles[z * dim.x * dim.y + y * dim.x + x];
 
-				if (id == -1)
+				if (id <= -1)
 					continue;
 
 				SDL_RenderCopy(
 					renderer,
-					world->currentLevel.texture,
-					&world->currentLevel.tileSet.srcRects[id],
+					world->currentLevel.tileSet->texture,
+					&world->currentLevel.tileSet->srcRects[id],
 					&destRect
 				);
 			}

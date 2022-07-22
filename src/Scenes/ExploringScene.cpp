@@ -2,9 +2,7 @@
 
 #include "ECS/ECS.h"
 
-#include "World.h"
-
-#include "Game.h"
+#include "Enviroment/WindowHandler.h"
 
 #include "Systems/MoveSystem.h"
 #include "Systems/AnimationSystem.h"
@@ -12,6 +10,9 @@
 #include "Systems/ActionSystem.h"
 #include "Systems/EnemySystem.h"
 #include "Systems/RenderSystem.h"
+
+#include "World.h"
+#include "Game.h"
 
 
 
@@ -81,6 +82,28 @@ void ExploringScene::generateOutputScene()
 
 void ExploringScene::processInputScene()
 {
+	SDL_Event event;
+
+	while (SDL_PollEvent(&event))
+	{
+		switch (event.type)
+		{
+		case SDL_QUIT:
+			Game::get()->setRunning(false);
+			break;
+		case SDL_WINDOWEVENT:
+			switch (event.window.event)
+			{
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
+				WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
+				CameraSystem::onUpdateWindowSize();
+				break;
+			}
+			break;
+		}
+	}
+
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
 	if (status == RunningScene)

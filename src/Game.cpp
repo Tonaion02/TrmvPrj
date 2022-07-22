@@ -89,29 +89,29 @@ void Game::update()
 void Game::processInput()
 {
 	//General handling of the Input
-	SDL_Event event;
+	//SDL_Event event;
 
-	//Handle principle events
-	while (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			mIsRunning = false;
-			break;
-		case SDL_WINDOWEVENT:
-			switch (event.window.event)
-			{
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
-				WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
-				CameraSystem::onUpdateWindowSize();
-				break;
-			}
-			break;
-		}
-	}
-	//Handle principle events
+	////Handle principle events
+	//while (SDL_PollEvent(&event))
+	//{
+	//	switch (event.type)
+	//	{
+	//	case SDL_QUIT:
+	//		mIsRunning = false;
+	//		break;
+	//	case SDL_WINDOWEVENT:
+	//		switch (event.window.event)
+	//		{
+	//		case SDL_WINDOWEVENT_SIZE_CHANGED:
+	//			SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
+	//			WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
+	//			CameraSystem::onUpdateWindowSize();
+	//			break;
+	//		}
+	//		break;
+	//	}
+	//}
+	////Handle principle events
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
 	//General commands
@@ -205,16 +205,19 @@ void Game::loadData()
 	//Load TileSet and Texture
 	world->currentLevel.texture = TextureHandler::get().getTexture("data/buch-outdoor.png");
 	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", 16);
-	world->currentLevel.tileSet = *world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
+	world->currentLevel.tileSet = world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
 	world->textureActor = TextureHandler::get().getTexture("data/player.png");
 	world->mTileSetHandler.loadTileSet("data/player.png", 16);
 	world->tilesetActor = world->mTileSetHandler.getTileSet("data/player.png");
+
+	TextureHandler::get().loadTexture("data/brimstone.png");
+	world->mTileSetHandler.loadTileSet("data/brimstone.png", 16);
 	//Load TileSet and Texture
 
 
 
 	//Load Level	
-	world->currentLevel = levelWrapper("random level");
+	world->currentLevel = levelWrapper("data/level0.tmx");
 	//Load Level
 
 
@@ -376,11 +379,10 @@ void Game::loadData()
 
 
 	///Init test for Battle Phase
-
-
-	int n = 200;
+	int n = 2;
 	bool first = true;
 	Entity firstEntity;
+
 	for (int i = 0; i < n; i++)
 	{
 		Entity e = EntityManager::get().createEntity();
@@ -398,7 +400,7 @@ void Game::loadData()
 			world->BattlePlayerEntity = e;
 			registerEntity(&world->mPoolPlayerBattleComponent, e);
 
-			world->delayFiring.coolDown = 0.05f;
+			world->delayFiring.coolDown = 0.5f;
 			initTimer(&world->delayFiring);
 			world->delayHitBox.coolDown = 0.05f;
 			initTimer(&world->delayHitBox);
@@ -422,14 +424,18 @@ void Game::loadData()
 		}
 
 		registerEntity(&world->mPoolControlledRectColliderComponent, e);
-		registerEntity(&world->mPoolPhysicBoxComponent, e);
 
+		registerEntity(&world->mPoolPhysicBoxComponent, e);
 		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->mass = 1.0f;
 		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
+		
 		registerEntity(&world->mPoolRectColliderComponent, e);
 		getCmpEntity(&world->mPoolRectColliderComponent, e)->dim = { 16, 16 };
+		
 		registerEntity(&world->mPoolDrawBattleComponent, e);
 		getCmpEntity(&world->mPoolDrawBattleComponent, e)->id = 17;
+		getCmpEntity(&world->mPoolDrawBattleComponent, e)->tileSet = world->mTileSetHandler.getTileSet("data/player.png");
+		getCmpEntity(&world->mPoolDrawBattleComponent, e)->dim = getCmpEntity(&world->mPoolDrawBattleComponent, e)->tileSet->tileDim;
 
 		registerEntity(&world->mPoolDamageComponent, e);
 
