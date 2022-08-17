@@ -89,33 +89,8 @@ void Game::update()
 void Game::processInput()
 {
 	//General handling of the Input
-	//SDL_Event event;
-
-	////Handle principle events
-	//while (SDL_PollEvent(&event))
-	//{
-	//	switch (event.type)
-	//	{
-	//	case SDL_QUIT:
-	//		mIsRunning = false;
-	//		break;
-	//	case SDL_WINDOWEVENT:
-	//		switch (event.window.event)
-	//		{
-	//		case SDL_WINDOWEVENT_SIZE_CHANGED:
-	//			SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
-	//			WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
-	//			CameraSystem::onUpdateWindowSize();
-	//			break;
-	//		}
-	//		break;
-	//	}
-	//}
-	////Handle principle events
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
-	//General commands
-	
 	//For zooming camera in and out
 	if (keyStates[SDL_SCANCODE_1])
 	{
@@ -126,8 +101,6 @@ void Game::processInput()
 		CameraSystem::updateCameraZoom(-1.0f);
 	}
 	//For zooming camera in and out
-	
-	//General commands
 
 	//General handling of the Input
 
@@ -175,6 +148,13 @@ void Game::generateOutput()
 
 
 
+void testFunction()
+{
+	SDL_Log("Wewe!!!!!");
+}
+
+
+
 void Game::loadData()
 {
 	//Init some base data
@@ -196,7 +176,9 @@ void Game::loadData()
 
 	//Create Scenes
 	exploringScene = new ExploringScene();
+	exploringScene->loadScene();
 	battleScene = new BattleScene();
+	battleScene->loadScene();
 	activateScene<ExploringScene>();
 	//Create Scenes
 
@@ -204,14 +186,14 @@ void Game::loadData()
 
 	//Load TileSet and Texture
 	world->currentLevel.texture = TextureHandler::get().getTexture("data/buch-outdoor.png");
-	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", 16);
+	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", 32);
 	world->currentLevel.tileSet = world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
 	world->textureActor = TextureHandler::get().getTexture("data/player.png");
-	world->mTileSetHandler.loadTileSet("data/player.png", 16);
+	world->mTileSetHandler.loadTileSet("data/player.png", 32);
 	world->tilesetActor = world->mTileSetHandler.getTileSet("data/player.png");
 
 	TextureHandler::get().loadTexture("data/brimstone.png");
-	world->mTileSetHandler.loadTileSet("data/brimstone.png", 16);
+	world->mTileSetHandler.loadTileSet("data/brimstone.png", 32);
 	//Load TileSet and Texture
 
 

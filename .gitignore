@@ -1,7 +1,7 @@
-# output-dir
+# Output-Dir
 output
 
-# Visual Studio files and folder
+# Visual Studio Files and Folder
 .vs/
 **.sln
 **.vcxproj
@@ -11,9 +11,8 @@ output
 # DLL FILES
 **.dll
 
-#Other files
+# Other Files
 src/ECS/ComponentManager.h
-src/ECS/System.h
 src/ToDo.h
 src/Inspiration/**.h
 src/Inspiration/**.cpp

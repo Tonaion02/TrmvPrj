@@ -14,6 +14,19 @@
 #include "World.h"
 #include "Game.h"
 
+///TESTING MENU
+#include "Enviroment/TextureHandler.h"
+#include "Menu/General/ImageWidget.h"
+#include "Menu/General/ContainerWidget.h"
+#include "Menu/General/ButtonWidget.h"
+
+#include "Menu/ExploringMenu/GeneralExploringMenu.h"
+
+#include "Menu/ExploringMenu/TestMenu.h"
+
+#include "Input/Input.h"
+///TESTING MENU
+
 
 
 
@@ -63,7 +76,58 @@ void ExploringScene::updateScene()
 
 		//Now the action that is ended is set to NoneAction
 		EnemySystem::aiBaseEnemy();
+
+
+
+		///FOR TESTING
+		if(showMenu)
+			widget->update();
+		///FOR TESTING
 	}
+}
+
+
+
+void ExploringScene::loadScene()
+{
+	///FOR TESTING
+	
+	showMenu = false;
+	
+	///Creating menu
+	std::array<DrawableWidget*, 5> buttons;
+	for (int i = 0; i < buttons.size(); i++)
+	{
+		ImageWidget* background = new ImageWidget(TextureHandler::get().getTexture("data/buch-outdoor.png"), Vector2i(0, 0), Vector2i(50, 50));
+		background->init();
+		ImageWidget* child = new ImageWidget(TextureHandler::get().getTexture("data/player.png"), Vector2i(0, 0), Vector2i(20, 20));
+		child->init();
+		ContainerWidget* container = new ContainerWidget(background, child, Vector2i(5, 5));
+		container->init();
+
+		ButtonWidget* button = new ButtonWidget(Vector2i(0, 0), Vector2i(50, 50), container);
+		button->init();
+		button->setFunction(changePage);
+		buttons[i] = button;
+	}
+	VerticalGroupWidget<LIMITS_CHILDREN_TEST_MENU>* vGroup = new VerticalGroupWidget<LIMITS_CHILDREN_TEST_MENU>({ 0, 0 }, buttons);
+	vGroup->init();
+
+	ImageWidget* backgroundForMenu = new ImageWidget(TextureHandler::get().getTexture("data/buch-outdoor.png"), Vector2i(0, 0), Vector2i(300, 300));
+	backgroundForMenu->init();
+	TestMenu<LIMITS_CHILDREN_TEST_MENU>* ptr = new TestMenu<LIMITS_CHILDREN_TEST_MENU>(backgroundForMenu, vGroup);
+	ptr->init();
+	widget = ptr;
+
+
+
+	///TRYING TO MOVE MENU
+	widget->setPos({ 300, 0 });
+	///TRYING TO MOVE MENU
+
+	///Creating menu
+
+	///FOR TESTING
 }
 
 
@@ -75,6 +139,9 @@ void ExploringScene::generateOutputScene()
 		//Prepare rendering
 		RenderSystem::draw();
 		//Prepare rendering
+
+		if(showMenu)
+			widget->draw();
 	}
 }
 
@@ -101,8 +168,21 @@ void ExploringScene::processInputScene()
 				break;
 			}
 			break;
+		case SDL_KEYDOWN:
+			{
+				switch (event.key.keysym.scancode)
+				{
+				case SDL_SCANCODE_M:
+					showMenu = !showMenu;
+
+				default:
+					break;
+				}
+			}
 		}
 	}
+
+	updateInput();
 
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
@@ -183,6 +263,9 @@ void ExploringScene::processInputScene()
 			first = false;
 		}
 		//For startingBattle
+
+		//else if (keyStates[SDL_SCANCODE_M])
+		//	showMenu = !showMenu;
 	}
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
