@@ -9,8 +9,8 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ContainerWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
-ContainerWidget::ContainerWidget(class DrawableWidget* background, class DrawableWidget* child, const Vector2i& transformPosChild)
-	:DrawableWidget(background->getPos(), background->getDim()), child(child), background(background), transformPosChild(transformPosChild)
+ContainerWidget::ContainerWidget(class SizedWidget* background, class SizedWidget* child, const Vector2i& transformPosChild)
+	:SizedWidget(background->getPos(), background->getDim()), child(child), background(background), transformPosChild(transformPosChild)
 {
 	child->setPos(this->getPos() + transformPosChild);
 }

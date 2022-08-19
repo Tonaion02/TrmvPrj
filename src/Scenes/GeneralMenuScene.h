@@ -6,10 +6,10 @@
 
 
 
-class BattleScene : public BaseScene
+class GeneralMenuScene : public BaseScene
 {
 public:
-	explicit BattleScene();
+	GeneralMenuScene();
 
 	void loadScene() override;
 	void updateScene() override;
@@ -17,6 +17,8 @@ public:
 	void processInputScene() override;
 
 public:
-	
+	class SizedWidget* widget;
+	int choice;
+
 protected:
 };

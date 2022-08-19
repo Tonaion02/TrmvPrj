@@ -1,21 +1,22 @@
 #pragma once
 
 #include "utils/Math/Vector2i.h"
+#include "SDL_pixels.h"
 #include "Menu/General/SizedWidget.h"
 
 
 
 
 
-class ImageWidget : public SizedWidget
+class ColorSurfaceWidget : public SizedWidget
 {
 public:
-	ImageWidget(struct SDL_Texture *image, const Vector2i& pos, const Vector2i& dim);
+	ColorSurfaceWidget(const Vector2i& pos, const Vector2i& dim, const SDL_Color& color);
 
 	virtual void init() override {}
 	virtual void update() override {}
 	virtual void draw() override;
 
 protected:
-	struct SDL_Texture *image;
+	SDL_Color color;
 };

@@ -1,4 +1,4 @@
-#include "Menu/General/DrawableWidget.h"
+#include "Menu/General/SizedWidget.h"
 
 #include "SDL_Enviroment.h"
 
@@ -9,7 +9,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class DrawableWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
-DrawableWidget::DrawableWidget(const Vector2i& pos, const Vector2i& dim)
+SizedWidget::SizedWidget(const Vector2i& pos, const Vector2i& dim)
 	:rect(new SDL_Rect())
 {
 	rect->x = pos.x;
@@ -20,7 +20,7 @@ DrawableWidget::DrawableWidget(const Vector2i& pos, const Vector2i& dim)
 
 
 
-void DrawableWidget::setPos(const Vector2i& pos)
+void SizedWidget::setPos(const Vector2i& pos)
 {
 	rect->x = pos.x;
 	rect->y = pos.y;
@@ -28,7 +28,7 @@ void DrawableWidget::setPos(const Vector2i& pos)
 
 
 
-void DrawableWidget::setDim(const Vector2i& dim)
+void SizedWidget::setDim(const Vector2i& dim)
 {
 	rect->w = dim.x;
 	rect->h = dim.y;
@@ -36,21 +36,21 @@ void DrawableWidget::setDim(const Vector2i& dim)
 
 
 
-Vector2i DrawableWidget::getPos() const
+Vector2i SizedWidget::getPos() const
 {
 	return Vector2i(rect->x, rect->y);
 }
 
 
 
-Vector2i DrawableWidget::getDim() const
+Vector2i SizedWidget::getDim() const
 {
 	return Vector2i(rect->w, rect->h);
 }
 
 
 
-SDL_Rect* DrawableWidget::getRect()
+SDL_Rect* SizedWidget::getRect()
 {
 	return rect;
 }

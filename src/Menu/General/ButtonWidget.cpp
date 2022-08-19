@@ -4,7 +4,7 @@
 
 #include "SDL_Enviroment.h"
 
-#include "Input/Input.h"
+#include "Enviroment/Input/Input.h"
 
 
 
@@ -13,8 +13,8 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ButtonWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
-ButtonWidget::ButtonWidget(const Vector2i& pos, const Vector2i& dim, class DrawableWidget* drawableWidget)
-	:DrawableWidget(pos, dim), drawableWidget(drawableWidget)
+ButtonWidget::ButtonWidget(class SizedWidget* sizedWidget)
+	:SizedWidget(sizedWidget->getPos(), sizedWidget->getDim()), sizedWidget(sizedWidget)
 {
 
 }
@@ -24,15 +24,19 @@ ButtonWidget::ButtonWidget(const Vector2i& pos, const Vector2i& dim, class Drawa
 void ButtonWidget::update()
 {
 	Vector2i cursor = getCursorPos();
+
 	if (isPointInRect(cursor, getPos(), getDim()) && getMouseButton(0))
+	{
 		function();
+		consumeClick(0);
+	}
 }
 
 
 
 void ButtonWidget::draw()
 {
-	drawableWidget->draw();
+	sizedWidget->draw();
 }
 
 
@@ -48,7 +52,7 @@ void ButtonWidget::setPos(const Vector2i& pos)
 {
 	this->rect->x = pos.x;
 	this->rect->y = pos.y;
-	drawableWidget->setPos(pos);
+	sizedWidget->setPos(pos);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ButtonWidget

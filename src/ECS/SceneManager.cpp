@@ -30,7 +30,8 @@ void SceneManager::activateScene(unsigned int typeScene)
 
 	//ASSERT: controlla se la scene è già presente
 
-	activeScenes.emplace(activeScenes.begin(), scenes[typeScene]);
+	/*activeScenes.emplace(activeScenes.begin(), scenes[typeScene]);*/
+	activeScenes.push_back(scenes[typeScene]);
 }
 
 
@@ -65,7 +66,7 @@ void SceneManager::resetIterator()
 
 bool SceneManager::isEndedScenes()
 {
-	return currentScene == activeScenes.size();
+	return currentScene >= activeScenes.size();
 }
 
 

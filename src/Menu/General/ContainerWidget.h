@@ -2,16 +2,16 @@
 
 
 #include "utils/Math/Vector2i.h"
-#include "Menu/General/DrawableWidget.h"
+#include "Menu/General/SizedWidget.h"
 
 
 
 
 
-class ContainerWidget : public DrawableWidget
+class ContainerWidget : public SizedWidget
 {
 public:
-	ContainerWidget(class DrawableWidget* background, class DrawableWidget* child, const Vector2i& transformPosChild);
+	ContainerWidget(class SizedWidget* background, class SizedWidget* child, const Vector2i& transformPosChild);
 
 	virtual void init() override;
 	virtual void update() override;
@@ -20,7 +20,7 @@ public:
 	void setPos(const Vector2i& pos) override;
 
 protected:
-	class DrawableWidget* child;
-	class DrawableWidget* background;
+	class SizedWidget* child;
+	class SizedWidget* background;
 	Vector2i transformPosChild;
 };

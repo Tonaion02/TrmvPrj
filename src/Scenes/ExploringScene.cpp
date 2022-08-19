@@ -1,31 +1,33 @@
 #include "Scenes/ExploringScene.h"
 
+//Including ECS
 #include "ECS/ECS.h"
+//Including ECS
 
+//Including some context
+#include "World.h"
+#include "Game.h"
+//Including some context
+
+//Including Scenes
+#include "Scenes/BattleScene.h"
+#include "Scenes/GeneralMenuScene.h"
+//Including Scenes
+
+//Including some Enviroment
 #include "Enviroment/WindowHandler.h"
 
+#include "Enviroment/Input/Input.h"
+//Including some Enviroment
+
+//Including Systems
 #include "Systems/MoveSystem.h"
 #include "Systems/AnimationSystem.h"
 #include "Systems/CameraSystem.h"
 #include "Systems/ActionSystem.h"
 #include "Systems/EnemySystem.h"
 #include "Systems/RenderSystem.h"
-
-#include "World.h"
-#include "Game.h"
-
-///TESTING MENU
-#include "Enviroment/TextureHandler.h"
-#include "Menu/General/ImageWidget.h"
-#include "Menu/General/ContainerWidget.h"
-#include "Menu/General/ButtonWidget.h"
-
-#include "Menu/ExploringMenu/GeneralExploringMenu.h"
-
-#include "Menu/ExploringMenu/TestMenu.h"
-
-#include "Input/Input.h"
-///TESTING MENU
+//Including Systems
 
 
 
@@ -46,7 +48,7 @@ void ExploringScene::updateScene()
 {
 	World* world = getWorld();
 
-	if (status == RunningScene)
+	if (status == statusScene::RunningScene)
 	{
 		//First input and then AI decides what is the action
 
@@ -76,13 +78,6 @@ void ExploringScene::updateScene()
 
 		//Now the action that is ended is set to NoneAction
 		EnemySystem::aiBaseEnemy();
-
-
-
-		///FOR TESTING
-		if(showMenu)
-			widget->update();
-		///FOR TESTING
 	}
 }
 
@@ -90,104 +85,48 @@ void ExploringScene::updateScene()
 
 void ExploringScene::loadScene()
 {
-	///FOR TESTING
-	
-	showMenu = false;
-	
-	///Creating menu
-	std::array<DrawableWidget*, 5> buttons;
-	for (int i = 0; i < buttons.size(); i++)
-	{
-		ImageWidget* background = new ImageWidget(TextureHandler::get().getTexture("data/buch-outdoor.png"), Vector2i(0, 0), Vector2i(50, 50));
-		background->init();
-		ImageWidget* child = new ImageWidget(TextureHandler::get().getTexture("data/player.png"), Vector2i(0, 0), Vector2i(20, 20));
-		child->init();
-		ContainerWidget* container = new ContainerWidget(background, child, Vector2i(5, 5));
-		container->init();
 
-		ButtonWidget* button = new ButtonWidget(Vector2i(0, 0), Vector2i(50, 50), container);
-		button->init();
-		button->setFunction(changePage);
-		buttons[i] = button;
-	}
-	VerticalGroupWidget<LIMITS_CHILDREN_TEST_MENU>* vGroup = new VerticalGroupWidget<LIMITS_CHILDREN_TEST_MENU>({ 0, 0 }, buttons);
-	vGroup->init();
-
-	ImageWidget* backgroundForMenu = new ImageWidget(TextureHandler::get().getTexture("data/buch-outdoor.png"), Vector2i(0, 0), Vector2i(300, 300));
-	backgroundForMenu->init();
-	TestMenu<LIMITS_CHILDREN_TEST_MENU>* ptr = new TestMenu<LIMITS_CHILDREN_TEST_MENU>(backgroundForMenu, vGroup);
-	ptr->init();
-	widget = ptr;
-
-
-
-	///TRYING TO MOVE MENU
-	widget->setPos({ 300, 0 });
-	///TRYING TO MOVE MENU
-
-	///Creating menu
-
-	///FOR TESTING
 }
 
 
 
 void ExploringScene::generateOutputScene()
 {
-	if (status == RunningScene)
-	{
-		//Prepare rendering
-		RenderSystem::draw();
-		//Prepare rendering
-
-		if(showMenu)
-			widget->draw();
-	}
+	//Prepare rendering
+	RenderSystem::draw();
+	//Prepare rendering
 }
 
 
 
 void ExploringScene::processInputScene()
 {
-	SDL_Event event;
-
-	while (SDL_PollEvent(&event))
-	{
-		switch (event.type)
-		{
-		case SDL_QUIT:
-			Game::get()->setRunning(false);
-			break;
-		case SDL_WINDOWEVENT:
-			switch (event.window.event)
-			{
-			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
-				WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
-				CameraSystem::onUpdateWindowSize();
-				break;
-			}
-			break;
-		case SDL_KEYDOWN:
-			{
-				switch (event.key.keysym.scancode)
-				{
-				case SDL_SCANCODE_M:
-					showMenu = !showMenu;
-
-				default:
-					break;
-				}
-			}
-		}
-	}
-
-	updateInput();
-
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
 	if (status == RunningScene)
 	{
+		if (isResizedWindow())
+		{
+			SDL_Log("Window size changed to %dx%d", getWindowSize().x, getWindowSize().y);
+			WindowHandler::get().updateWindowDimension(getWindowSize());
+			CameraSystem::onUpdateWindowSize();
+		}
+		if (isQuitted())
+		{
+			Game::get()->setRunning(false);
+		}
+		if (isPressedKey(SDL_SCANCODE_M))
+		{
+			consumeClick(SDL_SCANCODE_M);
+			if (!isActiveScene<GeneralMenuScene>())
+			{
+				Game::get()->startGeneralMenu();
+				Game::get()->getGeneraMenuScene()->choice = 0;
+			}
+		}
+
+
+
 		//For debugging
 		if (keyStates[SDL_SCANCODE_B])
 		{
@@ -263,9 +202,6 @@ void ExploringScene::processInputScene()
 			first = false;
 		}
 		//For startingBattle
-
-		//else if (keyStates[SDL_SCANCODE_M])
-		//	showMenu = !showMenu;
 	}
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------

@@ -8,10 +8,10 @@
 
 
 
-class DrawableWidget : public Widget
+class SizedWidget : public Widget
 {
 public:
-	DrawableWidget(const Vector2i& pos, const Vector2i& dim);
+	SizedWidget(const Vector2i& pos, const Vector2i& dim);
 
 	virtual void init() override {}
 	virtual void update() override {}

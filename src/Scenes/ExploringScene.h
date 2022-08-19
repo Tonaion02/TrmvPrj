@@ -17,8 +17,6 @@ public:
 	void processInputScene() override;
 
 protected:
-	class DrawableWidget* widget;
-	bool showMenu;
 
 public:
 };

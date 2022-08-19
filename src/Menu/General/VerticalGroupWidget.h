@@ -2,18 +2,18 @@
 
 #include <array>
 
-#include "Menu/General/DrawableWidget.h"
+#include "Menu/General/SizedWidget.h"
 
 
 
 
 
 template<unsigned int NumChildrens>
-class VerticalGroupWidget : public DrawableWidget
+class VerticalGroupWidget : public SizedWidget
 {
 public:
-	VerticalGroupWidget(const Vector2i& pos, const std::array<class DrawableWidget*, NumChildrens>& childrens)
-		:DrawableWidget(pos, { 0, 0 }), childrens(childrens)
+	VerticalGroupWidget(const Vector2i& pos, const std::array<class SizedWidget*, NumChildrens>& childrens)
+		:SizedWidget(pos, { 0, 0 }), childrens(childrens)
 	{
 
 	}
@@ -77,5 +77,5 @@ public:
 	}
 
 protected:
-	std::array<class DrawableWidget*, NumChildrens> childrens;
+	std::array<class SizedWidget*, NumChildrens> childrens;
 };

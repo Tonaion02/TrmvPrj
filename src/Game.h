@@ -30,6 +30,7 @@ public:
 	void setRunning(bool running) { mIsRunning = running; }
 	float getDeltaTime() { return mDeltaTime; }
 	bool isInBattle();
+	bool isInGeneralMenu();
 	//Secondary Methods
 
 
@@ -37,14 +38,17 @@ public:
 	//Handling flow of the program
 	void startBattle();
 	void endBattle(); ///TO ADD
+	void startGeneralMenu();
+	void endGeneralMenu();
 	//Handling flow of the program
 
 
 
 	//Encapsulation Methods
 	inline struct World* getWorld() { return world; }
-	inline class ExploringScene* getExploringScene() { return exploringScene; }
-	inline class BattleScene* getBattleScene() { return battleScene; }
+	inline class ExploringScene* getExploringScene() { return sExploringScene; }
+	inline class BattleScene* getBattleScene() { return sBattleScene; }
+	inline class GeneralMenuScene* getGeneraMenuScene() { return sGeneralMenuScene; }
 	//Encapsulation Methods
 
 
@@ -62,11 +66,11 @@ protected:
 	float mDeltaTime;
 	float mTicksCount;
 
-	class ExploringScene* exploringScene;
-	class BattleScene* battleScene;
-
 	struct World* world;
 
 	static const float sMaxDeltaTime;
 	static class Game* sGameInstance;
+	class ExploringScene* sExploringScene;
+	class BattleScene* sBattleScene;
+	class GeneralMenuScene* sGeneralMenuScene;
 };

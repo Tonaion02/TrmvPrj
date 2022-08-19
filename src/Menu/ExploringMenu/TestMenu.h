@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils/Math/Vector2i.h"
+
 #include "Menu/General/ContainerWidget.h"
 #include "Menu/General/VerticalGroupWidget.h"
 
@@ -11,8 +13,8 @@ template<unsigned int NumChildrens>
 class TestMenu : public ContainerWidget
 {
 public:
-	TestMenu(class DrawableWidget* background, class VerticalGroupWidget<NumChildrens>* verticalGroupWidget)
-		:ContainerWidget(background, verticalGroupWidget, {0, 0})
+	TestMenu(class SizedWidget* background, class VerticalGroupWidget<NumChildrens>* verticalGroupWidget, const Vector2i& transformPos = { 0, 0 })
+		:ContainerWidget(background, verticalGroupWidget, transformPos)
 	{}
 
 protected:

@@ -2,26 +2,26 @@
 
 #include <functional>
 
-#include "Menu/General/DrawableWidget.h"
+#include "Menu/General/SizedWidget.h"
 
 
 
 
 
-class ButtonWidget : public DrawableWidget
+class ButtonWidget : public SizedWidget
 {
 public:
-	ButtonWidget(const Vector2i& pos, const Vector2i& dim, class DrawableWidget* drawableWidget);
+	ButtonWidget(class SizedWidget* sizedWidget);
 
-	void init() override { }
-	void update() override;
-	void draw() override;
+	virtual void init() override { }
+	virtual void update() override;
+	virtual void draw() override;
 
 	void setFunction(std::function<void()> f);
 	void setPos(const Vector2i& pos) override;
 
 protected:
-	class DrawableWidget* drawableWidget;
+	class SizedWidget* sizedWidget;
 
 	std::function<void()> function;
 };

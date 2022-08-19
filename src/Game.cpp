@@ -1,28 +1,12 @@
 #include "Game.h"
 
-#include "ECS/TypeManager.h"
-
-//Including Some Utils
-#include "Misc/Direction.h"
-#include "Misc/Grid.h"
-
-#include "utils/FromTypeToText.h"
-//Including Some Utils
-
-//Including PhaseHandler
-#include "Data/Phase/Phase.h"
-#include "Data/Phase/PhaseHandler.h"
-//Including PhaseHandler
-
-//Including Enviroment
-#include "Enviroment/WindowHandler.h"
-#include "Enviroment/TextureHandler.h"
-//Including Enviroment
-
 //Including Ecs
-#include "ECS/EntityManager.h"
 #include "ECS/ECS.h"
 //Including Ecs
+
+//Including some context
+#include "World.h"
+//Including some context
 
 //Including System
 #include "Systems/RenderSystem.h"
@@ -41,19 +25,31 @@
 //Including Battle System
 //Including System
 
-//Some Shit
-#include "World.h"
-//Some Shit
+//Including Enviroment
+#include "Enviroment/WindowHandler.h"
+#include "Enviroment/TextureHandler.h"
+//Including Enviroment
+
+//Including Some Utils
+#include "Misc/Direction.h"
+#include "Misc/Grid.h"
+
+#include "utils/FromTypeToText.h"
+//Including Some Utils
+
 
 
 ///FOR TESTING
-#include "ECS/Scene.h"
+//#include "ECS/Scene.h"
 
 #include "Scenes/ExploringScene.h"
 #include "Scenes/BattleScene.h"
+#include "Scenes/GeneralMenuScene.h"
 
 #include "utils/Physic/DataGridSP.h"
 #include "utils/Physic/GridSP.h"
+
+#include "Enviroment/Input/Input.h"
 ///FOR TESTING
 
 
@@ -88,7 +84,60 @@ void Game::update()
 
 void Game::processInput()
 {
+	updateInput();
 	//General handling of the Input
+	//SDL_Event event;
+
+	//while (SDL_PollEvent(&event))
+	//{
+	//	switch (event.type)
+	//	{
+	//	case SDL_QUIT:
+	//		Game::get()->setRunning(false);
+	//		break;
+	//	case SDL_WINDOWEVENT:
+	//		switch (event.window.event)
+	//		{
+	//		case SDL_WINDOWEVENT_SIZE_CHANGED:
+	//			SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
+	//			WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
+	//			CameraSystem::onUpdateWindowSize();
+	//			break;
+	//		}
+	//		break;
+	//	case SDL_KEYDOWN:
+	//	{
+	//		switch (event.key.keysym.scancode)
+	//		{
+	//		case SDL_SCANCODE_M:
+	//			if (!isActiveScene<GeneralMenuScene>())
+	//			{
+	//				Game::get()->startGeneralMenu();
+	//				break;
+	//			}
+	//			if (isActiveScene<GeneralMenuScene>())
+	//			{
+	//				Game::get()->endGeneralMenu();
+	//				break;
+	//			}
+
+	//			break;
+
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//	case SDL_MOUSEBUTTONDOWN:
+	//		updateStateMouseButtons(event);
+	//		break;
+	//	case SDL_MOUSEBUTTONUP:
+	//		updateStateMouseButtons(event);
+	//		break;
+	//	}
+	//}
+
+	//updateMouseCursor();
+
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
 
 	//For zooming camera in and out
@@ -109,11 +158,13 @@ void Game::processInput()
 	//ProcessInput for each scene
 	resetIteratorScene();
 
-	if (!isEndedScenes())
+	while (!isEndedScenes())
 	{
 		BaseScene* current = currentScene();
 
 		current->processInputScene();
+
+		nextScene();
 	}
 	//ProcessInput for each scene
 }
@@ -148,13 +199,6 @@ void Game::generateOutput()
 
 
 
-void testFunction()
-{
-	SDL_Log("Wewe!!!!!");
-}
-
-
-
 void Game::loadData()
 {
 	//Init some base data
@@ -175,11 +219,13 @@ void Game::loadData()
 
 
 	//Create Scenes
-	exploringScene = new ExploringScene();
-	exploringScene->loadScene();
-	battleScene = new BattleScene();
-	battleScene->loadScene();
+	sExploringScene = new ExploringScene();
+	sExploringScene->loadScene();
+	sBattleScene = new BattleScene();
+	sBattleScene->loadScene();
 	activateScene<ExploringScene>();
+	sGeneralMenuScene = new GeneralMenuScene();
+	sGeneralMenuScene->loadScene();
 	//Create Scenes
 
 
@@ -424,11 +470,6 @@ void Game::loadData()
 		registerEntity(&world->mPoolLifeBarComponent, e);
 		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 300.0f;
 
-		//if (i != 0)
-		//{
-		//	BattleMoveSystem::applyForce(e, { -30.0f, 0.0f });
-		//}
-
 
 
 		//register Entity to GridSP for collision detection
@@ -510,6 +551,45 @@ void Game::startBattle()
 
 	world->cameraData = world->backupBattleCameraData;
 	//Set the CameraData for the camera
+}
+
+
+
+bool Game::isInGeneralMenu()
+{
+	return isActiveScene<GeneralMenuScene>();
+}
+
+
+
+void Game::startGeneralMenu()
+{
+	if (isActiveScene<BattleScene>())
+	{
+		getScene<BattleScene>()->setStatus(statusScene::PauseScene);
+	}
+	else if (isActiveScene<ExploringScene>())
+	{
+		getScene<ExploringScene>()->setStatus(statusScene::PauseScene);
+	}
+	activateScene<GeneralMenuScene>();
+}
+
+
+
+void Game::endGeneralMenu()
+{
+	getScene<GeneralMenuScene>()->setStatus(statusScene::PauseScene);
+	deActivateScene<GeneralMenuScene>();
+	if (sGeneralMenuScene->choice == 0)
+	{
+		getScene<ExploringScene>()->setStatus(statusScene::RunningScene);
+	}
+	else if (sGeneralMenuScene->choice == 1)
+	{
+		getScene<BattleScene>()->setStatus(statusScene::RunningScene);
+	}
+	sGeneralMenuScene->choice = -1;
 }
 
 

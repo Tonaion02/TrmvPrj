@@ -12,7 +12,7 @@
 //Class ImageWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
 ImageWidget::ImageWidget(struct SDL_Texture *image, const Vector2i& pos, const Vector2i& dim)
-	:DrawableWidget(pos, dim), image(image)
+	:SizedWidget(pos, dim), image(image)
 {
 
 }

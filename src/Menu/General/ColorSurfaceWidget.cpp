@@ -1,32 +1,29 @@
-#pragma once
+#include "Menu/General/ColorSurfaceWidget.h"
 
-#include "Input/InputHandler.h"
+#include "Enviroment/WindowHandler.h"
+
+#include "SDL_Enviroment.h"
 
 
 
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//InputHandler interface
+//Class ColorSurfaceWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
-inline void updateInput()
+ColorSurfaceWidget::ColorSurfaceWidget(const Vector2i& pos, const Vector2i& dim, const SDL_Color& color)
+	:SizedWidget(pos, dim), color(color)
 {
-	InputHandler::get().updateInput();
+
 }
 
 
 
-inline Vector2i getCursorPos()
+void ColorSurfaceWidget::draw()
 {
-	return InputHandler::get().getPosCursor();
-}
-
-
-
-inline bool getMouseButton(int button)
-{
-	return InputHandler::get().getMouseButton(button);
+	SDL_SetRenderDrawColor(WindowHandler::get().getRenderer(), color.r, color.g, color.b, color.a);
+	SDL_RenderFillRect(WindowHandler::get().getRenderer(), this->rect);
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
-//InputHandler interface
+//Class ColorSurfaceWidget
 //-----------------------------------------------------------------------------------------------------------------------------------------
