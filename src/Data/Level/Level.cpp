@@ -8,6 +8,14 @@
 #include "World.h"
 //Including some context
 
+//Including scenes
+#include "Scenes/ExploringScene.h"
+//Including scenes
+
+//Including some Systems
+#include "Systems/TileSystem.h"
+//Including some Systems
+
 //Including Enviroment
 #include "Enviroment/TextureHandler.h"
 //Including Enviroment
@@ -31,6 +39,8 @@
 Level levelWrapper(const std::string& path)
 {
 	World* world = Game::get()->getWorld();
+	ExploringScene* exploringScene = Game::get()->getExploringScene();
+
 	std::string baseDataPath = "data/";
 
 	Level level;
@@ -57,13 +67,20 @@ Level levelWrapper(const std::string& path)
 
 	int firstGId;
 
-	for (unsigned int i = 0; i < xmlVariables.size(); i++)
+	int indexGroup = -1;
+	
+
+
+	while (!xmlVariables.empty())
 	{
-		XMLvariab var = xmlVariables[i];
+		XMLvariab var = xmlVariables.front();
+		xmlVariables.erase(xmlVariables.begin());
+
+
 
 		//Analyze the xml variables
 		if (var.name == "tileset")
-		{		
+		{
 			std::string path = var.getValue("source");
 			path = baseDataPath + path.substr(0, path.find(".")) + ".png";
 
@@ -72,8 +89,27 @@ Level levelWrapper(const std::string& path)
 			else
 				firstGId = std::stoi(var.getValue("firstgid"));
 		}
+		else if (var.name == "group")
+		{
+			indexGroup++;
+
+			level.graphicTileLayer.deepOfLayer.push_back(0);
+
+			std::vector<XMLvariab> copy = getXMLvariables(var.rawData);
+
+			while (!copy.empty())
+			{
+				xmlVariables.emplace(xmlVariables.begin(), copy.back());
+
+				copy.pop_back();
+			}
+		}
 		else if (var.name == "layer")
 		{
+			//Update the counter of layer for this group
+			level.graphicTileLayer.deepOfLayer[indexGroup]++;
+			//Update the counter of layer for this group
+
 			XMLvariab var2 = getXMLvariables(var.rawData)[0];
 
 			for (unsigned int j = 0; j < var2.rawData.size(); j++)
@@ -117,6 +153,21 @@ Level levelWrapper(const std::string& path)
 
 
 
+			//Set all the Unique tiles to nullptr
+			level.tileMap.uniqueTiles.resize(levelDim.x * levelDim.y * (zT + 1));
+
+
+			for (posT.y = 0; posT.y < levelDim.y; posT.y++)
+			{
+				for (posT.x = 0; posT.x < levelDim.x; posT.x++)
+				{
+					level.tileMap.uniqueTiles[zT * levelDim.y * levelDim.x + posT.y * levelDim.x + posT.x] = nullptr;
+				}
+			}
+			//Set all the Unique tiles to nullptr
+
+
+
 			//Set all the tiles to unOccupied
 			level.tileMap.mappedEntities.resize(levelDim.x * levelDim.y * (zT + 1));
 
@@ -137,13 +188,62 @@ Level levelWrapper(const std::string& path)
 				std::vector<XMLvariab> variables = getXMLvariables(var.rawData);
 				for (auto iter : variables)
 				{
+					int logicType = 0;
+					//Get the pos of the Tile
 					Vector2i pos = { std::stoi(iter.getValue("x")), std::stoi(iter.getValue("y")) - world->currentLevel.tileSet->tileDim.y };
 					pos = pos / world->currentLevel.tileSet->tileDim;
-					int logicType = std::stoi(iter.getValue("gid")) - firstGId;
+					//Get the pos of the Tile
+
+					//Case is a standard Tile
+					if (iter.getValue("gid") != "nothing")
+					{
+						logicType = std::stoi(iter.getValue("gid")) - firstGId;
+					}
+					//Case is a standard Tile
+					
+					//Case is a Unique Tile
+					else
+					{
+						//Create the Unique Tile
+						XMLvariab temp = *exploringScene->templatesUniqueTile[iter.getValue("template")];
+						logicType = std::stoi(temp.getValue("gid")) - 1;
+
+						//In case some properties are modified
+						if (iter.withRawData)
+						{
+							//Delete the first line and last line("properties")
+							iter.rawData.erase(iter.rawData.begin());
+							iter.rawData.pop_back();
+							//Delete the first line and last line("properties")
+
+							//Iterate about properties that is changed
+							std::vector<XMLvariab> propertiesChanged = getXMLvariables(iter.rawData);
+							for (XMLvariab& prop : propertiesChanged)
+								temp.values[prop.getValue("name")] = prop.getValue("value");
+							//Iterate about properties that is changed
+						}
+						//In case some properties are modified
+
+						//Add Unique Tile to the collection of the level of UniqueTile
+						level.tileMap.uniqueTiles[zT * levelDim.y * levelDim.x + pos.y * levelDim.x + pos.x] = TileSystem::createUniqueTile(&temp);
+						//Add Unique Tile to the collection of the level of UniqueTile
+
+						//Create the Unique Tile
+					}
+					//Case is a Unique Tile
+
+					//Set the logicType of Tile
 					level.tileMap.tiles[zT * levelDim.y * levelDim.x + pos.y * levelDim.x + pos.x].logicType = static_cast<int>(logicType);
+					//Set the logicType of Tile
 				}
 			}
 			//Add particular object to this layer
+
+
+
+			//Add a group of Entity
+			level.groupsEntities.push_back(GroupEntity<>());
+			//Add a group of Entity
 
 
 
@@ -151,6 +251,8 @@ Level levelWrapper(const std::string& path)
 		}
 		//Analyze the xml variables
 	}
+
+
 
 	level.maxZ = zT;
 

@@ -2,6 +2,11 @@
 
 #include <vector>
 
+//Include all the Tile
+#include "Data/Level/UniqueTile.h"
+#include "Data/Level/ChestTile.h"
+//Include all the Tile
+
 
 
 
@@ -11,7 +16,8 @@ enum LogicType
 	NoneLogicType=-1,
 	Ground,
 	Wall,
-	Sea
+	Sea,
+	Chest
 };
 
 
@@ -36,14 +42,11 @@ struct Tile
 
 
 
-//struct TileMap
-//{
-//	std::vector<Tile> tiles;
-//	std::vector<int> mappedUniqueTiles;
-//	std::vector<int> mappedEntities;
-//};
+
 struct TileMap
 {
 	std::vector<Tile> tiles;
 	std::vector<int> mappedEntities;
+
+	std::vector<struct UniqueTile*> uniqueTiles;
 };

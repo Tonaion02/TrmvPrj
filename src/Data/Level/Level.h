@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ECS/GroupEntity.h"
+
 #include "utils/Math/Math.h"
 
 #include "Enviroment/TileSet.h"
@@ -24,6 +26,8 @@ struct Level
 	int maxZ;
 
 	BattleCamp battleCamp;
+
+	std::vector<GroupEntity<>> groupsEntities;
 };
 
 

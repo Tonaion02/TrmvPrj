@@ -8,7 +8,7 @@
 
 
 
-template<unsigned int SIZE = MAX_ENTITIES>
+template<unsigned int SIZE = MAX_ENTITIES / 3>
 struct GroupEntity
 {
 	std::array<unsigned int, MAX_ENTITIES> reverseArray;

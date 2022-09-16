@@ -45,7 +45,7 @@ void EnemySystem::init()
 	{
 		BaseEnemyCmp->mPackedArray[i].alive = true;
 		BaseEnemyCmp->mPackedArray[i].viewDistance = 3;
-		BaseEnemyCmp->mPackedArray[i].currentStepPath = 1;
+		BaseEnemyCmp->mPackedArray[i].currentStepPath = 0;
 		MoveCmp->mPackedArray[i].lastDirection = BaseEnemyCmp->mPackedArray[i].path[0];
 	}
 	//Init all BaseEnemyComponent
@@ -122,19 +122,28 @@ void EnemySystem::aiBaseEnemy()
 							world->battleEntities.push_back(e);
 							
 							//Create entity for allerting animation
-							Entity allertingEntity = EntityManager::get().createEntity();
+							Entity allertingEntity = createEntityId();
 
 							//Init allertingEntity for the animation of allerting
 							registerEntity(TransformCmp, allertingEntity);
-							TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
-							TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].pos.y -= 1;
-							TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].z = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z;
+							//TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
+							getCmpEntity(TransformCmp, allertingEntity)->pos = getCmpEntity(TransformCmp, e)->pos;
+							//TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].pos.y -= 1;
+							getCmpEntity(TransformCmp, allertingEntity)->pos.y -= 1;
+							//TransformCmp->mPackedArray[TransformCmp->mReverseArray[allertingEntity]].z = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].z;
+							getCmpEntity(TransformCmp, allertingEntity)->z = getCmpEntity(TransformCmp, e)->z;
 							registerEntity(&world->mPoolDrawComponent, allertingEntity);
-							world->mPoolDrawComponent.mPackedArray[world->mPoolDrawComponent.mReverseArray[allertingEntity]].id = 117;
+							//world->mPoolDrawComponent.mPackedArray[world->mPoolDrawComponent.mReverseArray[allertingEntity]].id = 117;
+							getCmpEntity(&world->mPoolDrawComponent, allertingEntity)->id = 117;
 							start(&world->delayTransictionToBattle);
 							//Init allertingEntity for the animation of allerting
 
 							world->allertingEntities.push_back(allertingEntity);
+
+							//Register Entity to a group
+							registerEntity(&world->currentLevel.groupsEntities[getCmpEntity(&world->mPoolTransformComponent, e)->z], allertingEntity);
+							//Register Entity to a group
+
 							//Create entity for allerting animation
 
 							break;
@@ -158,6 +167,7 @@ void EnemySystem::aiBaseEnemy()
 						if (BaseEnemyCmp->mPackedArray[i].currentStepPath == BaseEnemyCmp->mPackedArray[i].path.size())
 							EnemySystem::reversePath(e);
 						//Controll if is terminated the path and reverse it
+
 						//Start an action if enemies not found the player
 					}
 				}

@@ -9,5 +9,6 @@ enum Actions
 	NoneActions = -1,
 	Walk,
 	Rotate,
-	Observe
+	Observe,
+	Interact
 };

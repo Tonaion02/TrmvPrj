@@ -5,8 +5,6 @@
 #include "World.h"
 //Including some context
 
-#include "Data/Phase/Phase.h"
-
 //Including enviroment
 #include "Enviroment/WindowHandler.h"
 //Including enviroment

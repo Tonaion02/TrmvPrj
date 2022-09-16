@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+
 #include "ECS/Scene.h"
 
 
@@ -19,4 +21,5 @@ public:
 protected:
 
 public:
+	std::map<std::string, struct XMLvariab*> templatesUniqueTile;
 };

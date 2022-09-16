@@ -5,8 +5,6 @@
 #include <set>
 #include <iterator>
 
-#include "Data/Phase/PhaseHandler.h"
-
 #include "Enviroment/TileSet.h"
 
 //Including ComponentPools

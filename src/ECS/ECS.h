@@ -156,7 +156,8 @@ inline bool isThereEntity(GroupEntity<>* group, Entity e)
 {
 	//ASSERT: 
 
-	return group->directArray[group->reverseArray[e]] != MAX_ENTITIES;
+	//return group->directArray[group->reverseArray[e]] != MAX_ENTITIES;
+	return group->reverseArray[e] != MAX_ENTITIES;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //GroupEntity interface

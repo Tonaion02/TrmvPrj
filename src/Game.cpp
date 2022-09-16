@@ -40,7 +40,7 @@
 
 
 ///FOR TESTING
-//#include "ECS/Scene.h"
+#include "utils/StringAndFile/XMLvariab.h"
 
 #include "Scenes/ExploringScene.h"
 #include "Scenes/BattleScene.h"
@@ -84,61 +84,14 @@ void Game::update()
 
 void Game::processInput()
 {
-	updateInput();
 	//General handling of the Input
-	//SDL_Event event;
+	updateInput();
 
-	//while (SDL_PollEvent(&event))
-	//{
-	//	switch (event.type)
-	//	{
-	//	case SDL_QUIT:
-	//		Game::get()->setRunning(false);
-	//		break;
-	//	case SDL_WINDOWEVENT:
-	//		switch (event.window.event)
-	//		{
-	//		case SDL_WINDOWEVENT_SIZE_CHANGED:
-	//			SDL_Log("Window %d size changed to %dx%d", event.window.windowID, event.window.data1, event.window.data2);
-	//			WindowHandler::get().updateWindowDimension({ event.window.data1, event.window.data2 });
-	//			CameraSystem::onUpdateWindowSize();
-	//			break;
-	//		}
-	//		break;
-	//	case SDL_KEYDOWN:
-	//	{
-	//		switch (event.key.keysym.scancode)
-	//		{
-	//		case SDL_SCANCODE_M:
-	//			if (!isActiveScene<GeneralMenuScene>())
-	//			{
-	//				Game::get()->startGeneralMenu();
-	//				break;
-	//			}
-	//			if (isActiveScene<GeneralMenuScene>())
-	//			{
-	//				Game::get()->endGeneralMenu();
-	//				break;
-	//			}
 
-	//			break;
-
-	//		default:
-	//			break;
-	//		}
-	//	}
-	//	case SDL_MOUSEBUTTONDOWN:
-	//		updateStateMouseButtons(event);
-	//		break;
-	//	case SDL_MOUSEBUTTONUP:
-	//		updateStateMouseButtons(event);
-	//		break;
-	//	}
-	//}
-
-	//updateMouseCursor();
 
 	const Uint8* keyStates = SDL_GetKeyboardState(nullptr);
+
+
 
 	//For zooming camera in and out
 	if (keyStates[SDL_SCANCODE_1])
@@ -150,8 +103,6 @@ void Game::processInput()
 		CameraSystem::updateCameraZoom(-1.0f);
 	}
 	//For zooming camera in and out
-
-	//General handling of the Input
 
 
 
@@ -167,6 +118,8 @@ void Game::processInput()
 		nextScene();
 	}
 	//ProcessInput for each scene
+
+	//General handling of the Input
 }
 
 
@@ -176,7 +129,7 @@ void Game::generateOutput()
 	//Clean screen
 	SDL_SetRenderDrawColor(WindowHandler::get().getRenderer(), 0, 0, 0, 255);
 	SDL_RenderClear(WindowHandler::get().getRenderer());
-	//Clean screen
+	//Clean screenw
 
 
 
@@ -190,6 +143,7 @@ void Game::generateOutput()
 
 		nextScene();
 	}
+
 
 
 	//Render elements
@@ -212,6 +166,8 @@ void Game::loadData()
 	mTicksCount = 0.0f;
 	//Init some base data
 
+
+
 	//Init world
 	world = new World();
 	//Init world
@@ -231,21 +187,33 @@ void Game::loadData()
 
 
 	//Load TileSet and Texture
+	int tileDim = 32;
+
 	world->currentLevel.texture = TextureHandler::get().getTexture("data/buch-outdoor.png");
-	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", 32);
+	world->mTileSetHandler.loadTileSet("data/buch-outdoor.png", tileDim);
 	world->currentLevel.tileSet = world->mTileSetHandler.getTileSet("data/buch-outdoor.png");
 	world->textureActor = TextureHandler::get().getTexture("data/player.png");
-	world->mTileSetHandler.loadTileSet("data/player.png", 32);
+	world->mTileSetHandler.loadTileSet("data/player.png", tileDim);
 	world->tilesetActor = world->mTileSetHandler.getTileSet("data/player.png");
 
 	TextureHandler::get().loadTexture("data/brimstone.png");
-	world->mTileSetHandler.loadTileSet("data/brimstone.png", 32);
+	world->mTileSetHandler.loadTileSet("data/brimstone.png", tileDim);
+
+	SDL_Log("Texture and TileSet loaded");
 	//Load TileSet and Texture
 
 
 
+	//Load base UniqueTile
+	XMLvariab* chestTest = TileSystem::uniqueTileWrapper("data/chest.tx");
+	sExploringScene->templatesUniqueTile["chest.tx"] = chestTest;
+	//Load base UniqueTile
+
+
 	//Load Level	
 	world->currentLevel = levelWrapper("data/level0.tmx");
+	
+	SDL_Log("Level loaded");
 	//Load Level
 
 
@@ -262,7 +230,7 @@ void Game::loadData()
 
 	for (int i = 0; i < 5; i++)
 	{
-		Entity e = EntityManager::get().createEntity();
+		Entity e = createEntityId();
 
 		registerEntity(&world->mPoolTransformComponent, e);
 		getCmpEntity(&world->mPoolTransformComponent, e)->pos = { x, x };
@@ -271,18 +239,23 @@ void Game::loadData()
 		registerEntity(&world->mPoolDrawComponent, e);
 		getCmpEntity(&world->mPoolDrawComponent, e)->id = 17;
 
+		//Register to the group of the level
+		registerEntity(&world->currentLevel.groupsEntities[z], e);
+		//Register to the group of the level
+
 		if (e != 1)
 		{
 			TileSystem::registerPos({ (int)x,(int)x }, z, e);
 
 			registerEntity(&world->mPoolMoveComponent, e);
 			getCmpEntity(&world->mPoolMoveComponent, e)->currentDirection = NoneDirection;
-			getCmpEntity(&world->mPoolMoveComponent, e)->lastDirection = Direction::Right;
+			getCmpEntity(&world->mPoolMoveComponent, e)->lastDirection = Direction::Down;
 
 			registerEntity(&world->mPoolActionComponent, e);
 			getCmpEntity(&world->mPoolActionComponent, e)->currentAction = NoneActions;
 			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Walk].coolDown = 0.5f;
 			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Rotate].coolDown = 0.5f;
+			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Interact].coolDown = 0.5f;
 
 			registerEntity(&world->mPoolAnimationComponent, e);
 			TiledAnimation tiledAnimation;
@@ -313,7 +286,9 @@ void Game::loadData()
 			tiledAnimation.ids = { 23 };
 			AnimationSystem::addAnimation(e, tiledAnimation, Actions::Rotate, Direction::Left);
 		}
-		
+	
+
+
 		if (e == 2)
 		{
 			registerEntity(&world->mPoolBaseEnemyComponent, e);
@@ -331,6 +306,23 @@ void Game::loadData()
 			getCmpEntity(&world->mPoolBaseEnemyComponent, e)->path = path;
 		}
 
+		//if (e == 3)
+		//{
+		//	registerEntity(&world->mPoolBaseEnemyComponent, e);
+
+		//	std::vector<Direction> path;
+		//	path.push_back(Direction::Right);
+		//	//path.push_back(Direction::Right);
+
+		//	getCmpEntity(&world->mPoolBaseEnemyComponent, e)->path = path;
+
+
+
+		//	//getCmpEntity(&world->mPoolTransformComponent, e)->pos = { 7, 7 };
+		//	//getCmpEntity(&world->mPoolTransformComponent, e)->tileOccupied = { 7, 7 };
+		//	//getCmpEntity(&world->mPoolTransformComponent, e)->z = 1;
+		//}
+
 		x += 1.0f;
 	}
 
@@ -338,23 +330,23 @@ void Game::loadData()
 
 	world->player = 1;
 
-	TileSystem::unRegisterPos(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied, z);
-	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos = { 7.0f, 7.0f };
-	world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied =
-		static_cast<Vector2i>(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos);
-	TileSystem::registerPos(world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].tileOccupied, z, world->player);
+	TileSystem::unRegisterPos(getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied, z);
+	getCmpEntity(&world->mPoolTransformComponent, world->player)->pos = { 17.0f, 16.0f };
+	getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied = static_cast<Vector2i>(getCmpEntity(&world->mPoolTransformComponent, world->player)->pos);
+	TileSystem::registerPos(getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied, z, world->player);
 
 	registerEntity(&world->mPoolMoveComponent, world->player);
-	world->mPoolMoveComponent.mPackedArray[world->mPoolMoveComponent.mReverseArray[world->player]].currentDirection = NoneDirection;
-	world->mPoolMoveComponent.mPackedArray[world->mPoolMoveComponent.mReverseArray[world->player]].lastDirection = Direction::Down;
+	getCmpEntity(&world->mPoolMoveComponent, world->player)->currentDirection = Direction::NoneDirection;
+	getCmpEntity(&world->mPoolMoveComponent, world->player)->lastDirection = Direction::Down;
 
 	///Register and init entity to PoolActionComponent
 	registerEntity(&world->mPoolActionComponent, world->player);
 
-	world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[world->player]].currentAction = NoneActions;
+	getCmpEntity(&world->mPoolActionComponent, world->player)->currentAction = Actions::NoneActions;
 
-	world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[world->player]].actionDelays[Actions::Walk].coolDown = 0.5f;
-	world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[world->player]].actionDelays[Actions::Rotate].coolDown = 0.2f;
+	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Walk].coolDown = 0.5f;
+	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Rotate].coolDown = 0.2f;
+	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Interact].coolDown = 0.5f;
 	///Register and init entity to PoolActionComponent
 
 	///Register and init entity to poolAnimationComponent
@@ -388,32 +380,39 @@ void Game::loadData()
 	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Rotate, Direction::Right);
 	tiledAnimation.ids = { 23 };
 	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Rotate, Direction::Left);
+
+	tiledAnimation.ids = { 85, 86, 87 };
+	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Interact, Direction::Up);
+	tiledAnimation.ids = { 88, 89, 90 };
+	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Interact, Direction::Down);
+	tiledAnimation.ids = { 94, 95, 96 };
+	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Interact, Direction::Right);
+	tiledAnimation.ids = { 91, 92, 93 };
+	AnimationSystem::addAnimation(world->player, tiledAnimation, Actions::Interact, Direction::Left);
 	///Register and init entity to poolAnimationComponent
 
 
 
 	///Init delayTransiction
-	world->delayTransictionToBattle.coolDown = world->mPoolActionComponent.mPackedArray[world->mPoolActionComponent.mReverseArray[world->player]].actionDelays[Actions::Walk].coolDown
-		+ 0.5f;
+	world->delayTransictionToBattle.coolDown = getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Walk].coolDown + 0.5f;
 	///Init delayTransiction
 	
 	
 	
 	///Init camera
-	Camera camera = EntityManager::get().createEntity();
-	world->camera = camera;
+	world->camera = createEntityId();
 	///Init camera
 
 
 
 	///Init test for Battle Phase
-	int n = 2;
+	int n = 4;
 	bool first = true;
 	Entity firstEntity;
 
 	for (int i = 0; i < n; i++)
 	{
-		Entity e = EntityManager::get().createEntity();
+		Entity e = createEntityId();
 
 		if (first)
 		{
@@ -424,7 +423,7 @@ void Game::loadData()
 		registerEntity(&world->mPoolTransformBattleComponent, e);
 		if (i == 0)
 		{
-			world->mPoolTransformBattleComponent.mPackedArray[world->mPoolTransformBattleComponent.mReverseArray[e]].pos = { 80.0f, 1.0f };
+			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = { 80.0f, 1.0f };
 			world->BattlePlayerEntity = e;
 			registerEntity(&world->mPoolPlayerBattleComponent, e);
 
@@ -440,7 +439,7 @@ void Game::loadData()
 			for (int j = 0, iteratorEntity = firstEntity; j < i; j++, iteratorEntity++)
 			{
 				TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, iteratorEntity);
-				if (ColliderSystem::detectCollision(pos, Vector2i(16, 16), transform->pos, {16, 16}))
+				if (ColliderSystem::detectCollision(pos, Vector2i(tileDim, tileDim), transform->pos, { tileDim, tileDim }))
 				{
 					pos = { random() % (world->currentLevel.battleCamp.dim.x * 16), random() % (world->currentLevel.battleCamp.dim.y * 16) };
 					j = 0, iteratorEntity = firstEntity;
@@ -458,7 +457,7 @@ void Game::loadData()
 		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
 		
 		registerEntity(&world->mPoolRectColliderComponent, e);
-		getCmpEntity(&world->mPoolRectColliderComponent, e)->dim = { 16, 16 };
+		getCmpEntity(&world->mPoolRectColliderComponent, e)->dim = { tileDim, tileDim };
 		
 		registerEntity(&world->mPoolDrawBattleComponent, e);
 		getCmpEntity(&world->mPoolDrawBattleComponent, e)->id = 17;

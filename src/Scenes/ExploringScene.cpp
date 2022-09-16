@@ -23,6 +23,8 @@
 //Including Systems
 #include "Systems/MoveSystem.h"
 #include "Systems/AnimationSystem.h"
+#include "Systems/InteractionSystem.h"
+
 #include "Systems/CameraSystem.h"
 #include "Systems/ActionSystem.h"
 #include "Systems/EnemySystem.h"
@@ -54,6 +56,7 @@ void ExploringScene::updateScene()
 
 		//Execute current action of all Entity
 		MoveSystem::move();
+		InteractionSystem::interact();
 
 		AnimationSystem::animate();
 
@@ -127,15 +130,6 @@ void ExploringScene::processInputScene()
 
 
 
-		//For debugging
-		if (keyStates[SDL_SCANCODE_B])
-		{
-
-		}
-		//For debugging
-
-
-
 		//For moving player
 		if (keyStates[SDL_SCANCODE_W])
 		{
@@ -155,9 +149,9 @@ void ExploringScene::processInputScene()
 				AnimationSystem::startAnimation(world->player);
 			}
 		}
-		else if (keyStates[SDL_SCANCODE_D])
+		else if (keyStates[SDL_SCANCODE_D] && world->battleEntities.empty())
 		{
-			if (ActionSystem::isDoingNothing(world->player) && world->battleEntities.empty())
+			if (ActionSystem::isDoingNothing(world->player))
 			{
 				ActionSystem::startAction(world->player, Actions::Walk);
 				MoveSystem::startMove(world->player, Direction::Right);
@@ -175,6 +169,18 @@ void ExploringScene::processInputScene()
 		}
 		//For moving player
 
+		//For interaction of the player
+		else if (keyStates[SDL_SCANCODE_B] && world->battleEntities.empty())
+		{
+			if (ActionSystem::isDoingNothing(world->player))
+			{
+				ActionSystem::startAction(world->player, Actions::Interact);
+				InteractionSystem::startInteraction(world->player);
+				AnimationSystem::startAnimation(world->player);
+			}
+		}
+		//For interaction of the player
+
 
 
 		//For debuggingInfo
@@ -182,8 +188,8 @@ void ExploringScene::processInputScene()
 		{
 			SDL_Log(
 				"Player pos: ( %f, %f )",
-				world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos.x,
-				world->mPoolTransformComponent.mPackedArray[world->mPoolTransformComponent.mReverseArray[world->player]].pos.y
+				getCmpEntity(&world->mPoolTransformComponent, world->player)->pos.x,
+				getCmpEntity(&world->mPoolTransformComponent, world->player)->pos.y
 			);
 
 			start(&world->debugInfoTimer);

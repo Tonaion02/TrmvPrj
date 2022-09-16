@@ -205,7 +205,7 @@ void BattleScene::processInputScene()
 			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->v = { 0.0f, 0.0f };
 
 			registerEntity(&world->mPoolRectColliderComponent, projectile);
-			getCmpEntity(&world->mPoolRectColliderComponent, projectile)->dim = { 16, 16 };
+			getCmpEntity(&world->mPoolRectColliderComponent, projectile)->dim = { 32, 32 };
 
 			registerEntity(&world->mPoolDrawBattleComponent, projectile);
 			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->id = 117;
@@ -227,22 +227,22 @@ void BattleScene::processInputScene()
 
 			case Up:
 				BattleMoveSystem::applyForce(projectile, { 0.0f, -100.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += -16.0f;
+				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += -32.0f;
 				break;
 
 			case Down:
 				BattleMoveSystem::applyForce(projectile, { 0.0f, 100.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += 16.0f;
+				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += 32.0f;
 				break;
 
 			case Right:
 				BattleMoveSystem::applyForce(projectile, { 100.0f, 0.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += 16.0f;
+				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += 32.0f;
 				break;
 
 			case Left:
 				BattleMoveSystem::applyForce(projectile, { -100.0f, 0.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += -16.0f;
+				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += -32.0f;
 				break;
 
 			default:

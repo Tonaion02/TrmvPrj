@@ -1,10 +1,13 @@
 #include "ActionSystem.h"
 
+//Including ECS
 #include "ECS/ECS.h"
+//Including ECS
 
-//Including other system
+//Including other systems
 #include "Systems/MoveSystem.h"
-//Including other system
+#include "Systems/InteractionSystem.h"
+//Including other systems
 
 //Including world
 #include "Game.h"
@@ -55,6 +58,10 @@ void ActionSystem::endAction()
 					MoveSystem::endMove(poolActionCmp->mDirectArray[i]);
 					break;
 
+				case Interact:
+					InteractionSystem::endInteraction(poolActionCmp->mDirectArray[i]);
+					break;
+
 				default:
 					break;
 				}
@@ -81,11 +88,9 @@ void ActionSystem::updateAction()
 
 	for (unsigned int i = 0; i < poolActionCmp->mNext; i++)
 	{
-		//if (poolActionCmp->mPackedArray[i].currentAction != NoneActions)
 		if (getCmpIndex(&world->mPoolActionComponent, i)->currentAction != NoneActions)
 		{
 			//Update delay of Action
-			//poolActionCmp->mPackedArray[i].actionDelays[poolActionCmp->mPackedArray[i].currentAction].timePassed += deltaTime;
 			getCmpIndex(&world->mPoolActionComponent, i)->actionDelays[getCmpIndex(&world->mPoolActionComponent, i)->currentAction].timePassed += deltaTime;
 			//Update delay of Action
 		}
@@ -100,12 +105,9 @@ void ActionSystem::startAction(Entity e, Actions action)
 
 	ComponentPool<ActionComponent>* poolActionCmp = &world->mPoolActionComponent;
 
-	//if (poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction == NoneActions)
 	if (getCmpEntity(&world->mPoolActionComponent, e)->currentAction == NoneActions)
 	{
-		//poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction = action;
 		getCmpEntity(&world->mPoolActionComponent, e)->currentAction = action;
-		//start(&poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].actionDelays[poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction]);
 		start(&getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[getCmpEntity(&world->mPoolActionComponent, e)->currentAction]);
 	}
 }
@@ -116,9 +118,6 @@ bool ActionSystem::isDoingNothing(Entity e)
 {
 	World* world = Game::get()->getWorld();
 
-	//ComponentPool<ActionComponent>* poolActionCmp = &world->mPoolActionComponent;
-
-	//return poolActionCmp->mPackedArray[poolActionCmp->mReverseArray[e]].currentAction == Actions::NoneActions;
 	return getCmpEntity(&world->mPoolActionComponent, e)->currentAction == Actions::NoneActions;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------

@@ -61,9 +61,17 @@ XMLvariab::XMLvariab(const std::string& line)
 std::string XMLvariab::getValue(const std::string& key)
 {
 	//AGGIUNGERE ASSERT
-	//if (values.find(key) == values.end());
+	if (values.find(key) == values.end())
+		return "nothing";
 
 	return values[key];
+}
+
+
+
+void XMLvariab::createValue(const std::string& name, const std::string& value)
+{
+	values[name] = value;
 }
 
 

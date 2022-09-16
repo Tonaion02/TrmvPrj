@@ -8,6 +8,7 @@
 //Include some base ECS
 #include "ECS/Entity.h"
 #include "ECS/ComponentPool.h"
+#include "ECS/ECS.h"
 //Include some base ECS
 
 //Including Components
@@ -105,13 +106,17 @@ void MoveSystem::startMove(Entity e, Direction direction)
 	ComponentPool<MoveComponent>* MoveCmp = &world->mPoolMoveComponent;
 	ComponentPool<ActionComponent>* ActionCmp = &world->mPoolActionComponent;
 
-	Vector2i pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
-	MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
+	//Vector2i pos = TransformCmp->mPackedArray[TransformCmp->mReverseArray[e]].pos;
+	Vector2i pos = getCmpEntity(TransformCmp, e)->pos;
+	//MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection = direction;
+	getCmpEntity(MoveCmp, e)->currentDirection = direction;
 
-	switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
+	//switch (ActionCmp->mPackedArray[ActionCmp->mReverseArray[e]].currentAction)
+	switch (getCmpEntity(ActionCmp, e)->currentAction)
 	{
 	case Walk:
-		switch (MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection)
+		//switch (MoveCmp->mPackedArray[MoveCmp->mReverseArray[e]].currentDirection)
+		switch (getCmpEntity(MoveCmp, e)->currentDirection)
 		{
 		case Up:
 			pos.y -= 1;

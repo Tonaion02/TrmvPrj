@@ -18,13 +18,13 @@ public:
 	XMLvariab(const std::string& line);
 
 	std::string getValue(const std::string& key);
+	void createValue(const std::string& name, const std::string& value);
 
 	//Da aggiungere in futuro(possibilità di ottenere a partire da un unordered_map e un nome una linea da inserire in un testo)
 	//std::string getLineFromValues(const std::string& name);
 
 public:
 
-	//Da testare 
 	bool withRawData = false;
 	std::vector<std::string> rawData;
 

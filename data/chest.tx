@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="tekTileSet.tsx"/>
+ <object gid="4" width="32" height="32">
+  <properties>
+   <property name="idItem" type="int" value="10"/>
+   <property name="images" value="67,91"/>
+   <property name="internalLayer" type="int" value="1"/>
+  </properties>
+ </object>
+</template>

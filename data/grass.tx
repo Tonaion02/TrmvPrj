@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <tileset firstgid="1" source="tekTileSet.tsx"/>
+ <object gid="3" width="32" height="32">
+  <properties>
+   <property name="idMonster" value="0,1"/>
+   <property name="images" value="90,91"/>
+  </properties>
+ </object>
+</template>

@@ -81,10 +81,12 @@ void AnimationSystem::animate()
 
 		Direction direction = (Direction)moveCmp->mPackedArray[moveCmp->mReverseArray[e]].lastDirection;
 
-		if (action != NoneActions)
+		//TO FIX
+		if (action != Actions::NoneActions)
 		{
 			direction = (Direction)moveCmp->mPackedArray[moveCmp->mReverseArray[e]].currentDirection;
 		}
+		//TO FIX
 
 		auto iterGroup = animationCmp->mPackedArray[i].animations.find(action);
 		auto iter = iterGroup->second.find(direction);
