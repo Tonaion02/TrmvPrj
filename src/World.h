@@ -16,6 +16,7 @@
 #include "Components/ActionComponent.h"
 #include "Components/AnimationComponent.h"
 #include "Components/BaseEnemyComponent.h"
+#include "Components/BagComponent.h"
 
 #include "Components/Battle/TransformBattleComponent.h"
 #include "Components/Battle/DrawBattleComponent.h"
@@ -57,6 +58,7 @@ struct World
 	ComponentPool<ActionComponent> mPoolActionComponent;
 	ComponentPool<AnimationComponent> mPoolAnimationComponent;
 	ComponentPool<BaseEnemyComponent> mPoolBaseEnemyComponent;
+	ComponentPool<BagComponent> mPoolBagComponent;
 
 	//POOL OF BATTLE-COMPONENTS
 	ComponentPool<TransformBattleComponent> mPoolTransformBattleComponent;

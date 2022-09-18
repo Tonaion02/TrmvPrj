@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Items>
+  <Potion attackHeal="10" defHeal="20" healthHeal="30"/>
+  <Medpotion attackHeal="10" defHeal="20" healthHeal="30"/>
+  <Bigpotion attackHeal="30" defHeal="30" healthHeal="50"/>
+  <AttackUp attackHeal="30" defHeal="0" healthHeal="0"/>
+  <DefUp attackHeal="0" defHeal="30" healthHeal="0"/>
+  <HealthUp attackHeal="0" defHeal="0" healthHeal="50"/>
+</Items>

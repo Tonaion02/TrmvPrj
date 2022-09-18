@@ -40,6 +40,10 @@
 
 
 ///FOR TESTING
+#include "Data/Items/FactoryItem.h"
+#include "Data/Items/ItemsInfoCenter.h"
+#include "Data/Items/CreationItemFunctions.h"
+
 #include "utils/StringAndFile/XMLvariab.h"
 
 #include "Scenes/ExploringScene.h"
@@ -210,11 +214,16 @@ void Game::loadData()
 	//Load base UniqueTile
 
 
+	
 	//Load Level	
 	world->currentLevel = levelWrapper("data/level0.tmx");
 	
 	SDL_Log("Level loaded");
 	//Load Level
+
+	//Load items
+	loadItems("data/Items/Items.tmx");
+	//Load items
 
 
 
