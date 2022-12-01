@@ -51,4 +51,3 @@ project "TiledMaker"
         defines { "NDEBUG" }
         optimize "On"
 		targetdir "output/bin/release"
-	

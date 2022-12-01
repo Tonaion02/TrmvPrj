@@ -91,7 +91,7 @@ void BattleScene::updateScene()
 		//Check if is dead the hitBoxes
 
 		//Update Camera
-		CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity)->pos);
+		CameraSystem::updateCamera(getCmpEntity<TransformBattleComponent>(world->BattlePlayerEntity).pos);
 		//Update Camera
 
 		//Update timer
@@ -170,7 +170,7 @@ void BattleScene::processInputScene()
 
 
 		if (!directions.empty())
-			getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection = directions.back();
+			getCmpEntity(world->mPoolPhysicBoxComponent, world->BattlePlayerEntity).lastDirection = directions.back();
 
 		//Handle principle events
 
@@ -196,53 +196,53 @@ void BattleScene::processInputScene()
 		{
 			Entity projectile = EntityManager::get().createEntity();
 
-			registerEntity(&world->mPoolTransformBattleComponent, projectile);
-			getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos = getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
+			registerEntity(world->mPoolTransformBattleComponent, projectile);
+			getCmpEntity(world->mPoolTransformBattleComponent, projectile).pos = getCmpEntity(world->mPoolTransformBattleComponent, world->BattlePlayerEntity).pos;
 
-			registerEntity(&world->mPoolPhysicBoxComponent, projectile);
-			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->lastDirection = getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection;
-			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->mass = 1.0f;
-			getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->v = { 0.0f, 0.0f };
+			registerEntity(world->mPoolPhysicBoxComponent, projectile);
+			getCmpEntity(world->mPoolPhysicBoxComponent, projectile).lastDirection = getCmpEntity(world->mPoolPhysicBoxComponent, world->BattlePlayerEntity).lastDirection;
+			getCmpEntity(world->mPoolPhysicBoxComponent, projectile).mass = 1.0f;
+			getCmpEntity(world->mPoolPhysicBoxComponent, projectile).v = { 0.0f, 0.0f };
 
-			registerEntity(&world->mPoolRectColliderComponent, projectile);
-			getCmpEntity(&world->mPoolRectColliderComponent, projectile)->dim = { 32, 32 };
+			registerEntity(world->mPoolRectColliderComponent, projectile);
+			getCmpEntity(world->mPoolRectColliderComponent, projectile).dim = { 32, 32 };
 
-			registerEntity(&world->mPoolDrawBattleComponent, projectile);
-			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->id = 117;
-			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->tileSet = world->mTileSetHandler.getTileSet("data/player.png");
-			getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->dim = getCmpEntity(&world->mPoolDrawBattleComponent, projectile)->tileSet->tileDim;
+			registerEntity(world->mPoolDrawBattleComponent, projectile);
+			getCmpEntity(world->mPoolDrawBattleComponent, projectile).id = 117;
+			getCmpEntity(world->mPoolDrawBattleComponent, projectile).tileSet = world->mTileSetHandler.getTileSet("data/player.png");
+			getCmpEntity(world->mPoolDrawBattleComponent, projectile).dim = getCmpEntity(world->mPoolDrawBattleComponent, projectile).tileSet->tileDim;
 
 			//Assign the categories
-			registerEntity(&world->mPoolFreeRectColliderComponent, projectile);
+			registerEntity(world->mPoolFreeRectColliderComponent, projectile);
 
-			registerEntity(&world->mPoolPlayerBattleComponent, projectile);
+			registerEntity(world->mPoolPlayerBattleComponent, projectile);
 
-			registerEntity(&world->mPoolProjectileComponent, projectile);
-			getCmpEntity(&world->mPoolProjectileComponent, projectile)->damage = 100.0f;
+			registerEntity(world->mPoolProjectileComponent, projectile);
+			getCmpEntity(world->mPoolProjectileComponent, projectile).damage = 100.0f;
 			//Assign the categories
 
 			//Apply force to move the projectile
-			switch (getCmpEntity(&world->mPoolPhysicBoxComponent, projectile)->lastDirection)
+			switch (getCmpEntity(world->mPoolPhysicBoxComponent, projectile).lastDirection)
 			{
 
 			case Up:
 				BattleMoveSystem::applyForce(projectile, { 0.0f, -100.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += -32.0f;
+				getCmpEntity(world->mPoolTransformBattleComponent, projectile).pos.y += -32.0f;
 				break;
 
 			case Down:
 				BattleMoveSystem::applyForce(projectile, { 0.0f, 100.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.y += 32.0f;
+				getCmpEntity(world->mPoolTransformBattleComponent, projectile).pos.y += 32.0f;
 				break;
 
 			case Right:
 				BattleMoveSystem::applyForce(projectile, { 100.0f, 0.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += 32.0f;
+				getCmpEntity(world->mPoolTransformBattleComponent, projectile).pos.x += 32.0f;
 				break;
 
 			case Left:
 				BattleMoveSystem::applyForce(projectile, { -100.0f, 0.0f });
-				getCmpEntity(&world->mPoolTransformBattleComponent, projectile)->pos.x += -32.0f;
+				getCmpEntity(world->mPoolTransformBattleComponent, projectile).pos.x += -32.0f;
 				break;
 
 			default:
@@ -258,62 +258,62 @@ void BattleScene::processInputScene()
 		{
 			Entity entity = createEntityId();
 
-			registerEntity(&world->mPoolHitBoxComponent, entity);
-			getCmpEntity(&world->mPoolHitBoxComponent, entity)->damage = 100.0f;
-			getCmpEntity(&world->mPoolHitBoxComponent, entity)->delayHitBox.coolDown = 0.05f;
-			getCmpEntity(&world->mPoolHitBoxComponent, entity)->delayHitBox.timePassed = 0.0f;
+			registerEntity(world->mPoolHitBoxComponent, entity);
+			getCmpEntity(world->mPoolHitBoxComponent, entity).damage = 100.0f;
+			getCmpEntity(world->mPoolHitBoxComponent, entity).delayHitBox.coolDown = 0.05f;
+			getCmpEntity(world->mPoolHitBoxComponent, entity).delayHitBox.timePassed = 0.0f;
 
-			registerEntity(&world->mPoolFollowingComponent, entity);
-			getCmpEntity(&world->mPoolFollowingComponent, entity)->parent = world->BattlePlayerEntity;
+			registerEntity(world->mPoolFollowingComponent, entity);
+			getCmpEntity(world->mPoolFollowingComponent, entity).parent = world->BattlePlayerEntity;
 
-			registerEntity(&world->mPoolRectColliderComponent, entity);
+			registerEntity(world->mPoolRectColliderComponent, entity);
 
-			registerEntity(&world->mPoolDrawBattleComponent, entity);
-			getCmpEntity(&world->mPoolDrawBattleComponent, entity)->tileSet = world->mTileSetHandler.getTileSet("data/brimstone.png");
+			registerEntity(world->mPoolDrawBattleComponent, entity);
+			getCmpEntity(world->mPoolDrawBattleComponent, entity).tileSet = world->mTileSetHandler.getTileSet("data/brimstone.png");
 
-			Direction direction = getCmpEntity(&world->mPoolPhysicBoxComponent, world->BattlePlayerEntity)->lastDirection;
-			getCmpEntity(&world->mPoolHitBoxComponent, entity)->direction = direction;
+			Direction direction = getCmpEntity(world->mPoolPhysicBoxComponent, world->BattlePlayerEntity).lastDirection;
+			getCmpEntity(world->mPoolHitBoxComponent, entity).direction = direction;
 			switch (direction)
 			{
 			case Up:
-				getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(3, -120);
-				getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(8, 120);
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 0;
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(8, 120);
+				getCmpEntity(world->mPoolFollowingComponent, entity).tranformPos = Vector2i(3, -120);
+				getCmpEntity(world->mPoolRectColliderComponent, entity).dim = Vector2i(8, 120);
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).id = 0;
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).dim = Vector2i(8, 120);
 				break;
 
 			case Down:
-				getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(3, 16);
-				getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(8, 120);
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 1;
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(8, 120);
+				getCmpEntity(world->mPoolFollowingComponent, entity).tranformPos = Vector2i(3, 16);
+				getCmpEntity(world->mPoolRectColliderComponent, entity).dim = Vector2i(8, 120);
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).id = 1;
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).dim = Vector2i(8, 120);
 				break;
 
 			case Right:
-				getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(16, 3);
-				getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(120, 8);
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 2;
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(120, 8);
+				getCmpEntity(world->mPoolFollowingComponent, entity).tranformPos = Vector2i(16, 3);
+				getCmpEntity(world->mPoolRectColliderComponent, entity).dim = Vector2i(120, 8);
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).id = 2;
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).dim = Vector2i(120, 8);
 				break;
 
 			case Left:
-				getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos = Vector2i(-120, 3);
-				getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim = Vector2i(120, 8);
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->id = 3;
-				getCmpEntity(&world->mPoolDrawBattleComponent, entity)->dim = Vector2i(120, 8);
+				getCmpEntity(world->mPoolFollowingComponent, entity).tranformPos = Vector2i(-120, 3);
+				getCmpEntity(world->mPoolRectColliderComponent, entity).dim = Vector2i(120, 8);
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).id = 3;
+				getCmpEntity(world->mPoolDrawBattleComponent, entity).dim = Vector2i(120, 8);
 				break;
 
 			default:
 				break;
 			}
 
-			registerEntity(&world->mPoolTransformBattleComponent, entity);
-			getCmpEntity(&world->mPoolTransformBattleComponent, entity)->pos = getCmpEntity(&world->mPoolFollowingComponent, entity)->tranformPos
-				+ getCmpEntity(&world->mPoolTransformBattleComponent, world->BattlePlayerEntity)->pos;
+			registerEntity(world->mPoolTransformBattleComponent, entity);
+			getCmpEntity(world->mPoolTransformBattleComponent, entity).pos = getCmpEntity(world->mPoolFollowingComponent, entity).tranformPos
+				+ getCmpEntity(world->mPoolTransformBattleComponent, world->BattlePlayerEntity).pos;
 
 			registerEntity(entity, world->currentLevel.battleCamp.gridSP);
 
-			registerEntity(&world->mPoolPlayerBattleComponent, entity);
+			registerEntity(world->mPoolPlayerBattleComponent, entity);
 
 			start(&world->delayHitBox);
 		}

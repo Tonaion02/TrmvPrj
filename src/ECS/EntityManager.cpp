@@ -38,7 +38,7 @@ void EntityManager::deleteEntity(Entity entityToDelete)
 
 	for (unsigned int i = 0; i < MAX_TYPE_CMPS; i++)
 		if(typeSignatures[entityToDelete][i])
-			(*DataManager::get().getPools())[i]->unRegisterEntity(entityToDelete);
+			(DataManager::get().getPools())[i]->unRegisterEntity(entityToDelete);
 
 	typeSignatures[entityToDelete].reset();
 }
@@ -48,6 +48,13 @@ void EntityManager::deleteEntity(Entity entityToDelete)
 bool EntityManager::isThereTypeCmp(Entity e, unsigned int typeCmp)
 {
 	return typeSignatures[e][typeCmp];
+}
+
+
+
+bool EntityManager::isThisType(Entity e, Signature typeEntity)
+{
+	return (typeSignatures[e] & typeEntity) == typeEntity;
 }
 
 

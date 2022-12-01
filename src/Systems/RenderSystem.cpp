@@ -31,8 +31,8 @@ void RenderSystem::draw()
 	Game* gameInstance = Game::get();
 	World* world = gameInstance->getWorld();
 
-	ComponentPool<DrawComponent>* drawCmp = &gameInstance->getWorld()->mPoolDrawComponent;
-	ComponentPool<TransformComponent>* transformCmp = &gameInstance->getWorld()->mPoolTransformComponent;
+	ComponentPool<DrawComponent>& drawCmp = gameInstance->getWorld()->mPoolDrawComponent;
+	ComponentPool<TransformComponent>& transformCmp = gameInstance->getWorld()->mPoolTransformComponent;
 
 	float baseScale = world->cameraData.baseScale;
 
@@ -107,15 +107,15 @@ void RenderSystem::draw()
 			if (index == 0 && z < world->currentLevel.groupsEntities.size())
 			{
 				//Draw all drawCmp of Entity of this z
-				for (unsigned int i = 0; i < drawCmp->mNext; i++)
+				for (unsigned int i = 0; i < drawCmp.mNext; i++)
 				{
-					Entity e = drawCmp->mDirectArray[i];
+					Entity e = drawCmp.mDirectArray[i];
 
-					if (!isThereEntity(&world->currentLevel.groupsEntities[z], e))
+					if (!isThereEntity(world->currentLevel.groupsEntities[z], e))
 						continue;
 
-					destRect.x = static_cast<int>(getCmpEntity(transformCmp, e)->pos.x * destRect.w);
-					destRect.y = static_cast<int>(getCmpEntity(transformCmp, e)->pos.y * destRect.h);
+					destRect.x = static_cast<int>(getCmpEntity(transformCmp, e).pos.x * destRect.w);
+					destRect.y = static_cast<int>(getCmpEntity(transformCmp, e).pos.y * destRect.h);
 
 					destRect.x += static_cast<int>(world->cameraData.adj.x);
 					destRect.y += static_cast<int>(world->cameraData.adj.y);
@@ -123,7 +123,7 @@ void RenderSystem::draw()
 					SDL_RenderCopy(
 						renderer,
 						world->textureActor,
-						&world->tilesetActor->srcRects[drawCmp->mPackedArray[i].id],
+						&world->tilesetActor->srcRects[drawCmp.mPackedArray[i].id],
 						&destRect
 					);
 				}

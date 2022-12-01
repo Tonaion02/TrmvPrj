@@ -70,7 +70,7 @@ void ActionSystem::endAction()
 
 				//Reset action 
 				//poolActionCmp->mPackedArray[i].currentAction = NoneActions;
-				getCmpIndex(&world->mPoolActionComponent, i)->currentAction = NoneActions;
+				getCmpIndex(world->mPoolActionComponent, i).currentAction = NoneActions;
 				//Reset action
 			}
 		}
@@ -84,14 +84,14 @@ void ActionSystem::updateAction()
 	World* world = Game::get()->getWorld();
 	float deltaTime = Game::get()->getDeltaTime();
 
-	ComponentPool<ActionComponent>* poolActionCmp = &world->mPoolActionComponent;
+	ComponentPool<ActionComponent>& poolActionCmp = world->mPoolActionComponent;
 
-	for (unsigned int i = 0; i < poolActionCmp->mNext; i++)
+	for (unsigned int i = 0; i < poolActionCmp.mNext; i++)
 	{
-		if (getCmpIndex(&world->mPoolActionComponent, i)->currentAction != NoneActions)
+		if (getCmpIndex(world->mPoolActionComponent, i).currentAction != NoneActions)
 		{
 			//Update delay of Action
-			getCmpIndex(&world->mPoolActionComponent, i)->actionDelays[getCmpIndex(&world->mPoolActionComponent, i)->currentAction].timePassed += deltaTime;
+			getCmpIndex(world->mPoolActionComponent, i).actionDelays[getCmpIndex(world->mPoolActionComponent, i).currentAction].timePassed += deltaTime;
 			//Update delay of Action
 		}
 	}
@@ -103,12 +103,12 @@ void ActionSystem::startAction(Entity e, Actions action)
 {
 	World* world = Game::get()->getWorld();
 
-	ComponentPool<ActionComponent>* poolActionCmp = &world->mPoolActionComponent;
+	ComponentPool<ActionComponent>& poolActionCmp = world->mPoolActionComponent;
 
-	if (getCmpEntity(&world->mPoolActionComponent, e)->currentAction == NoneActions)
+	if (getCmpEntity(world->mPoolActionComponent, e).currentAction == NoneActions)
 	{
-		getCmpEntity(&world->mPoolActionComponent, e)->currentAction = action;
-		start(&getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[getCmpEntity(&world->mPoolActionComponent, e)->currentAction]);
+		getCmpEntity(world->mPoolActionComponent, e).currentAction = action;
+		start(&getCmpEntity(world->mPoolActionComponent, e).actionDelays[getCmpEntity(world->mPoolActionComponent, e).currentAction]);
 	}
 }
 
@@ -118,7 +118,7 @@ bool ActionSystem::isDoingNothing(Entity e)
 {
 	World* world = Game::get()->getWorld();
 
-	return getCmpEntity(&world->mPoolActionComponent, e)->currentAction == Actions::NoneActions;
+	return getCmpEntity(world->mPoolActionComponent, e).currentAction == Actions::NoneActions;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //Class ActionSystem

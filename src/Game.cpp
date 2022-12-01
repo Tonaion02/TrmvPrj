@@ -46,6 +46,9 @@
 
 #include "utils/StringAndFile/XMLvariab.h"
 
+#include "utils/Math/RectI.h"
+#include "utils/Math/Math.h"
+
 #include "Scenes/ExploringScene.h"
 #include "Scenes/BattleScene.h"
 #include "Scenes/GeneralMenuScene.h"
@@ -159,6 +162,11 @@ void Game::generateOutput()
 
 void Game::loadData()
 {
+	Vector2i vec(10, 11);
+	Vector2f vecF(10.0f, 11.0f);
+	//Vector2f v = vec.cast<float>();
+
+
 	//Init some base data
 	mIsRunning = true;
 
@@ -201,7 +209,7 @@ void Game::loadData()
 	world->tilesetActor = world->mTileSetHandler.getTileSet("data/player.png");
 
 	TextureHandler::get().loadTexture("data/brimstone.png");
-	world->mTileSetHandler.loadTileSet("data/brimstone.png", tileDim);
+	world->mTileSetHandler.loadTileSet("data/brimstone.png", 16);
 
 	SDL_Log("Texture and TileSet loaded");
 	//Load TileSet and Texture
@@ -241,32 +249,32 @@ void Game::loadData()
 	{
 		Entity e = createEntityId();
 
-		registerEntity(&world->mPoolTransformComponent, e);
-		getCmpEntity(&world->mPoolTransformComponent, e)->pos = { x, x };
-		getCmpEntity(&world->mPoolTransformComponent, e)->tileOccupied = { (int)x, (int)x };
-		getCmpEntity(&world->mPoolTransformComponent, e)->z = z;
-		registerEntity(&world->mPoolDrawComponent, e);
-		getCmpEntity(&world->mPoolDrawComponent, e)->id = 17;
+		registerEntity(world->mPoolTransformComponent, e);
+		getCmpEntity(world->mPoolTransformComponent, e).pos = { x, x };
+		getCmpEntity(world->mPoolTransformComponent, e).tileOccupied = { (int)x, (int)x };
+		getCmpEntity(world->mPoolTransformComponent, e).z = z;
+		registerEntity(world->mPoolDrawComponent, e);
+		getCmpEntity(world->mPoolDrawComponent, e).id = 17;
 
 		//Register to the group of the level
-		registerEntity(&world->currentLevel.groupsEntities[z], e);
+		registerEntity(world->currentLevel.groupsEntities[z], e);
 		//Register to the group of the level
 
 		if (e != 1)
 		{
 			TileSystem::registerPos({ (int)x,(int)x }, z, e);
 
-			registerEntity(&world->mPoolMoveComponent, e);
-			getCmpEntity(&world->mPoolMoveComponent, e)->currentDirection = NoneDirection;
-			getCmpEntity(&world->mPoolMoveComponent, e)->lastDirection = Direction::Down;
+			registerEntity(world->mPoolMoveComponent, e);
+			getCmpEntity(world->mPoolMoveComponent, e).currentDirection = NoneDirection;
+			getCmpEntity(world->mPoolMoveComponent, e).lastDirection = Direction::Down;
 
-			registerEntity(&world->mPoolActionComponent, e);
-			getCmpEntity(&world->mPoolActionComponent, e)->currentAction = NoneActions;
-			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Walk].coolDown = 0.5f;
-			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Rotate].coolDown = 0.5f;
-			getCmpEntity(&world->mPoolActionComponent, e)->actionDelays[Actions::Interact].coolDown = 0.5f;
+			registerEntity(world->mPoolActionComponent, e);
+			getCmpEntity(world->mPoolActionComponent, e).currentAction = NoneActions;
+			getCmpEntity(world->mPoolActionComponent, e).actionDelays[Actions::Walk].coolDown = 0.5f;
+			getCmpEntity(world->mPoolActionComponent, e).actionDelays[Actions::Rotate].coolDown = 0.5f;
+			getCmpEntity(world->mPoolActionComponent, e).actionDelays[Actions::Interact].coolDown = 0.5f;
 
-			registerEntity(&world->mPoolAnimationComponent, e);
+			registerEntity(world->mPoolAnimationComponent, e);
 			TiledAnimation tiledAnimation;
 			tiledAnimation.ids = { 17 };
 			AnimationSystem::addAnimation(e, tiledAnimation, Actions::NoneActions, Direction::Up);
@@ -300,7 +308,7 @@ void Game::loadData()
 
 		if (e == 2)
 		{
-			registerEntity(&world->mPoolBaseEnemyComponent, e);
+			registerEntity(world->mPoolBaseEnemyComponent, e);
 
 			std::vector<Direction> path;
 			path.push_back(Direction::Right);
@@ -312,7 +320,7 @@ void Game::loadData()
 			path.push_back(Direction::Down);
 			path.push_back(Direction::Down);
 
-			getCmpEntity(&world->mPoolBaseEnemyComponent, e)->path = path;
+			getCmpEntity(world->mPoolBaseEnemyComponent, e).path = path;
 		}
 
 		//if (e == 3)
@@ -339,27 +347,27 @@ void Game::loadData()
 
 	world->player = 1;
 
-	TileSystem::unRegisterPos(getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied, z);
-	getCmpEntity(&world->mPoolTransformComponent, world->player)->pos = { 17.0f, 16.0f };
-	getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied = static_cast<Vector2i>(getCmpEntity(&world->mPoolTransformComponent, world->player)->pos);
-	TileSystem::registerPos(getCmpEntity(&world->mPoolTransformComponent, world->player)->tileOccupied, z, world->player);
+	TileSystem::unRegisterPos(getCmpEntity(world->mPoolTransformComponent, world->player).tileOccupied, z);
+	getCmpEntity(world->mPoolTransformComponent, world->player).pos = { 17.0f, 16.0f };
+	getCmpEntity(world->mPoolTransformComponent, world->player).tileOccupied = static_cast<Vector2i>(getCmpEntity(world->mPoolTransformComponent, world->player).pos);
+	TileSystem::registerPos(getCmpEntity(world->mPoolTransformComponent, world->player).tileOccupied, z, world->player);
 
-	registerEntity(&world->mPoolMoveComponent, world->player);
-	getCmpEntity(&world->mPoolMoveComponent, world->player)->currentDirection = Direction::NoneDirection;
-	getCmpEntity(&world->mPoolMoveComponent, world->player)->lastDirection = Direction::Down;
+	registerEntity(world->mPoolMoveComponent, world->player);
+	getCmpEntity(world->mPoolMoveComponent, world->player).currentDirection = Direction::NoneDirection;
+	getCmpEntity(world->mPoolMoveComponent, world->player).lastDirection = Direction::Down;
 
 	///Register and init entity to PoolActionComponent
-	registerEntity(&world->mPoolActionComponent, world->player);
+	registerEntity(world->mPoolActionComponent, world->player);
 
-	getCmpEntity(&world->mPoolActionComponent, world->player)->currentAction = Actions::NoneActions;
+	getCmpEntity(world->mPoolActionComponent, world->player).currentAction = Actions::NoneActions;
 
-	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Walk].coolDown = 0.5f;
-	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Rotate].coolDown = 0.2f;
-	getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Interact].coolDown = 0.5f;
+	getCmpEntity(world->mPoolActionComponent, world->player).actionDelays[Actions::Walk].coolDown = 0.5f;
+	getCmpEntity(world->mPoolActionComponent, world->player).actionDelays[Actions::Rotate].coolDown = 0.2f;
+	getCmpEntity(world->mPoolActionComponent, world->player).actionDelays[Actions::Interact].coolDown = 0.5f;
 	///Register and init entity to PoolActionComponent
 
 	///Register and init entity to poolAnimationComponent
-	registerEntity(&world->mPoolAnimationComponent, world->player);
+	registerEntity(world->mPoolAnimationComponent, world->player);
 
  	TiledAnimation tiledAnimation;
 
@@ -403,7 +411,7 @@ void Game::loadData()
 
 
 	///Init delayTransiction
-	world->delayTransictionToBattle.coolDown = getCmpEntity(&world->mPoolActionComponent, world->player)->actionDelays[Actions::Walk].coolDown + 0.5f;
+	world->delayTransictionToBattle.coolDown = getCmpEntity(world->mPoolActionComponent, world->player).actionDelays[Actions::Walk].coolDown + 0.5f;
 	///Init delayTransiction
 	
 	
@@ -429,12 +437,12 @@ void Game::loadData()
 			first = false;
 		}
 
-		registerEntity(&world->mPoolTransformBattleComponent, e);
+		registerEntity(world->mPoolTransformBattleComponent, e);
 		if (i == 0)
 		{
-			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = { 80.0f, 1.0f };
+			getCmpEntity(world->mPoolTransformBattleComponent, e).pos = { 80.0f, 1.0f };
 			world->BattlePlayerEntity = e;
-			registerEntity(&world->mPoolPlayerBattleComponent, e);
+			registerEntity(world->mPoolPlayerBattleComponent, e);
 
 			world->delayFiring.coolDown = 0.5f;
 			initTimer(&world->delayFiring);
@@ -447,36 +455,36 @@ void Game::loadData()
 			
 			for (int j = 0, iteratorEntity = firstEntity; j < i; j++, iteratorEntity++)
 			{
-				TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, iteratorEntity);
-				if (ColliderSystem::detectCollision(pos, Vector2i(tileDim, tileDim), transform->pos, { tileDim, tileDim }))
+				TransformBattleComponent& transform = getCmpEntity(world->mPoolTransformBattleComponent, iteratorEntity);
+				if (ColliderSystem::detectCollision(pos, Vector2i(tileDim, tileDim), transform.pos, { tileDim, tileDim }))
 				{
 					pos = { random() % (world->currentLevel.battleCamp.dim.x * 16), random() % (world->currentLevel.battleCamp.dim.y * 16) };
 					j = 0, iteratorEntity = firstEntity;
 				}
 			}
 			
-			getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = pos;
-			registerEntity(&world->mPoolEnemyBattleComponent, e);
+			getCmpEntity(world->mPoolTransformBattleComponent, e).pos = pos;
+			registerEntity(world->mPoolEnemyBattleComponent, e);
 		}
 
-		registerEntity(&world->mPoolControlledRectColliderComponent, e);
+		registerEntity(world->mPoolControlledRectColliderComponent, e);
 
-		registerEntity(&world->mPoolPhysicBoxComponent, e);
-		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->mass = 1.0f;
-		getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
+		registerEntity(world->mPoolPhysicBoxComponent, e);
+		getCmpEntity(world->mPoolPhysicBoxComponent, e).mass = 1.0f;
+		getCmpEntity(world->mPoolPhysicBoxComponent, e).v = { 0.0f, 0.0f };
 		
-		registerEntity(&world->mPoolRectColliderComponent, e);
-		getCmpEntity(&world->mPoolRectColliderComponent, e)->dim = { tileDim, tileDim };
+		registerEntity(world->mPoolRectColliderComponent, e);
+		getCmpEntity(world->mPoolRectColliderComponent, e).dim = { tileDim, tileDim };
 		
-		registerEntity(&world->mPoolDrawBattleComponent, e);
-		getCmpEntity(&world->mPoolDrawBattleComponent, e)->id = 17;
-		getCmpEntity(&world->mPoolDrawBattleComponent, e)->tileSet = world->mTileSetHandler.getTileSet("data/player.png");
-		getCmpEntity(&world->mPoolDrawBattleComponent, e)->dim = getCmpEntity(&world->mPoolDrawBattleComponent, e)->tileSet->tileDim;
+		registerEntity(world->mPoolDrawBattleComponent, e);
+		getCmpEntity(world->mPoolDrawBattleComponent, e).id = 17;
+		getCmpEntity(world->mPoolDrawBattleComponent, e).tileSet = world->mTileSetHandler.getTileSet("data/player.png");
+		getCmpEntity(world->mPoolDrawBattleComponent, e).dim = getCmpEntity(world->mPoolDrawBattleComponent, e).tileSet->tileDim;
 
-		registerEntity(&world->mPoolDamageComponent, e);
+		registerEntity(world->mPoolDamageComponent, e);
 
-		registerEntity(&world->mPoolLifeBarComponent, e);
-		getCmpEntity(&world->mPoolLifeBarComponent, e)->health = 300.0f;
+		registerEntity(world->mPoolLifeBarComponent, e);
+		getCmpEntity(world->mPoolLifeBarComponent, e).health = 300.0f;
 
 
 

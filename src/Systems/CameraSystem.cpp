@@ -120,7 +120,7 @@ void CameraSystem::updateCamera(const Vector2f& newPos)
 
 	if (Game::get()->isInBattle() )
 	{
-		scaledTileDim = (Vector2f)world->currentLevel.battleCamp.tileSet.tileDim * world->cameraData.baseScale;
+		scaledTileDim = Vector2f(world->currentLevel.battleCamp.tileSet.tileDim) * world->cameraData.baseScale;
 		realScaledImageDim = world->currentLevel.battleCamp.dim * scaledTileDim;
 
 		limit = world->currentLevel.battleCamp.dim;

@@ -4,12 +4,14 @@
 
 #include "ECS/Entity.h"
 
+#include "utils/Math/Vector2i.h"
+
+
 
 
 
 
 class GridSP;
-class Vector2i;
 
 std::array<unsigned int, 3> getIndexes(const GridSP& gridSP, const Vector2i& pos, const Vector2i& dim);
 void registerEntity(Entity e, GridSP& gridSP);

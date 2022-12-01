@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/Math/Vector2i.h"
+#include "utils/Math/Math.h"
 #include "Menu/General/SizedWidget.h"
 
 

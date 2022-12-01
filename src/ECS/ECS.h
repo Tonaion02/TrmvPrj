@@ -44,6 +44,11 @@ bool isThereTypeCmp(Entity e)
 	return EntityManager::get().isThereTypeCmp(e, idTypeCmp<TypeCmp>());
 }
 
+inline bool isThisTypeEntity(Entity e, Signature typeEntity)
+{
+	return EntityManager::get().isThisType(e, typeEntity);
+}
+
 template<typename TypeCmp>
 void registerType(Entity e)
 {
@@ -65,62 +70,68 @@ void unRegisterType(Entity e)
 //ComponentPool interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
 template<typename TypeCmp>
-TypeCmp* getCmpEntity(Entity e)
+TypeCmp& getCmpEntity(Entity e)
 {
-	ComponentPool<TypeCmp>* pool = (ComponentPool<TypeCmp>*)getCmpPool<TypeCmp>();
-	return &pool->mPackedArray[pool->mReverseArray[e]];
+	ComponentPool<TypeCmp>& pool = getCmpPool<TypeCmp>();
+	return pool.mPackedArray[pool.mReverseArray[e]];
 }
 
 template<typename TypeCmp>
-TypeCmp* getCmpEntity(ComponentPool<TypeCmp>* pool, Entity e)
+TypeCmp& getCmpEntity(ComponentPool<TypeCmp>& pool, Entity e)
 {
-	return &pool->mPackedArray[pool->mReverseArray[e]];
+	return pool.mPackedArray[pool.mReverseArray[e]];
 }
 
 template<typename TypeCmp>
-TypeCmp* getCmpIndex(ComponentPool<TypeCmp>* pool, unsigned int index)
+TypeCmp& getCmpIndex(ComponentPool<TypeCmp>& pool, unsigned int index)
 {
-	return &pool->mPackedArray[index];
+	return pool.mPackedArray[index];
 }
 
 template<typename TypeCmp>
-void registerEntity(ComponentPool<TypeCmp>* pool, Entity e)
+void registerEntity(ComponentPool<TypeCmp>& pool, Entity e)
 {
-	pool->mReverseArray[e] = pool->mNext;
-	pool->mDirectArray[pool->mNext] = e;
+	pool.mReverseArray[e] = pool.mNext;
+	pool.mDirectArray[pool.mNext] = e;
 
-	pool->mNext++;
+	pool.mNext++;
 
 	EntityManager::get().registerTypeSignature(e, idTypeCmp<TypeCmp>());
 }
 
 template<typename TypeCmp>
-void unRegisterEntity(ComponentPool<TypeCmp>* pool, Entity e)
+void unRegisterEntity(ComponentPool<TypeCmp>& pool, Entity e)
 {
-	//Controll if this entity is already unregistered
-	//if (pool->mReverseArray[e] == pool->mDirectArray.size())
-	//{
-	//	SDL_Log("!!!Entity is already unregistered!!!");
-	//	return;
-	//}
-	//Controll if this entity is already unregistered
+	ASSERT(pool->mReverseArray[e] != pool->mDirectArray.size());
 
-	Entity newId = pool->mDirectArray[pool->mNext - 1];
+	Entity newId = pool.mDirectArray[pool.mNext - 1];
 
-	pool->mDirectArray[pool->mReverseArray[e]] = pool->mDirectArray[pool->mNext - 1];
-	pool->mPackedArray[pool->mReverseArray[e]] = pool->mPackedArray[pool->mNext - 1];
+	pool.mDirectArray[pool.mReverseArray[e]] = pool.mDirectArray[pool.mNext - 1];
+	pool.mPackedArray[pool.mReverseArray[e]] = pool.mPackedArray[pool.mNext - 1];
 
-	//pool->mDirectArray[pool->mReverseArray[newId]] = 0;
-	pool->mDirectArray[pool->mReverseArray[newId]] = MAX_ENTITIES;
+	pool.mDirectArray[pool.mReverseArray[newId]] = pool->mDirectArray.size();
 
-	pool->mReverseArray[newId] = pool->mReverseArray[e];
+	pool.mReverseArray[newId] = pool.mReverseArray[e];
 
-	pool->mNext--;
+	pool.mNext--;
 
-	pool->mReverseArray[e] = (unsigned int)pool->mDirectArray.size();
+	pool.mReverseArray[e] = (unsigned int)pool.mDirectArray.size();
 
 	EntityManager::get().unRegisterSignature(e, idTypeCmp<TypeCmp>());
 }
+
+
+
+//void registerE(Entity e, Signature sign) 
+//{
+//	Pools pools = DataManager::get().getPools();
+//
+//	for (int i=0;i<sign.size();i++)
+//		if (sign.test(i))
+//		{
+//			pools.at(i)
+//		}
+//}
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //ComponentPool interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
@@ -130,34 +141,34 @@ void unRegisterEntity(ComponentPool<TypeCmp>* pool, Entity e)
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //GroupEntity interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
-inline void registerEntity(GroupEntity<>* group, Entity e)
+inline void registerEntity(GroupEntity<>& group, Entity e)
 {
 	//ASSERT: Controll if next is less than MAX_ENTITIES
 
-	group->next++;
-	group->reverseArray[e] = group->next;
-	group->directArray[group->next] = e;
+	group.next++;
+	group.reverseArray[e] = group.next;
+	group.directArray[group.next] = e;
 }
 
-inline void unRegisterEntity(GroupEntity<>* group, Entity e)
+inline void unRegisterEntity(GroupEntity<>& group, Entity e)
 {
 	//ASSERT: Controll if next is not less than zero
 
-	Entity entityToMove = group->directArray[group->next - 1];
-	unsigned int pos = group->reverseArray[e];
-	group->reverseArray[e] = MAX_ENTITIES;
-	group->reverseArray[entityToMove] = pos;
-	group->directArray[pos] = entityToMove;
-	group->directArray[group->next - 1] = MAX_ENTITIES;
-	group->next--;
+	Entity entityToMove = group.directArray[group.next - 1];
+	unsigned int pos = group.reverseArray[e];
+	group.reverseArray[e] = MAX_ENTITIES;
+	group.reverseArray[entityToMove] = pos;
+	group.directArray[pos] = entityToMove;
+	group.directArray[group.next - 1] = MAX_ENTITIES;
+	group.next--;
 }
 
-inline bool isThereEntity(GroupEntity<>* group, Entity e)
+inline bool isThereEntity(GroupEntity<>& group, Entity e)
 {
 	//ASSERT: 
 
 	//return group->directArray[group->reverseArray[e]] != MAX_ENTITIES;
-	return group->reverseArray[e] != MAX_ENTITIES;
+	return group.reverseArray[e] != MAX_ENTITIES;
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //GroupEntity interface
@@ -227,12 +238,12 @@ void deActivateScene()
 //DataManager interface
 //-----------------------------------------------------------------------------------------------------------------------------------------
 template<typename TypeCmp>
-ComponentPool<TypeCmp>* getCmpPool()
+ComponentPool<TypeCmp>& getCmpPool()
 {
-	return (ComponentPool<TypeCmp>*)DataManager::get().getPool(idTypeCmp<TypeCmp>());
+	return *(ComponentPool<TypeCmp>*)DataManager::get().getPool(idTypeCmp<TypeCmp>());
 }
 
-inline std::array<struct BaseComponentPool*, MAX_TYPE_CMPS>* getCmpPools()
+inline std::array<struct BaseComponentPool*, MAX_TYPE_CMPS>& getCmpPools()
 {
 	return DataManager::get().getPools();
 }
@@ -255,6 +266,12 @@ template<typename TypeCmp>
 std::string stringTypeCmp()
 {
 	return TypeManagerComponent::get().stringType<TypeCmp>();
+}
+
+template<typename TypeCmp>
+Signature getTypeSignature()
+{
+	return TypeManagerComponent::get().getTypeSignature<TypeCmp>();
 }
 //-----------------------------------------------------------------------------------------------------------------------------------------
 //TypeComponentManager interface

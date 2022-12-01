@@ -4,8 +4,8 @@
 #include <set>
 
 #include "ECS/Entity.h"
-#include "utils/Math/Vector2i.h"
-#include "utils/Math/Vector2f.h"
+#include "utils/Math/Math.h"
+#include "utils/Math/Math.h"
 
 
 

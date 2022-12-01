@@ -34,10 +34,10 @@ bool checkIfIsDeadProjectileForCategory(Entity e)
 {
 	World* world = Game::get()->getWorld();
 
-	TransformBattleComponent* transform = getCmpEntity(&world->mPoolTransformBattleComponent, e);
-	RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+	TransformBattleComponent& transform = getCmpEntity(world->mPoolTransformBattleComponent, e);
+	RectColliderComponent& rect = getCmpEntity(world->mPoolRectColliderComponent, e);
 
-	std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform->pos, rect->dim);
+	std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform.pos, rect.dim);
 
 	unsigned int i;
 	for (unsigned int h = 0; h <= indexes[2]; h++)
@@ -55,10 +55,10 @@ bool checkIfIsDeadProjectileForCategory(Entity e)
 					{
 						if (isThereTypeCmp<Category>(*iter) && isThereTypeCmp<RectColliderComponent>(*iter))
 						{
-							TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, *iter);
-							RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, *iter);
+							TransformBattleComponent& transform2 = getCmpEntity(world->mPoolTransformBattleComponent, *iter);
+							RectColliderComponent& rect2 = getCmpEntity(world->mPoolRectColliderComponent, *iter);
 
-							if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+							if (ColliderSystem::detectCollision(transform.pos, rect.dim, transform2.pos, rect2.dim))
 							{
 								world->entityToDelete.insert(e);
 								unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
@@ -92,8 +92,8 @@ void ProjectileSystem::checkIfIsDeadProjectile()
 		for (unsigned int j = 0; j < world->currentLevel.battleCamp.boundCamp.size(); j++)
 		{
 			if (ColliderSystem::detectCollision(world->currentLevel.battleCamp.boundCamp[j],
-				getCmpEntity(&world->mPoolTransformBattleComponent, entity)->pos,
-				getCmpEntity(&world->mPoolRectColliderComponent, entity)->dim))
+				getCmpEntity(world->mPoolTransformBattleComponent, entity).pos,
+				getCmpEntity(world->mPoolRectColliderComponent, entity).dim))
 			{
 				world->entityToDelete.insert(entity);
 				unRegisterEntity(entity, world->currentLevel.battleCamp.gridSP);

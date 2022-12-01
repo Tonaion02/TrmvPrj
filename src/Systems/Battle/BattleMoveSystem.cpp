@@ -48,8 +48,8 @@ void BattleMoveSystem::applyFriction(Entity e, float friction = 1.0f)
 {
 	World* world = Game::get()->getWorld();
 
-	getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v.x = 0.0f;
-	getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v.y = 0.0f;
+	getCmpEntity(world->mPoolPhysicBoxComponent, e).v.x = 0.0f;
+	getCmpEntity(world->mPoolPhysicBoxComponent, e).v.y = 0.0f;
 }
 
 
@@ -64,7 +64,7 @@ void BattleMoveSystem::freeMove()
 
 		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
 
-		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos += getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v * Game::get()->getDeltaTime();
+		getCmpEntity(world->mPoolTransformBattleComponent, e).pos += getCmpEntity(world->mPoolPhysicBoxComponent, e).v * Game::get()->getDeltaTime();
 
 		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}
@@ -82,12 +82,12 @@ void BattleMoveSystem::controlledMoves()
 
 		unRegisterEntity(e, world->currentLevel.battleCamp.gridSP);
 
-		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos += getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v * Game::get()->getDeltaTime();
+		getCmpEntity(world->mPoolTransformBattleComponent, e).pos += getCmpEntity(world->mPoolPhysicBoxComponent, e).v * Game::get()->getDeltaTime();
 
-		TransformBattleComponent* transform= getCmpEntity(&world->mPoolTransformBattleComponent, e);
-		RectColliderComponent* rect = getCmpEntity(&world->mPoolRectColliderComponent, e);
+		TransformBattleComponent& transform= getCmpEntity(world->mPoolTransformBattleComponent, e);
+		RectColliderComponent& rect = getCmpEntity(world->mPoolRectColliderComponent, e);
 
-		std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform->pos, rect->dim);
+		std::array<unsigned int, 3> indexes = getIndexes(world->currentLevel.battleCamp.gridSP, transform.pos, rect.dim);
 
 		unsigned int index;
 		for (unsigned int h = 0; h <= indexes[2]; h++)
@@ -105,34 +105,34 @@ void BattleMoveSystem::controlledMoves()
 						{
 							if (isThereTypeCmp<ControlledRectCollider>(*iter))
 							{
-								TransformBattleComponent* transform2 = getCmpEntity(&world->mPoolTransformBattleComponent, *iter);
-								RectColliderComponent* rect2 = getCmpEntity(&world->mPoolRectColliderComponent, *iter);
+								TransformBattleComponent& transform2 = getCmpEntity(world->mPoolTransformBattleComponent, *iter);
+								RectColliderComponent& rect2 = getCmpEntity(world->mPoolRectColliderComponent, *iter);
 
-								if (ColliderSystem::detectCollision(transform->pos, rect->dim, transform2->pos, rect2->dim))
+								if (ColliderSystem::detectCollision(transform.pos, rect.dim, transform2.pos, rect2.dim))
 								{
-									Vector2f penetration = ColliderSystem::penetration(transform->pos, rect->dim, transform2->pos, rect2->dim);
+									Vector2f penetration = ColliderSystem::penetration(transform.pos, rect.dim, transform2.pos, rect2.dim);
 
 									Vector2i signs;
-									if (transform->pos.x > transform2->pos.x)
+									if (transform.pos.x > transform2.pos.x)
 										signs.x = -1;
 									else
 										signs.x = 1;
 
-									if (transform->pos.y > transform2->pos.y)
+									if (transform.pos.y > transform2.pos.y)
 										signs.y = -1;
 									else
 										signs.y = 1;
 
 									if (penetration.x >= penetration.y)
 									{
-										transform->pos.x += signs.x * penetration.x;
+										transform.pos.x += signs.x * penetration.x;
 									}
 									else
 									{
-										transform->pos.y += signs.y * penetration.y;
+										transform.pos.y += signs.y * penetration.y;
 									}
 
-									getCmpEntity(&world->mPoolPhysicBoxComponent, e)->v = { 0.0f, 0.0f };
+									getCmpEntity(world->mPoolPhysicBoxComponent, e).v = { 0.0f, 0.0f };
 								}
 							}
 						}
@@ -158,7 +158,7 @@ void BattleMoveSystem::followingMoves()
 
 		Entity parent = world->mPoolFollowingComponent.mPackedArray[i].parent;
 
-		getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos = getCmpEntity(&world->mPoolTransformBattleComponent, parent)->pos + world->mPoolFollowingComponent.mPackedArray[i].tranformPos;
+		getCmpEntity(world->mPoolTransformBattleComponent, e).pos = getCmpEntity(world->mPoolTransformBattleComponent, parent).pos + world->mPoolFollowingComponent.mPackedArray[i].tranformPos;
 
 		registerEntity(e, world->currentLevel.battleCamp.gridSP);
 	}

@@ -4,11 +4,13 @@
 
 #include "ECS/Entity.h"
 
+#include "utils/Math/Vector2i.h"
 
 
 
 
-class Vector2i;
+
+
 
 class TileSystem
 {

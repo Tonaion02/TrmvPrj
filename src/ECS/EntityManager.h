@@ -22,6 +22,7 @@ public:
 	Entity createEntity();
 	void deleteEntity(Entity entityToDelete);
 	bool isThereTypeCmp(Entity e, unsigned int typeCmp);
+	bool isThisType(Entity e, Signature typeEntity);
 	void registerTypeSignature(Entity e, unsigned int typeCmp);
 	void unRegisterTypeSignature(Entity e, unsigned int typeCmp);
 

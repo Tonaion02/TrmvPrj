@@ -40,8 +40,8 @@ void BattleRenderSystem::draw()
 
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
-	ComponentPool<DrawBattleComponent>* drawBattleCmp = &world->mPoolDrawBattleComponent;
-	ComponentPool<TransformBattleComponent>* transformBattleCmp = &world->mPoolTransformBattleComponent;
+	ComponentPool<DrawBattleComponent>& drawBattleCmp = world->mPoolDrawBattleComponent;
+	ComponentPool<TransformBattleComponent>& transformBattleCmp = world->mPoolTransformBattleComponent;
 
 	Vector2i dim = world->currentLevel.battleCamp.dim;
 
@@ -73,16 +73,16 @@ void BattleRenderSystem::draw()
 
 
 	//Draw all drawCmp
-	for (unsigned int i = 0; i < drawBattleCmp->mNext; i++)
+	for (unsigned int i = 0; i < drawBattleCmp.mNext; i++)
 	{
-		Entity e = drawBattleCmp->mDirectArray[i];
-		TileSet* currentTileSet = getCmpIndex(&world->mPoolDrawBattleComponent, i)->tileSet;
+		Entity e = drawBattleCmp.mDirectArray[i];
+		TileSet* currentTileSet = getCmpIndex(world->mPoolDrawBattleComponent, i).tileSet;
 
-		destRect.w = static_cast<int>(getCmpIndex(&world->mPoolDrawBattleComponent, i)->dim.x * world->cameraData.baseScale);
-		destRect.h = static_cast<int>(getCmpIndex(&world->mPoolDrawBattleComponent, i)->dim.y * world->cameraData.baseScale);
+		destRect.w = static_cast<int>(getCmpIndex(world->mPoolDrawBattleComponent, i).dim.x * world->cameraData.baseScale);
+		destRect.h = static_cast<int>(getCmpIndex(world->mPoolDrawBattleComponent, i).dim.y * world->cameraData.baseScale);
 
-		destRect.x = static_cast<int>(getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos.x * world->cameraData.baseScale);
-		destRect.y = static_cast<int>(getCmpEntity(&world->mPoolTransformBattleComponent, e)->pos.y * world->cameraData.baseScale);
+		destRect.x = static_cast<int>(getCmpEntity(world->mPoolTransformBattleComponent, e).pos.x * world->cameraData.baseScale);
+		destRect.y = static_cast<int>(getCmpEntity(world->mPoolTransformBattleComponent, e).pos.y * world->cameraData.baseScale);
 
 		destRect.x += static_cast<int>(world->cameraData.adj.x);
 		destRect.y += static_cast<int>(world->cameraData.adj.y);
@@ -90,7 +90,7 @@ void BattleRenderSystem::draw()
 		SDL_RenderCopy(
 			renderer,
 			currentTileSet->texture,
-			&currentTileSet->srcRects[getCmpIndex(drawBattleCmp, i)->id],
+			&currentTileSet->srcRects[getCmpIndex(drawBattleCmp, i).id],
 			&destRect
 		);
 	}
@@ -107,20 +107,20 @@ void BattleRenderSystem::drawColliders()
 
 	SDL_Renderer* renderer = WindowHandler::get().getRenderer();
 
-	ComponentPool<RectColliderComponent>* rectColliderCmp = &world->mPoolRectColliderComponent;
-	ComponentPool<DrawBattleComponent>* drawBattleCmp = &world->mPoolDrawBattleComponent;
-	ComponentPool<TransformBattleComponent>* transformBattleCmp = &world->mPoolTransformBattleComponent;
+	ComponentPool<RectColliderComponent>& rectColliderCmp = world->mPoolRectColliderComponent;
+	ComponentPool<DrawBattleComponent>& drawBattleCmp = world->mPoolDrawBattleComponent;
+	ComponentPool<TransformBattleComponent>& transformBattleCmp = world->mPoolTransformBattleComponent;
 
 	//Draw all colliders
-	for (unsigned int i = 0; i < rectColliderCmp->mNext; i++)
+	for (unsigned int i = 0; i < rectColliderCmp.mNext; i++)
 	{
-		Entity e = rectColliderCmp->mDirectArray[i];
+		Entity e = rectColliderCmp.mDirectArray[i];
 
-		destRect.w = static_cast<int>(getCmpEntity(&world->mPoolRectColliderComponent, e)->dim.x * world->cameraData.baseScale);
-		destRect.h = static_cast<int>(getCmpEntity(&world->mPoolRectColliderComponent, e)->dim.y * world->cameraData.baseScale);
+		destRect.w = static_cast<int>(getCmpEntity(world->mPoolRectColliderComponent, e).dim.x * world->cameraData.baseScale);
+		destRect.h = static_cast<int>(getCmpEntity(world->mPoolRectColliderComponent, e).dim.y * world->cameraData.baseScale);
 
-		destRect.x = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.x * world->cameraData.baseScale);
-		destRect.y = static_cast<int>(transformBattleCmp->mPackedArray[transformBattleCmp->mReverseArray[e]].pos.y * world->cameraData.baseScale);
+		destRect.x = static_cast<int>(transformBattleCmp.mPackedArray[transformBattleCmp.mReverseArray[e]].pos.x * world->cameraData.baseScale);
+		destRect.y = static_cast<int>(transformBattleCmp.mPackedArray[transformBattleCmp.mReverseArray[e]].pos.y * world->cameraData.baseScale);
 
 		destRect.x += static_cast<int>(world->cameraData.adj.x);
 		destRect.y += static_cast<int>(world->cameraData.adj.y);

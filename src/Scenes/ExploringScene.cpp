@@ -188,8 +188,8 @@ void ExploringScene::processInputScene()
 		{
 			SDL_Log(
 				"Player pos: ( %f, %f )",
-				getCmpEntity(&world->mPoolTransformComponent, world->player)->pos.x,
-				getCmpEntity(&world->mPoolTransformComponent, world->player)->pos.y
+				getCmpEntity(world->mPoolTransformComponent, world->player).pos.x,
+				getCmpEntity(world->mPoolTransformComponent, world->player).pos.y
 			);
 
 			start(&world->debugInfoTimer);

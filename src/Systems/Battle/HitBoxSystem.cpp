@@ -29,9 +29,9 @@ void HitBoxSystem::checkIfIsDead()
 	{
 		Entity e = world->mPoolHitBoxComponent.mDirectArray[i];
 
-		getCmpIndex(&world->mPoolHitBoxComponent, i)->delayHitBox.timePassed += Game::get()->getDeltaTime();
+		getCmpIndex(world->mPoolHitBoxComponent, i).delayHitBox.timePassed += Game::get()->getDeltaTime();
 
-		if (isEnd(getCmpIndex(&world->mPoolHitBoxComponent, i)->delayHitBox))
+		if (isEnd(getCmpIndex(world->mPoolHitBoxComponent, i).delayHitBox))
 			deleteEntity(e);
 	}
 }

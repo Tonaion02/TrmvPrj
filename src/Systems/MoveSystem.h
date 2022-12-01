@@ -6,6 +6,8 @@
 
 #include "ECS/Entity.h"
 
+#include "utils/Math/Vector2f.h"
+
 
 
 
@@ -17,5 +19,5 @@ public:
 	static void startMove(Entity e, Direction direction);
 	static void endMove(Entity e);
 protected:
-	static bool isValid(const class Vector2f& pos, short int z);
+	static bool isValid(const Vector2f& pos, short int z);
 };

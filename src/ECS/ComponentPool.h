@@ -15,6 +15,7 @@
 struct BaseComponentPool
 {
 	virtual void unRegisterEntity(Entity e) = 0;
+	//virtual void registerEntity(Entity e) = 0;
 };
 
 
@@ -35,10 +36,10 @@ struct ComponentPool : public BaseComponentPool
 		for (unsigned int i = 0; i < MAX_ENTITIES; i++)
 			mReverseArray[i] = MAX_ENTITIES;
 
-		(*DataManager::get().getPools())[TypeManagerComponent::get().idType<TypeCmp>()] = this;
+		(DataManager::get().getPools())[TypeManagerComponent::get().idType<TypeCmp>()] = this;
 	}
 
-	void unRegisterEntity(Entity e)
+	void unRegisterEntity(Entity e) override
 	{
 		Entity newId = this->mDirectArray[this->mNext - 1];
 
@@ -56,4 +57,9 @@ struct ComponentPool : public BaseComponentPool
 
 		EntityManager::get().unRegisterTypeSignature(e, TypeManagerComponent::get().idType<TypeCmp>());
 	}
+
+	//void registerEntity(Entity e)
+	//{
+
+	//}
 };

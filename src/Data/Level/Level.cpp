@@ -27,6 +27,8 @@
 
 //Including some physics Data Structures
 #include "utils/Physic/GridSP.h"
+
+#include "utils/Math/Vector2i.h"
 //Including some physics Data Structures
 
 
