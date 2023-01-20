@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ECS/Entity.h"
-#include "Components/ActionComponent.h"
+#include "Components/Exploring/ActionComponent.h"
 
 
 

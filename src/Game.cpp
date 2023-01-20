@@ -9,13 +9,13 @@
 //Including some context
 
 //Including System
-#include "Systems/RenderSystem.h"
-#include "Systems/MoveSystem.h"
-#include "Systems/CameraSystem.h"
-#include "Systems/ActionSystem.h"
-#include "Systems/AnimationSystem.h"
-#include "Systems/TileSystem.h"
-#include "Systems/EnemySystem.h"
+#include "Systems/Exploring/RenderSystem.h"
+#include "Systems/Exploring/MoveSystem.h"
+#include "Systems/Exploring/CameraSystem.h"
+#include "Systems/Exploring/ActionSystem.h"
+#include "Systems/Exploring/AnimationSystem.h"
+#include "Systems/Exploring/TileSystem.h"
+#include "Systems/Exploring/EnemySystem.h"
 
 //Including Battle System
 #include "Systems/Battle/BattleRenderSystem.h"
@@ -71,11 +71,12 @@ Game* Game::sGameInstance = nullptr;
 
 
 
-
-
 void Game::update()
 {
 	resetIteratorScene();
+
+	
+
 
 	while (!isEndedScenes())
 	{
@@ -162,11 +163,6 @@ void Game::generateOutput()
 
 void Game::loadData()
 {
-	Vector2i vec(10, 11);
-	Vector2f vecF(10.0f, 11.0f);
-	//Vector2f v = vec.cast<float>();
-
-
 	//Init some base data
 	mIsRunning = true;
 

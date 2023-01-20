@@ -5,8 +5,8 @@
 //Including ECS
 
 //Including other systems
-#include "Systems/MoveSystem.h"
-#include "Systems/InteractionSystem.h"
+#include "Systems/Exploring/MoveSystem.h"
+#include "Systems/Exploring/InteractionSystem.h"
 //Including other systems
 
 //Including world

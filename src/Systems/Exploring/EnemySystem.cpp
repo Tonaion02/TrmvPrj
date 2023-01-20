@@ -11,14 +11,14 @@
 //Including Base ECS
 
 //Including components
-#include "Components/BaseEnemyComponent.h"
-#include "Components/MoveComponent.h"
+#include "Components/Exploring/BaseEnemyComponent.h"
+#include "Components/Exploring/MoveComponent.h"
 //Including components
 
 //Including systems
-#include "Systems/ActionSystem.h"
-#include "Systems/AnimationSystem.h"
-#include "Systems/MoveSystem.h"
+#include "Systems/Exploring/ActionSystem.h"
+#include "Systems/Exploring/AnimationSystem.h"
+#include "Systems/Exploring/MoveSystem.h"
 //Including systems
 
 //Including context

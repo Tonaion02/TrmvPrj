@@ -10,13 +10,13 @@
 //Including ComponentPools
 #include "ECS/ComponentPool.h"
 
-#include "Components/TransformComponent.h"
-#include "Components/DrawComponent.h"
-#include "Components/MoveComponent.h"
-#include "Components/ActionComponent.h"
-#include "Components/AnimationComponent.h"
-#include "Components/BaseEnemyComponent.h"
-#include "Components/BagComponent.h"
+#include "Components/Exploring/TransformComponent.h"
+#include "Components/Exploring/DrawComponent.h"
+#include "Components/Exploring/MoveComponent.h"
+#include "Components/Exploring/ActionComponent.h"
+#include "Components/Exploring/AnimationComponent.h"
+#include "Components/Exploring/BaseEnemyComponent.h"
+#include "Components/Exploring/BagComponent.h"
 
 #include "Components/Battle/TransformBattleComponent.h"
 #include "Components/Battle/DrawBattleComponent.h"

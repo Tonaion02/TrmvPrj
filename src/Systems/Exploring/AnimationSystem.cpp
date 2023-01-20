@@ -1,9 +1,9 @@
 #include "AnimationSystem.h"
 
 //Including components
-#include "Components/AnimationComponent.h"
-#include "Components/DrawComponent.h"
-#include "Components/MoveComponent.h"
+#include "Components/Exploring/AnimationComponent.h"
+#include "Components/Exploring/DrawComponent.h"
+#include "Components/Exploring/MoveComponent.h"
 //Including components
 
 //Including world

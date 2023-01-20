@@ -24,7 +24,7 @@
 
 #include "Systems/Battle/HitBoxSystem.h"
 
-#include "Systems/CameraSystem.h"
+#include "Systems/Exploring/CameraSystem.h"
 //Including some Systems
 
 //Including some Context

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Misc/Direction.h"
-#include "Components/AnimationComponent.h"
-#include "Components/ActionComponent.h"
+#include "Components/Exploring/AnimationComponent.h"
+#include "Components/Exploring/ActionComponent.h"
 
 #include "ECS/Entity.h"
 

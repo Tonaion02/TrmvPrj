@@ -21,14 +21,14 @@
 //Including some Enviroment
 
 //Including Systems
-#include "Systems/MoveSystem.h"
-#include "Systems/AnimationSystem.h"
-#include "Systems/InteractionSystem.h"
+#include "Systems/Exploring/MoveSystem.h"
+#include "Systems/Exploring/AnimationSystem.h"
+#include "Systems/Exploring/InteractionSystem.h"
 
-#include "Systems/CameraSystem.h"
-#include "Systems/ActionSystem.h"
-#include "Systems/EnemySystem.h"
-#include "Systems/RenderSystem.h"
+#include "Systems/Exploring/CameraSystem.h"
+#include "Systems/Exploring/ActionSystem.h"
+#include "Systems/Exploring/EnemySystem.h"
+#include "Systems/Exploring/RenderSystem.h"
 //Including Systems
 
 

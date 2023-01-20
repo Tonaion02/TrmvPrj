@@ -1,4 +1,4 @@
-#include "Systems/MoveSystem.h"
+#include "Systems/Exploring/MoveSystem.h"
 
 //Include World
 #include "Game.h"
@@ -12,12 +12,12 @@
 //Include some base ECS
 
 //Including Components
-#include "Components/MoveComponent.h"
-#include "Components/TransformComponent.h"
+#include "Components/Exploring/MoveComponent.h"
+#include "Components/Exploring/TransformComponent.h"
 //Including Components
 
 //Including other Systems
-#include "Systems/TileSystem.h"
+#include "Systems/Exploring/TileSystem.h"
 //Including other Systems
 
 

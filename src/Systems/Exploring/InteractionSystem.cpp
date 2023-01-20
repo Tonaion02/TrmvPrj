@@ -1,12 +1,12 @@
-#include "Systems/InteractionSystem.h"
+#include "Systems/Exploring/InteractionSystem.h"
 
 //Including ECS
 #include "ECS/ECS.h"
 //Including ECS
 
 //Including other systems
-#include "Systems/ActionSystem.h"
-#include "Systems/TileSystem.h"
+#include "Systems/Exploring/ActionSystem.h"
+#include "Systems/Exploring/TileSystem.h"
 //Including other systems
 
 //Including some context
